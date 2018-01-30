@@ -126,12 +126,12 @@ echo "     _|      _|  _|      _|    _|_|    _|    _|    _|_|_|    _|_|_|"
 echo ""
 
 # GENTOOLKIT
-if ! sudo emerge -qn app-portage/gentoolkit
-    then
-        echo 'ERRO não foi possível instalar gentoolkit'
-        exit 1
-fi
-echo "Gentoolkit instalado!"
+# if ! sudo emerge -qn app-portage/gentoolkit
+#     then
+#         echo 'ERRO não foi possível instalar gentoolkit'
+#         exit 1
+# fi
+# echo "Gentoolkit instalado!"
 
 # ------------------ Flags para Xmonad -------------------------
 
@@ -202,7 +202,7 @@ sleep 2
 
 # 5 XMONAD
 echo 'INSTALANDO XMONAD'
-if ! sudo emerge -qn x11-wm/{xmonad,xmonad-contrib} x11-misc/{xmobar,stalonetray,lightdm} x11-terms/rxvt-unicode
+if ! sudo emerge -qn x11-wm/{xmonad,xmonad-contrib} x11-misc/{xmobar,stalonetray} x11-terms/rxvt-unicode
     then
         echo 'ERRO'
         exit 1
@@ -299,82 +299,9 @@ if ! rm -rf ~/dotfiles-tilingwm
 fi
 echo "Pastas/Arquivos desnecessárias/os removidas!"
 
-# Adicionando shutdown para uso sem sudo
-if ! sudo chmod 4755 /sbin/shutdown
-    then
-        echo 'ERRO não consegui adicionar privilegios de uso para o comando shutdown ou já configurado antes'
-fi
-echo -e '\033[01;34mComando shutdown com privilegios adicionado!\033[0m'
 
-# Criando atalho para o comando shutdown
-if ! sudo ln -s /sbin/shutdown /bin/
-    then
-        echo 'ERRO não consegui criar o atalho para o comando shutdown ou já confirurado antes'
-fi
-echo -e '\033[01;34mAtalho para o comando shutdown adicionado!\033[0m'
 sleep 1
 
-sudo sed -i 's/[a-zA-Z0-9_ #]*autologin-session=[a-zA-Z0-9_ ]*/#autologin-session=/g' /etc/lightdm/lightdm.conf
-sleep 2
-sudo sed -i "s/[a-zA-Z0-9_ #]*autologin-user=[a-zA-Z0-9_ #]*/#autologin-user=/g" /etc/lightdm/lightdm.conf
-sleep 2
-sudo sed -i 's/[a-zA-Z0-9_ #]*user-session=[a-zA-Z0-9_ #]*/#user-session=default/g' /etc/lightdm/lightdm.conf
-sleep 2
-
-# Adicionando lightdm como gerenciador de login padrão
-if ! sudo sed -i 's/DISPLAYMANAGER="xdm"/DISPLAYMANAGER="lightdm"/g' /etc/conf.d/xdm
-    then
-        echo 'ERRO não consegui adicionar lightdm como gerenciador de login padrão'
-        exit 1
-fi
-echo "Gerenciador lightdm adicionado como padrão"
-sleep 1
-# Adicionado login sessão
-if ! sudo sed -i 's/#autologin-session=/autologin-session=xmonad/g' /etc/lightdm/lightdm.conf
-    then
-        echo 'ERRO não consegui adicionar o autologin-session'
-        exit 1
-fi
-echo -e '\033[01;34mAutologin-session adicionado!\033[0m'
-sleep 1
-# Adicionando usuŕio ao lightdm
-if ! sudo sed -i "s/#autologin-user=/autologin-user=${USER}/g" /etc/lightdm/lightdm.conf
-    then
-        echo 'ERRO não consegui adicionar o usuário'
-        exit 1
-fi
-echo -e '\033[01;34mUsuário adicionado ao lightdm!\033[0m'
-sleep 1
-# Adicionando user sessão
-if ! sudo sed -i 's/#user-session=default/user-session=xmonad/g' /etc/lightdm/lightdm.conf
-    then
-        echo 'ERRO não consegui adicionar a sessão xmonad'
-        exit 1
-fi
-echo -e '\033[01;34mUser sessão adicionada!\033[0m'
-sleep 1
-# Adicionando autologin ao grupo de usuŕios
-if ! sudo groupadd -r autologin
-    then
-        echo 'ERRO não consegui adicionar autologin ao grupo de usuários ou já existe'
-fi
-echo -e '\033[01;34mautologin adiciondo ao grupo de usuários!\033[0m'
-sleep 1
-# Adicionando usuário ao grupo
-if ! sudo gpasswd -a ${USER} autologin
-    then
-        echo 'ERRO não consegui adicionar o usuário ao grupo'
-        exit 1
-fi
-echo -e '\033[01;34mUsuário adicionado ao grupo!\033[0m'
-sleep 1
-# Adicionando xdm para iniciar automaticamente
-if ! sudo rc-update add xdm default
-    then
-        echo 'ERRO não consegui adicionar o xdm ao rc'
-fi
-echo -e '\033[01;34mxdm adicionado ao rc!\033[0m'
-sleep 1
 # 9 COMPILANDO
 if ! xmonad --recompile
     then
@@ -459,7 +386,7 @@ echo -e '\033[01;34mPasta de configuração criada!\033[0m'
 
 # Configurando Awesome
 echo "Copiando configuração padrão"
-if ! sudo cp -rfv /etc/xdg/awesome/rc.lua ~/.config/awesome/
+if ! cp -rfv /etc/xdg/awesome/rc.lua ~/.config/awesome/
     then
         echo 'ERRO não foi possível copiar a configuração do awesome'
         exit 1
@@ -477,7 +404,7 @@ echo -e '\033[01;34mClonado!\033[0m'
 
 # Configurando Awesome
 echo "Movendo tema"
-if ! sudo cp -rf awesome-copycats/* ~/.config/awesome/
+if ! cp -rf awesome-copycats/* ~/.config/awesome/
     then
         echo 'ERRO não foi possível mover os temas para as suas pastas'
         exit 1
@@ -495,7 +422,7 @@ echo -e '\033[01;34mCopycats removido!\033[0m'
 
 # Configurando Awesome
 echo "Copiando temas padão"
-if ! sudo cp -rf /usr/share/awesome/themes/* ~/.config/awesome/themes
+if ! cp -rf /usr/share/awesome/themes/* ~/.config/awesome/themes
     then
         echo 'ERRO não foi possível copiar as pastas themes com os temas padrão do awesome'
         exit 1
@@ -582,13 +509,21 @@ Programas(){
 	echo
 	echo -e "\033[1;35;40m[ 1 ]\033[0m Programas enssenciais"
 	echo -e "\033[1;35;40m[ 2 ]\033[0m Netbeans (Baixe o jdk do site para /usr/portage/distfiles)"
-	echo -e "\033[1;35;40m[ b ]\033[0m Voltar"
+    echo -e "\033[1;35;40m[ 3 ]\033[0m Instalar e configurar Lightdm"
+    echo -e "\033[1;35;40m[ 4 ]\033[0m Configurar o shutdown"
+    echo -e "\033[1;35;40m[ 5 ]\033[0m Configurar o tema GTK: Vertex e icones OSX La Capitaine"
+    echo -e "\033[1;35;40m[ 6 ]\033[0m Configurar AUTO MOUNT Pendrive USB"
+    echo -e "\033[1;35;40m[ b ]\033[0m Voltar"
 	echo
 	echo -n "Qual a opção desejada? "
 	read opcao
 	case $opcao in
 			1) Enssencial;;
 			2) Netbeans ;;
+			3) Lightdm ;;
+			4) Shutdown ;;
+            5) Tema ;;
+            6) Pendrive ;;
 			b) Menu ;;
 			x) exit ;;
 			*) "Opção desconhecida." ; echo ; Programas ;;
@@ -872,7 +807,7 @@ fi
 echo -e '\033[01;34mHome!\033[0m'
 sleep 3
 # Criando pastas padrão
-if ! mkdir Documentos Downloads Música Vídeo
+if ! mkdir Documentos Downloads Músicas Vídeos
     then
         echo 'ERRO pastas padões já existem, tudo bem!'
 fi
@@ -972,7 +907,244 @@ sudo sed -i 1i\ "_JAVA_OPTIONS='-Dawt.useSystemAAFontSettings=lcd_hrgb'" /etc/en
 fi
 echo 'Filtro para fontes java instalado!'
 
+Menu
 }
+
+## -------------------------- LIGHTDM -----------------------------------------
+
+Lightdm(){
+
+# INSTALANDO LIGHTDM
+if ! sudo emerge -a x11-misc/lightdm
+    then
+        echo 'ERRO não foi possível instalar o Lightdm'
+fi
+echo 'Lightdm instalado!'
+
+# REMOVENDO CONFIURAÇÕES
+
+sudo sed -i 's/[a-zA-Z0-9_ #]*autologin-session=[a-zA-Z0-9_ ]*/#autologin-session=/g' /etc/lightdm/lightdm.conf
+sleep 2
+sudo sed -i "s/[a-zA-Z0-9_ #]*autologin-user=[a-zA-Z0-9_ #]*/#autologin-user=/g" /etc/lightdm/lightdm.conf
+sleep 2
+sudo sed -i 's/[a-zA-Z0-9_ #]*user-session=[a-zA-Z0-9_ #]*/#user-session=default/g' /etc/lightdm/lightdm.conf
+sleep 2
+
+echo "Para qual WM será configurado?"
+echo "[ 1 ] Xmonad"
+echo "[ 2 ] Awesome"
+read wm
+
+if wm == 1
+then
+    $wmanager = "xmonad"
+elif
+   wm == 2
+then
+    $wmanager = "awesome"
+elif
+    $wmanager == *
+then
+    Programas
+fi
+
+sleep 2
+# Adicionando lightdm como gerenciador de login padrão
+if ! sudo sed -i 's/DISPLAYMANAGER="xdm"/DISPLAYMANAGER="lightdm"/g' /etc/conf.d/xdm
+    then
+        echo 'ERRO não consegui adicionar lightdm como gerenciador de login padrão'
+        exit 1
+fi
+echo "Gerenciador lightdm adicionado como padrão"
+sleep 1
+# Adicionado login sessão
+if ! sudo sed -i "s/#autologin-session=/autologin-session=$wmanager/g" /etc/lightdm/lightdm.conf
+    then
+        echo 'ERRO não consegui adicionar o autologin-session'
+        exit 1
+fi
+echo -e '\033[01;34mAutologin-session adicionado!\033[0m'
+sleep 1
+# Adicionando usuŕio ao lightdm
+if ! sudo sed -i "s/#autologin-user=/autologin-user=${USER}/g" /etc/lightdm/lightdm.conf
+    then
+        echo 'ERRO não consegui adicionar o usuário'
+        exit 1
+fi
+echo -e '\033[01;34mUsuário adicionado ao lightdm!\033[0m'
+sleep 1
+# Adicionando user sessão
+if ! sudo sed -i "s/#user-session=default/user-session=$wmanager/g" /etc/lightdm/lightdm.conf
+    then
+        echo 'ERRO não consegui adicionar a sessão xmonad'
+        exit 1
+fi
+echo -e '\033[01;34mUser sessão adicionada!\033[0m'
+sleep 1
+# Adicionando autologin ao grupo de usuŕios
+if ! sudo groupadd -r autologin
+    then
+        echo 'ERRO não consegui adicionar autologin ao grupo de usuários ou já existe'
+fi
+echo -e '\033[01;34mautologin adiciondo ao grupo de usuários!\033[0m'
+sleep 1
+# Adicionando usuário ao grupo
+if ! sudo gpasswd -a ${USER} autologin
+    then
+        echo 'ERRO não consegui adicionar o usuário ao grupo'
+        exit 1
+fi
+echo -e '\033[01;34mUsuário adicionado ao grupo!\033[0m'
+sleep 1
+# Adicionando xdm para iniciar automaticamente
+if ! sudo rc-update add xdm default
+    then
+        echo 'ERRO não consegui adicionar o xdm ao rc'
+fi
+echo -e '\033[01;34mxdm adicionado ao rc!\033[0m'
+
+
+Programas
+}
+
+## ----------------------- SHUTDOWN -------------------------------------------
+
+Shutdown(){
+
+# Adicionando shutdown para uso sem sudo
+if ! sudo chmod 4755 /sbin/shutdown
+    then
+        echo 'ERRO não consegui adicionar privilegios de uso para o comando shutdown ou já configurado antes'
+fi
+echo -e '\033[01;34mComando shutdown com privilegios adicionado!\033[0m'
+
+# Criando atalho para o comando shutdown
+if ! sudo ln -s /sbin/shutdown /bin/
+    then
+        echo 'ERRO não consegui criar o atalho para o comando shutdown ou já confirurado antes'
+fi
+echo -e '\033[01;34mAtalho para o comando shutdown adicionado!\033[0m'
+
+
+Programas
+}
+
+## ------------------------ TEMA ----------------------------------------------
+
+Tema(){
+
+# REMOVENDO CONFIGURAÇÕES ANTIGAS
+sudo rm -rf /usr/share/themes/{Vertex,Vertex-Dark,Vertex-Light,Vertex-Gnome-Shell,Vertex-Gnome-Shell-3.16,Vertex-Cinnamon}
+rm -rf ~/.local/share/themes/{Vertex,Vertex-Dark,Vertex-Light,Vertex-Gnome-Shell,Vertex-Gnome-Shell-3.16,Vertex-Cinnamon}
+rm -rf ~/.themes/{Vertex,Vertex-Dark,Vertex-Light,Vertex-Gnome-Shell,Vertex-Gnome-Shell-3.16,Vertex-Cinnamon}
+
+cd ~/
+
+sleep 1
+# CLONANDO O TEMA
+if ! git clone https://github.com/horst3180/vertex-theme --depth 1
+    then
+        echo 'ERRO não foi possível clonar o tema Vertex'
+        exit 1
+fi
+echo -e '\033[01;34mTema Vertex clonado com sucesso!\033[0m'
+sleep 1
+
+cd ~/vertex-theme
+
+sleep 1
+# INSTALANDO TEMA
+if ! sh autogen.sh --prefix=/usr
+    then
+        echo 'ERRO não foi possível usar sh'
+        exit 1
+fi
+echo -e '\033[01;34mInstação configurada!\033[0m'
+sleep 1
+# USANDO MAKE
+if ! sudo make install
+    then
+        echo 'ERRO não foi possível usar o make'
+        exit 1
+fi
+echo -e '\033[01;34mTema instalando!\033[0m'
+sleep 1
+# CLONANDO O TEMA DE ICONES
+if ! git clone https://github.com/keeferrourke/la-capitaine-icon-theme.git ~/.icons/la-capitaine-icon-theme
+    then
+        echo 'ERRO não foi possivel clonar o tema dos icones la capitaine'
+        exit 1
+fi
+echo -e '\033[01;34mTema de icones la capitaine clonado!\033[0m'
+sleep 1
+# CLONANDO CONFIGURAÇÕES
+if ! git clone https://github.com/Quebravel/mylinux-conf.git ~/mylinux-conf
+    then
+        echo 'ERRO não foi possível clonar mylinux-conf'
+        exit 1
+fi
+echo -e '\033[01;34mmylinux-conf clonado!\033[0m'
+sleep 1
+# COPIANDO CONFIGURAÇÃO DO GTK2
+if ! cp ~/mylinux-conf/.gtkrc-2.0 ~/
+    then
+        echo 'ERRO não foi possivel clonar .gtkrc-2.0'
+        exit 1
+fi
+echo -e '\033[01;34mArquivo de configuração do GTK copiados!\033[0m'
+sleep 1
+# REMOVENDO PASTA mylinux-conf
+if ! rm -rf ~/mylinux-conf
+    then
+        echo 'ERRO não foi possível remove a pasta mylinux-conf'
+        exit 1
+fi
+echo -e '\033[01;34mPasta mylinux-conf removida!\033[0m'
+sleep 1
+
+
+Programas
+}
+
+
+## -------------------------- PENDRIVE -----------------------------------
+Pendrive(){
+
+# CLONANDO CONFIGURAÇÕES
+if ! git clone https://github.com/Quebravel/mylinux-conf.git ~/mylinux-conf
+    then
+        echo 'ERRO não foi possível clonar mylinux-conf'
+        exit 1
+fi
+echo -e '\033[01;34mmylinux-conf clonado!\033[0m'
+sleep 1
+
+# COPIANDO COMFIGURAÇÃO DO PENDRIVE
+if ! sudo cp ~/mylinux-conf/11-media-by-label-auto-mount.rules /etc/udev/rules.d/11-media-by-label-auto-mount.rules
+    then
+        echo 'ERRO não foi po'
+        exit 1
+fi
+echo -e '\033[01;34mConfiguração adcionada na pasta de configuração!\033[0m'
+sleep 1
+# CARREGANDO CONFIGURAÇÕES
+if ! sudo udevadm control --reload-rules
+    then
+        echo 'ERRO não foi possivel carregar configurações'
+        exit 1
+fi
+echo -e '\033[01;34mConfigurações carregadas!\033[0m'
+sleep 1
+# REMOVENDO PASTA mylinux-conf
+if ! rm -rf ~/mylinux-conf
+    then
+        echo 'ERRO não foi possível remove a pasta mylinux-conf'
+        exit 1
+fi
+echo -e '\033[01;34mPasta mylinux-conf removida!\033[0m'
+Programas
+}
+
 
 #-------------------------------------------------------- VIM ------------------------------------------------------------
 Vim(){
