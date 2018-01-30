@@ -430,72 +430,6 @@ fi
 echo -e '\033[01;34mTemas padrões copiados!\033[0m'
 sleep 3
 
-sudo sed -i 's/[a-zA-Z0-9_ #]*autologin-session=[a-zA-Z0-9_ ]*/#autologin-session=/g' /etc/lightdm/lightdm.conf
-sleep 2
-sudo sed -i "s/[a-zA-Z0-9_ #]*autologin-user=[a-zA-Z0-9_ #]*/#autologin-user=/g" /etc/lightdm/lightdm.conf
-sleep 2
-sudo sed -i 's/[a-zA-Z0-9_ #]*user-session=[a-zA-Z0-9_ #]*/#user-session=default/g' /etc/lightdm/lightdm.conf
-sleep 2
-
-#echo "|||||||||||| INSTALAR LIGHTDM COM LOGIN AUTOMATICO  (AWESOME WM)||||||||||||"
-#echo "Digite o nome do usuário"
-#read nome
-
-#echo "$nome"
-
-# Adicionando lightdm como gerenciador de login padrão
-if ! sudo sed -i 's/DISPLAYMANAGER="xdm"/DISPLAYMANAGER="lightdm"/g' /etc/conf.d/xdm
-    then
-        echo 'ERRO não consegui adicionar lightdm como gerenciador de login padrão'
-        exit 1
-fi
-echo "Gerenciador lightdm adicionado como padrão"
-
-# Adicionado login seif ! sudo sed -i 's/#autologin-session=/autologin-session=xmonad/g' /etc/lightdm/lightdm.conf
-if ! sudo sed -i 's/#autologin-session=/autologin-session=awesome/g' /etc/lightdm/lightdm.conf
-    then
-        echo 'ERRO não consegui adicionar o autologin-session'
-        exit 1
-fi
-echo -e '\033[01;34mAutologin-session adicionado!\033[0m'
-
-# Adicionando usuŕio ao lightdm
-if ! sudo sed -i "s/#autologin-user=/autologin-user=${USER}/g" /etc/lightdm/lightdm.conf
-    then
-        echo 'ERRO não consegui adicionar o usuário'
-        exit 1
-fi
-echo -e '\033[01;34mUsuário adicionado ao lightdm!\033[0m'
-
-# Adicionando user sessão
-if ! sudo sed -i 's/#user-session=default/user-session=awesome/g' /etc/lightdm/lightdm.conf
-    then
-        echo 'ERRO não consegui adicionar a sessão xmonad'
-        exit 1
-fi
-echo -e '\033[01;34mUser sessão adicionada!\033[0m'
-
-# Adicionando autologin ao grupo de usuŕios
-if ! sudo groupadd -r autologin
-    then
-        echo 'ERRO não consegui adicionar autologin ao grupo de usuários'
-fi
-echo -e '\033[01;34mautologin adiciondo ao grupo de usuários!\033[0m'
-
-# Adicionando usuário ao grupo
-if ! sudo gpasswd -a ${USER} autologin
-    then
-        echo 'ERRO não consegui adicionar o usuário ao grupo'
-        exit 1
-fi
-echo -e '\033[01;34mUsuário adicionado ao grupo!\033[0m'
-
-# Adicionando xdm para iniciar automaticamente
-if ! sudo rc-update add xdm default
-    then
-        echo 'ERRO não consegui adicionar o xdm ao rc'
-fi
-echo -e '\033[01;34mxdm adicionado ao rc!\033[0m'
 
 MenuX
 }
@@ -930,23 +864,19 @@ sleep 2
 sudo sed -i 's/[a-zA-Z0-9_ #]*user-session=[a-zA-Z0-9_ #]*/#user-session=default/g' /etc/lightdm/lightdm.conf
 sleep 2
 
-echo "Para qual WM será configurado?"
-echo "[ 1 ] Xmonad"
-echo "[ 2 ] Awesome"
-read wm
+echo "========================="
+echo "|    [ 1 ] Xmonad       |"
+echo "|    [ 2 ] Awesome      |"
+echo "========================="
+echo "Qual o WM?" ; read wman
 
-if wm == 1
-then
-    $wmanager = "xmonad"
-elif
-   wm == 2
-then
-    $wmanager = "awesome"
-elif
-    $wmanager == *
-then
-    Programas
-fi
+case $wman in
+  1) wm="xmonad" ;;
+  2) wm="awesome" ;;
+  *) echo "Você tem de entrar com um parâmetro válido" ; Lightdm ;;
+esac
+
+echo Instação para $wm
 
 sleep 2
 # Adicionando lightdm como gerenciador de login padrão
@@ -958,7 +888,7 @@ fi
 echo "Gerenciador lightdm adicionado como padrão"
 sleep 1
 # Adicionado login sessão
-if ! sudo sed -i "s/#autologin-session=/autologin-session=$wmanager/g" /etc/lightdm/lightdm.conf
+if ! sudo sed -i "s/#autologin-session=/autologin-session=$wm/g" /etc/lightdm/lightdm.conf
     then
         echo 'ERRO não consegui adicionar o autologin-session'
         exit 1
@@ -974,7 +904,7 @@ fi
 echo -e '\033[01;34mUsuário adicionado ao lightdm!\033[0m'
 sleep 1
 # Adicionando user sessão
-if ! sudo sed -i "s/#user-session=default/user-session=$wmanager/g" /etc/lightdm/lightdm.conf
+if ! sudo sed -i "s/#user-session=default/user-session=$wm/g" /etc/lightdm/lightdm.conf
     then
         echo 'ERRO não consegui adicionar a sessão xmonad'
         exit 1
@@ -1076,6 +1006,13 @@ if ! git clone https://github.com/keeferrourke/la-capitaine-icon-theme.git ~/.ic
         exit 1
 fi
 echo -e '\033[01;34mTema de icones la capitaine clonado!\033[0m'
+sleep 1
+if ! wget -qO- https://raw.githubusercontent.com/PapirusDevelopmentTeam/papirus-icon-theme/master/install.sh | DESTDIR="$HOME/.icons" sh
+    then
+        echo 'ERRO não foi possivel clonar o tema dos icones papirus'
+        exit 1
+fi
+echo -e '\033[01;34m>>>Tema de papirus clonado e instalado!\033[0m'
 sleep 1
 # CLONANDO CONFIGURAÇÕES
 if ! git clone https://github.com/Quebravel/mylinux-conf.git ~/mylinux-conf
