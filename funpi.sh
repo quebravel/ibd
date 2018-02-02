@@ -445,7 +445,7 @@ Programas(){
 	echo -e "\033[1;35;40m[ 2 ]\033[0m Netbeans (Baixe o jdk do site para /usr/portage/distfiles)"
     echo -e "\033[1;35;40m[ 3 ]\033[0m Instalar e configurar Lightdm"
     echo -e "\033[1;35;40m[ 4 ]\033[0m Configurar o shutdown"
-    echo -e "\033[1;35;40m[ 5 ]\033[0m Configurar o tema GTK: Vertex e icones OSX La Capitaine"
+    echo -e "\033[1;35;40m[ 5 ]\033[0m Configurar o tema GTK/MOC"
     echo -e "\033[1;35;40m[ 6 ]\033[0m Configurar AUTO MOUNT Pendrive USB"
     echo -e "\033[1;35;40m[ b ]\033[0m Voltar"
 	echo
@@ -1024,6 +1024,14 @@ echo -e '\033[01;34mmylinux-conf clonado!\033[0m'
 sleep 1
 # COPIANDO CONFIGURAÇÃO DO GTK2
 if ! cp ~/mylinux-conf/.gtkrc-2.0 ~/
+    then
+        echo 'ERRO não foi possivel clonar .gtkrc-2.0'
+        exit 1
+fi
+echo -e '\033[01;34mArquivo de configuração do GTK copiados!\033[0m'
+sleep 1
+# COPIANDO CONFIGURAÇÕES E THEMAS PARA MOC
+if ! cp ~/mylinux-conf/.moc ~/
     then
         echo 'ERRO não foi possivel clonar .gtkrc-2.0'
         exit 1
