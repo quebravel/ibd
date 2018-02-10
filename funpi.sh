@@ -1,30 +1,11 @@
 #!/bin/bash
 
 # Removendo copias de configurações
-if ! rm -rf ~/mylinux-conf
-    then
-        echo 'ERRO pasta mylinux-conf não removida'
-fi
-
-if ! rm -rf ~/oh-my-fish
-    then
-        echo 'ERRO pasta oh-my-fish não removida'
-fi
-
-if ! rm -rf ~/dotfiles-tilingwm
-    then
-        echo "Sem pastas de configurações. OK!"
-fi
-
-if ! rm -rf ~/fonts
-    then
-        echo "Sem pastas de configurações. OK!"
-fi
-
-if ! rm -rf ~/tecladoVideoConfig
-    then
-        echo 'Não tem a pasta tecladoVideoConfig, tudo bem'
-fi
+rm -rf ~/mylinux-conf
+rm -rf ~/oh-my-fish
+rm -rf ~/dotfiles-tilingwm
+rm -rf ~/fonts
+rm -rf ~/mylinux-conf
 
 
 Menu(){
@@ -1020,7 +1001,7 @@ if ! git clone https://github.com/Quebravel/mylinux-conf.git ~/mylinux-conf
         echo 'ERRO não foi possível clonar mylinux-conf'
         exit 1
 fi
-echo -e '\033[01;34mmylinux-conf clonado!\033[0m'
+echo -e '\033[01;34mylinux-conf clonado!\033[0m'
 sleep 1
 # COPIANDO CONFIGURAÇÃO DO GTK2
 if ! cp ~/mylinux-conf/.gtkrc-2.0 ~/
@@ -1061,7 +1042,7 @@ if ! git clone https://github.com/Quebravel/mylinux-conf.git ~/mylinux-conf
         echo 'ERRO não foi possível clonar mylinux-conf'
         exit 1
 fi
-echo -e '\033[01;34mmylinux-conf clonado!\033[0m'
+echo -e '\033[01;34mylinux-conf clonado!\033[0m'
 sleep 1
 
 # COPIANDO COMFIGURAÇÃO DO PENDRIVE
@@ -1547,13 +1528,13 @@ Vim
 
 Teclado(){
 
-if ! rm -rf ~/tecladoVideoConfig
+if ! rm -rf ~/mylinux-conf
     then
-        echo 'Não tem a pasta tecladoVideoConfig, tudo bem'
+        echo 'Não tem a pasta mylinux-conf, tudo bem'
 fi
 
 # 1 clonado
-if ! git clone https://github.com/Quebravel/tecladoVideoConfig.git ~/tecladoVideoConfig
+if ! git clone https://github.com/Quebravel/mylinux-conf.git ~/mylinux-conf.git
     then
         echo 'ERRO'
         exit 1
@@ -1561,7 +1542,7 @@ fi
 echo -e '\033[01;34mConfigurações clonadas!\033[0m'
 sleep 2
 # 2 movendo configuração do teclado para br-abnt2
-if ! sudo cp ~/tecladoVideoConfig/30-keyboard.conf /etc/X11/xorg.conf.d/
+if ! sudo cp ~/mylinux-conf/confKeyboardVideo/30-keyboard.conf /etc/X11/xorg.conf.d/
     then
         echo 'ERRO cópia de configuração de teclado não movidas '
         exit 1
@@ -1569,7 +1550,7 @@ fi
 echo -e '\033[01;34mConfiguração do teclado movida!\033[0m'
 
 # 3 movendo configuração do touchpad
-if ! sudo cp ~/tecladoVideoConfig/70-synaptics.conf /etc/X11/xorg.conf.d/
+if ! sudo cp ~/mylinux-conf/confKeyboardVideo/70-synaptics.conf /etc/X11/xorg.conf.d/
     then
         echo 'ERRO cópia de configuração do touchpad não movida'
         exit 1
@@ -1577,9 +1558,9 @@ fi
 echo -e '\033[01;34mConfiguração do touchpad movida!\033[0m'
 
 # 4 removendo pasta
-if ! rm -rf tecladoVideoConfig
+if ! rm -rf mylinux-conf
     then
-        echo 'ERRO pasta tecladoVideoConfig não removida'
+        echo 'ERRO pasta mylinux-conf não removida'
         exit 1
 fi
 echo -e '\033[01;34mPasta removida!\033[0m'
@@ -1666,7 +1647,7 @@ fi
 echo -e '\033[01;34mDrive intel instalado!\033[0m'
 
 # 1 clonando pasta da intel
-if ! git clone https://github.com/Quebravel/tecladoVideoConfig.git
+if ! git clone https://github.com/Quebravel/mylinux-conf.git ~/mylinux-conf.git
     then
         echo 'ERRO'
         exit 1
@@ -1674,7 +1655,7 @@ fi
 echo -e '\033[01;34mConfigurações clonadas!\033[0m'
 sleep 2
 # movendo configuração intel
-if ! sudo mv -v tecladoVideoConfig/20-intel.conf /etc/X11/xorg.conf.d/
+if ! sudo mv -v confKeyboardVideo/20-intel.conf /etc/X11/xorg.conf.d/
     then
         echo 'ERRO'
         exit 1
@@ -1682,9 +1663,9 @@ fi
 echo -e '\033[01;34mConfiguração movida!\033[0m'
 
 # removendo pasta
-if ! rm -rf tecladoVideoConfig
+if ! rm -rf mylinux-conf
     then
-        echo 'ERRO pasta tecladoVideoConfig não removida'
+        echo 'ERRO pasta mylinux-conf não removida'
         exit 1
 fi
 echo -e '\033[01;34mPasta removida!\033[0m'
@@ -1734,7 +1715,7 @@ fi
 echo -e '\033[01;34mDrive radeon instalado!\033[0m'
 
 # 1 clonando configuração
-if ! git clone https://github.com/Quebravel/tecladoVideoConfig.git
+if ! git clone https://github.com/Quebravel/mylinux-conf.git ~/mylinux-conf.git
     then
         echo 'ERRO git das configurações de teclado e videos não executado'
         exit 1
@@ -1742,7 +1723,7 @@ fi
 echo -e '\033[01;34mConfigurações clonadas!\033[0m'
 sleep 2
 # 2 movendo configuração radeon
-if ! sudo mv -v tecladoVideoConfig/50-device.conf /etc/X11/xorg.conf.d/
+if ! sudo mv -v ~/mylinux-conf/confKeyboardVideo/30-keyboard.conf/etc/X11/xorg.conf.d/
     then
         echo 'ERRO configuração de video da radeon não copiada'
         exit 1
@@ -1750,9 +1731,9 @@ fi
 echo -e '\033[01;34mConfiguração movida!\033[0m'
 sleep 2
 # 3 removendo a pasta
-if ! rm -rf tecladoVideoConfig
+if ! rm -rf ~/mylinux-conf
     then
-        echo 'ERRO pasta tecladoVideoConfig não removida'
+        echo 'ERRO pasta mylinux-conf não removida'
         exit 1
 fi
 echo -e '\033[01;34mPasta removida!\033[0m'
