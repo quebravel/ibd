@@ -682,7 +682,7 @@ echo "Repositório funtoo atualizado!"
 
 # 10 INSTALANDO PROGRAMAS ADCIONAIS PARA A USUABILIDADE DO DESKTOP
 echo "Instalando programas"
-if ! sudo emerge -q media-libs/fontconfig-infinality net-misc/networkmanager app-misc/ranger app-editors/{mousepad,gvim} media-plugins/alsa-plugins media-sound/{moc,pulseaudio,alsa-utils} media-video/mplayer app-text/{odt2txt,poppler} app-arch/{unrar,rar,unzip,zip,p7zip,atool} x11-misc/{numlockx,rofi,xcompmgr,urxvt-perls,urxvt-font-size} www-client/{google-chrome,w3m} media-gfx/{scrot,feh} x11-apps/{xbacklight,xfd,xsetroot} sys-fs/{ntfs3g,dosfstools} x11-terms/{rxvt-unicode,xfce4-terminal} media-fonts/{droid,dejavu,fantasque-sans-mono,fontawesome} dev-util/ctags sys-libs/ncurses dev-python/pyflakes xfce-base/thunar xfce-extra/thunar-volman
+if ! sudo emerge -q media-libs/fontconfig-infinality net-misc/networkmanager app-misc/ranger app-editors/{mousepad,gvim} media-plugins/alsa-plugins media-sound/{moc,pulseaudio,alsa-utils} media-video/mplayer app-text/{odt2txt,poppler,mupdf} app-arch/{unrar,rar,unzip,zip,p7zip,atool} x11-misc/{numlockx,rofi,xcompmgr,urxvt-perls,urxvt-font-size} www-client/{google-chrome,w3m} media-gfx/{scrot,feh} x11-apps/{xbacklight,xfd,xsetroot} sys-fs/{ntfs3g,dosfstools} x11-terms/{rxvt-unicode,xfce4-terminal} media-fonts/{droid,dejavu,fantasque-sans-mono,fontawesome} dev-util/ctags sys-libs/ncurses dev-python/pyflakes xfce-base/thunar xfce-extra/thunar-volman
     then
         echo 'ERRO'
         exit 1
@@ -698,7 +698,7 @@ fi
 echo -e '\033[01;34mRanger confiugrações copiadas!\033[0m'
 
 # RANGER PRÉ-VISUALIZAÇÃO DE IMAGENS (inicio da configuração)
-if ! sed 's/set preview_images false/set preview_images true/g' ~/.config/ranger/rc.conf > ~/.config/ranger/rc.confi
+if ! sed -i 's/set preview_images false/set preview_images true/g' ~/.config/ranger/rc.conf
     then
         echo 'ERRO na linha 584, não foi possível configurar o gerenciador de arquivos para visualizar imagens'
         exit 1
@@ -706,13 +706,20 @@ fi
 echo -e '\033[01;34mPreviwer imagens abilitado!\033[0m'
 
 # RANGER TEMA SOLARIZED (final da configuração)
-if ! sed 's/set colorscheme default/set colorscheme solarized/g' ~/.config/ranger/rc.confi > ~/.config/ranger/rc.conf
+if ! sed -i 's/set colorscheme default/set colorscheme solarized/g' ~/.config/ranger/rc.conf
     then
         echo 'ERRO na linha 592, configurando o tema de cores para o gerenciador de arquivos ranger'
         exit 1
 fi
 echo -e '\033[01;34mRanger file manager totalmente configurado!\033[0m'
 
+if ! sed -i 's/mime ^audio|ogg$, terminal, has mplayer  = mplayer -- "$@"/mime ^audio|ogg$, terminal, has moc      = mocp -- "$@"/g' ~/.config/ranger/rifle.conf
+    then
+        echo 'ERRO não foi possível localizar a pasta home'
+        exit 1
+fi
+echo -e '\033[01;34mHome!\033[0m'
+sleep 3
 # cd home
 if ! cd ~/
     then
