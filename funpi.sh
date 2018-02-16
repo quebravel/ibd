@@ -682,7 +682,7 @@ echo "Repositório funtoo atualizado!"
 
 # 10 INSTALANDO PROGRAMAS ADCIONAIS PARA A USUABILIDADE DO DESKTOP
 echo "Instalando programas"
-if ! sudo emerge -q media-libs/fontconfig-infinality net-misc/networkmanager app-misc/ranger app-editors/{mousepad,gvim} media-plugins/alsa-plugins media-sound/{moc,pulseaudio,alsa-utils} media-video/mplayer app-text/{odt2txt,poppler,mupdf} app-arch/{unrar,rar,unzip,zip,p7zip,atool} x11-misc/{numlockx,rofi,xcompmgr,urxvt-perls,urxvt-font-size} www-client/{google-chrome,w3m} media-gfx/{scrot,feh} x11-apps/{xbacklight,xfd,xsetroot} sys-fs/{ntfs3g,dosfstools} x11-terms/{rxvt-unicode,xfce4-terminal} media-fonts/{droid,dejavu,fantasque-sans-mono,fontawesome,ohsnap,artwiz-latin1,montecarlo} dev-util/ctags sys-libs/ncurses dev-python/pyflakes xfce-base/thunar xfce-extra/thunar-volman
+if ! sudo emerge -q media-libs/fontconfig-infinality net-misc/networkmanager app-misc/ranger app-editors/{mousepad,gvim} media-plugins/alsa-plugins media-sound/{moc,pulseaudio,alsa-utils} media-video/mplayer app-text/{odt2txt,poppler,mupdf} app-arch/{unrar,rar,unzip,zip,p7zip,atool} x11-misc/{numlockx,rofi,compton,urxvt-perls,urxvt-font-size} www-client/{google-chrome,w3m} media-gfx/{scrot,feh} x11-apps/{xbacklight,xfd,xsetroot} sys-fs/{ntfs3g,dosfstools} x11-terms/{rxvt-unicode,xfce4-terminal} media-fonts/{droid,dejavu,fantasque-sans-mono,fontawesome,ohsnap,artwiz-latin1,montecarlo} dev-util/ctags sys-libs/ncurses dev-python/pyflakes xfce-base/thunar xfce-extra/thunar-volman
     then
         echo 'ERRO'
         exit 1
@@ -748,6 +748,14 @@ if ! xset fp rehash
         exit 1
 fi
 echo -e '\033[01;34mFontes setadas!\033[0m'
+# Desabilitando filtros
+if ! sudo eselect fontconfig disable 10-autohint.conf 10-no-sub-pixel.conf 10-scale-bitmap-fonts.conf 10-sub-pixel-bgr.conf 10-sub-pixel-rgb.conf 10-sub-pixel-vbgr.conf 10-sub-pixel-vrgb.conf 10-unhinted.conf
+    then
+        echo 'ERRO Filtro não abilitado'
+#        exit 1
+fi
+echo -e '\033[01;34mFiltros desabilitados!\033[0m'
+sleep 2
 
 # Abilitando filtro LCD
 if ! sudo eselect fontconfig enable 11-lcdfilter-default.conf
@@ -1025,6 +1033,14 @@ if ! cp ~/mylinux-conf/.moc ~/
         exit 1
 fi
 echo -e '\033[01;34mArquivo de configuração do GTK copiados!\033[0m'
+sleep 1
+# COPIANDO CONFIGURAÇÕES DO COMPTON
+if ! cp ~/mylinux-conf/compton.conf ~/.config/
+    then
+        echo 'ERRO não foi possivel copiar a configuração do compton'
+        exit 1
+fi
+echo -e '\033[01;34mArquivo de configuração do compton copiados!\033[0m'
 sleep 1
 # REMOVENDO PASTA mylinux-conf
 if ! rm -rf ~/mylinux-conf
