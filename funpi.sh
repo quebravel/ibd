@@ -805,6 +805,47 @@ then
     echo "Não consegui tirar a borda do tema gruvbox"
     exit 1
 fi
+sleep 2
+# DOWNLOAD DMENU2
+if ! wget https://bitbucket.org/melek/dmenu2/downloads/dmenu2-0.2.tar.gz ~/
+    then
+        echo 'ERRO não foi possivel baixar dmenu2'
+        exit 1
+fi
+echo -e '\033[01;34mDmenu2 baixado!\033[0m'
+sleep 1
+cd ~/
+# DESCOMPACTANDO PACOTE
+tar -zxf dmenu2-0.2.tar.gz
+echo -e '\033[01;34mPacote descompactado!\033[0m'
+sleep 1
+cd dmenu2-0.2
+sleep 1
+# COMPILANDO DMENU2
+if ! sudo make clean install
+    then
+        echo 'ERRO não foi possível copilar'
+        exit 1
+fi
+echo -e '\033[01;34mDmenu2 copilado/instalando!\033[0m'
+sleep 1
+cd ~/
+sleep 1
+# REMOVENDO PASTA
+if ! rm -r dmenu2-0.2
+    then
+        echo 'ERRO não consegui remover a pasta do dmenu2'
+        exit 1
+fi
+echo -e '\033[01;34mPasta do dmenu2 removida!\033[0m'
+sleep 1
+# REMOVENDO ARQUIVO TAR.GZ DO DMENU2
+if ! rm dmenu2-0.2.tar.gz
+    then
+        echo 'ERRO não foi possivel remover o tar.gz do dmenu2'
+        exit 1
+fi
+echo -e '\033[01;34mArquivo tar.gz do dmenu2 removido!\033[0m'
 ###
 
 Menu
