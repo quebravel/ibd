@@ -1291,7 +1291,7 @@ fi
 echo -e '\033[01;34mPapel de parede adicionado!\033[0m'
 
 # Copiando ProFont e MonacoPowerline
-if ! cp -rf proFont MonacoPowerline ~/.local/share/fonts/
+if ! cp -rf proFont MonacoPowerline Eurostar ~/.local/share/fonts/
     then
         echo 'ERRO não foi possível mover as fontes proFont e monaco'
         exit 1
