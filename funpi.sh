@@ -1100,38 +1100,17 @@ Programas
 ## -------------------------- PENDRIVE -----------------------------------
 Pendrive(){
 
-# CLONANDO CONFIGURAÇÕES
-if ! git clone https://github.com/Quebravel/mylinux-conf.git ~/mylinux-conf
-    then
-        echo 'ERRO não foi possível clonar mylinux-conf'
-        exit 1
-fi
-echo -e '\033[01;34mylinux-conf clonado!\033[0m'
-sleep 1
+# CONFIGURANDO
 
-# COPIANDO COMFIGURAÇÃO DO PENDRIVE
-if ! sudo cp ~/mylinux-conf/11-media-by-label-auto-mount.rules /etc/udev/rules.d/11-media-by-label-auto-mount.rules
-    then
-        echo 'ERRO não foi po'
-        exit 1
-fi
-echo -e '\033[01;34mConfiguração adcionada na pasta de configuração!\033[0m'
+sudo sed -i 1i\ "/dev/sdb1   /media/pen-usb          vfat        noauto,user,umask=000     0 0" /etc/fstab
+#sudo echo '/dev/sdb1   /media/pen-usb          vfat        noauto,user,umask=000     0 0' >> /etc/fstab
 sleep 1
-# CARREGANDO CONFIGURAÇÕES
-if ! sudo udevadm control --reload-rules
-    then
-        echo 'ERRO não foi possivel carregar configurações'
-        exit 1
-fi
-echo -e '\033[01;34mConfigurações carregadas!\033[0m'
+sudo mkdir /media/pen-usb
 sleep 1
-# REMOVENDO PASTA mylinux-conf
-if ! rm -rf ~/mylinux-conf
-    then
-        echo 'ERRO não foi possível remove a pasta mylinux-conf'
-        exit 1
-fi
-echo -e '\033[01;34mPasta mylinux-conf removida!\033[0m'
+sudo groupadd plugdev
+sleep 1
+sudo gpasswd -a ${USER} plugdev
+
 Programas
 }
 
