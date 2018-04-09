@@ -682,7 +682,7 @@ echo "Repositório funtoo atualizado!"
 
 # 10 INSTALANDO PROGRAMAS ADCIONAIS PARA A USUABILIDADE DO DESKTOP
 echo "Instalando programas"
-if ! sudo emerge -q media-libs/fontconfig-infinality net-misc/networkmanager app-misc/ranger app-editors/{mousepad,gvim} media-plugins/alsa-plugins media-sound/{moc,pulseaudio,alsa-utils} media-video/mplayer app-text/{odt2txt,poppler,mupdf} app-arch/{unrar,rar,unzip,zip,p7zip,atool} x11-misc/{numlockx,rofi,xcompmgr,urxvt-perls,urxvt-font-size} www-client/{google-chrome,w3m} media-gfx/{scrot,feh} x11-apps/{xbacklight,xfd,xsetroot} sys-fs/{ntfs3g,dosfstools} x11-terms/{rxvt-unicode,xfce4-terminal} media-fonts/{droid,dejavu,fantasque-sans-mono,fontawesome,ohsnap,artwiz-latin1,montecarlo} dev-util/ctags sys-libs/ncurses dev-python/pyflakes xfce-base/thunar xfce-extra/thunar-volman
+if ! sudo emerge -q media-libs/fontconfig-infinality net-misc/networkmanager app-misc/ranger app-editors/{mousepad,gvim} media-plugins/alsa-plugins media-sound/{moc,pulseaudio,alsa-utils} media-video/mplayer app-text/{odt2txt,poppler,mupdf} app-arch/{unrar,rar,unzip,zip,p7zip,atool} x11-misc/{numlockx,rofi,compton,urxvt-perls,urxvt-font-size} www-client/{google-chrome,w3m} media-gfx/{scrot,feh} x11-apps/{xbacklight,xfd,xsetroot} sys-fs/{ntfs3g,dosfstools} x11-terms/{rxvt-unicode,xfce4-terminal} media-fonts/{droid,dejavu,fantasque-sans-mono,fontawesome,ohsnap,artwiz-latin1,montecarlo} dev-util/ctags sys-libs/ncurses dev-python/pyflakes xfce-base/thunar xfce-extra/thunar-volman
     then
         echo 'ERRO'
         exit 1
