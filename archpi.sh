@@ -530,7 +530,7 @@ Programas(){
 	echo -e "\033[1;34m |||||             Instalação de programas              |||||\033[0m"
 	echo
 	echo -e "\033[1;35;40m[ 1 ]\033[0m Programas enssenciais"
-	echo -e "\033[1;35;40m[ 2 ]\033[0m Netbeans (Baixe o jdk do site para /usr/portage/distfiles)"
+	echo -e "\033[1;35;40m[ 2 ]\033[0m Netbeans"
 	echo -e "\033[1;35;40m[ b ]\033[0m Voltar"
 	echo
 	echo -n "Qual a opção desejada? "
@@ -548,6 +548,59 @@ clear
 }
 
 Enssencial(){
+
+# Configuração para o uso de todos os cores
+
+set -e
+##################################################################################################################
+# Author 	: 	Erik Dubois
+# Website 	: 	https://www.erikdubois.be
+# Website	:	https://www.arcolinux.info
+# Website	:	https://www.arcolinux.com
+# Website	:	https://www.arcolinuxd.com
+# Website	:	https://www.arcolinuxforum.com
+##################################################################################################################
+#
+#   DO NOT JUST RUN THIS. EXAMINE AND JUDGE. RUN AT YOUR OWN RISK.
+#
+##################################################################################################################
+
+numberofcores=$(grep -c ^processor /proc/cpuinfo)
+
+
+case $numberofcores in
+
+    8)
+        echo "Você tem " $numberofcores" cores."
+        echo "Mudando os makeflags para "$numberofcores" cores."
+        sudo sed -i 's/#MAKEFLAGS="-j2"/MAKEFLAGS="-j9"/g' /etc/makepkg.conf
+        echo "Mudando as configurações de compressão para "$numberofcores" cores."
+        sudo sed -i 's/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T 8 -z -)/g' /etc/makepkg.conf
+        ;;
+    4)
+        echo "Você tem " $numberofcores" cores."
+        echo "Mudando os makeflags para "$numberofcores" cores."
+        sudo sed -i 's/#MAKEFLAGS="-j2"/MAKEFLAGS="-j5"/g' /etc/makepkg.conf
+        echo "Mudando as configurações de compressão para "$numberofcores" cores."
+        sudo sed -i 's/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T 4 -z -)/g' /etc/makepkg.conf
+        ;;
+    2)
+        echo "Você tem " $numberofcores" cores."
+        echo "Mudando os makeflags para "$numberofcores" cores."
+        sudo sed -i 's/#MAKEFLAGS="-j2"/MAKEFLAGS="-j3"/g' /etc/makepkg.conf
+        echo "Mudando as configurações de compressão para "$numberofcores" cores."
+        sudo sed -i 's/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T 2 -z -)/g' /etc/makepkg.conf
+        ;;
+    *)
+        echo "Nós não sabemos quantos núcleos você tem."
+        echo "Faça manualmente."
+        ;;
+
+esac
+
+echo "################################################################"
+echo "###  All cores will be used during building and compression ####"
+echo "################################################################"
 
 # 10 INSTALANDO PROGRAMAS ADCIONAIS PARA A USUABILIDADE DO DESKTOP
 echo "Instalando programas"
