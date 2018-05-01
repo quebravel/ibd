@@ -1037,20 +1037,38 @@ fi
 echo -e '\033[01;34mTema instalando!\033[0m'
 sleep 1
 # CLONANDO O TEMA DE ICONES
-if ! git clone https://github.com/keeferrourke/la-capitaine-icon-theme.git ~/.icons/la-capitaine-icon-theme
+# if ! git clone https://github.com/keeferrourke/la-capitaine-icon-theme.git ~/.icons/la-capitaine-icon-theme
+#     then
+#         echo 'ERRO não foi possivel clonar o tema dos icones la capitaine'
+#         exit 1
+# fi
+# echo -e '\033[01;34mTema de icones la capitaine clonado!\033[0m'
+# sleep 1
+# if ! wget -qO- https://raw.githubusercontent.com/PapirusDevelopmentTeam/papirus-icon-theme/master/install.sh | DESTDIR="$HOME/.icons" sh
+#     then
+#         echo 'ERRO não foi possivel clonar o tema dos icones papirus'
+#         exit 1
+# fi
+# echo -e '\033[01;34m>>>Tema de papirus clonado e instalado!\033[0m'
+
+# NOVO TEMA DE ICONES PREFERIDO
+
+if ! sudo emerge x11-themes/greybird
     then
-        echo 'ERRO não foi possivel clonar o tema dos icones la capitaine'
+        echo 'ERRO não foi possível installar o tema greybird'
         exit 1
 fi
-echo -e '\033[01;34mTema de icones la capitaine clonado!\033[0m'
+echo -e '\033[01;34mTema greybird instalando com sucesso!\033[0m'
 sleep 1
-if ! wget -qO- https://raw.githubusercontent.com/PapirusDevelopmentTeam/papirus-icon-theme/master/install.sh | DESTDIR="$HOME/.icons" sh
-    then
-        echo 'ERRO não foi possivel clonar o tema dos icones papirus'
-        exit 1
-fi
-echo -e '\033[01;34m>>>Tema de papirus clonado e instalado!\033[0m'
+
+echo '>>> VISTE O SITE PARA BAIXAR O TEMA DE ICONES'
+echo '>>> https://www.dropbox.com/s/qwd5j61us7i0euh/Vibrancy-Colors-GTK-Icon-Theme-v-2-7.tar.gz'
+echo '>>> DESCOMPACTE AS PASTAS DO ARQUIVO TAR.GZ NA PASTA /.icons/Vibrancy-Colors'
+echo '>>>                                                         /Vibrancy-Colors-Dark'
+echo '>>>                                                         /...'
+
 sleep 1
+
 # CLONANDO CONFIGURAÇÕES
 if ! git clone https://github.com/Quebravel/mylinux-conf.git ~/mylinux-conf
     then
