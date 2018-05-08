@@ -350,66 +350,21 @@ echo "Repositório funtoo atualizado!"
 
 # Awesome
 echo "Instalando Awesome"
-if ! sudo emerge -qn x11-wm/awesome x11-misc/lightdm
+if ! sudo emerge -qn x11-wm/awesome
     then
         echo 'ERRO não foi possível instalar Awesome windows manager'
         exit 1
 fi
 echo -e '\033[01;34mAwesome instalado!\033[0m'
 
-# Configurando Awesome
-echo "Criando pasta de configuração"
-if ! mkdir -p ~/.config/awesome/
+# clonando configuração com git
+if ! git clone https://github.com/Quebravel/awesome.git ~/.config/awesome
     then
-        echo 'ERRO não foi possível criar a pasta awesome em .config, ela já existe, tudo bem!'
+        echo 'ERRO já existe a pasta ou sua internet não esta funcionado'
+        exit 1
 fi
-echo -e '\033[01;34mPasta de configuração criada!\033[0m'
+echo -e '\033[01;34m>>> Configurações clonadas!\033[0m'
 
-# Configurando Awesome
-echo "Copiando configuração padrão"
-if ! cp -rfv /etc/xdg/awesome/rc.lua ~/.config/awesome/
-    then
-        echo 'ERRO não foi possível copiar a configuração do awesome'
-        exit 1
-fi
-echo -e '\033[01;34mConfiguração copiada!\033[0m'
-sleep 2
-# Configurando Awesome
-echo "Clonado tema copycats"
-if ! git clone --recursive https://github.com/lcpz/awesome-copycats.git
-    then
-        echo 'ERRO não foi possível clonar os temas para awesome'
-        exit 1
-fi
-echo -e '\033[01;34mClonado!\033[0m'
-
-# Configurando Awesome
-echo "Movendo tema"
-if ! cp -rf awesome-copycats/* ~/.config/awesome/
-    then
-        echo 'ERRO não foi possível mover os temas para as suas pastas'
-        exit 1
-fi
-echo -e '\033[01;34mCopycats copiados!\033[0m'
-sleep 2
-# Configurando Awesome
-echo "Removendo Clone"
-if ! rm -rf awesome-copycats/
-    then
-        echo 'ERRO não consegui remover a pasta awesome-copycats, remova manualmente'
-        exit 1
-fi
-echo -e '\033[01;34mCopycats removido!\033[0m'
-
-# Configurando Awesome
-echo "Copiando temas padão"
-if ! cp -rf /usr/share/awesome/themes/* ~/.config/awesome/themes
-    then
-        echo 'ERRO não foi possível copiar as pastas themes com os temas padrão do awesome'
-        exit 1
-fi
-echo -e '\033[01;34mTemas padrões copiados!\033[0m'
-sleep 3
 
 
 MenuX
