@@ -243,6 +243,53 @@ if ! cp -rf ~/dotfiles-tilingwm/.xinitrc ~/
 fi
 echo 'Arquivos movidos com sucesso!'
 
+sleep 2
+
+# 2.3  DMENU PARA XMONAD
+
+# DOWNLOAD DMENU2
+if ! wget https://bitbucket.org/melek/dmenu2/downloads/dmenu2-0.2.tar.gz ~/
+    then
+        echo 'ERRO não foi possivel baixar dmenu2'
+        exit 1
+fi
+echo -e '\033[01;34mDmenu2 baixado!\033[0m'
+sleep 1
+cd ~/
+# DESCOMPACTANDO PACOTE
+tar -zxf dmenu2-0.2.tar.gz
+echo -e '\033[01;34mPacote descompactado!\033[0m'
+sleep 1
+cd dmenu2-0.2
+sleep 1
+# COMPILANDO DMENU2
+if ! sudo make clean install
+    then
+        echo 'ERRO não foi possível copilar'
+        exit 1
+fi
+echo -e '\033[01;34mDmenu2 copilado/instalando!\033[0m'
+sleep 1
+cd ~/
+sleep 1
+# REMOVENDO PASTA
+if ! rm -r dmenu2-0.2
+    then
+        echo 'ERRO não consegui remover a pasta do dmenu2'
+        exit 1
+fi
+echo -e '\033[01;34mPasta do dmenu2 removida!\033[0m'
+sleep 1
+# REMOVENDO ARQUIVO TAR.GZ DO DMENU2
+if ! rm dmenu2-0.2.tar.gz
+    then
+        echo 'ERRO não foi possivel remover o tar.gz do dmenu2'
+        exit 1
+fi
+echo -e '\033[01;34mArquivo tar.gz do dmenu2 removido!\033[0m'
+
+# FIM DMENU PARA XMONAD
+
 # 3
 if ! cd ..
     then
@@ -471,12 +518,12 @@ sudo sed -i 's/USE="/USE="pixbuf /g' /etc/portage/make.conf
 fi
 sleep 2
 # windowmode ---- ROFI
-sudo sed -i 's/windowmode //g' /etc/portage/make.conf
-var="0"
-if test "$var" = "0"
-then
-sudo sed -i 's/USE="/USE="windowmode /g' /etc/portage/make.conf
-fi
+#sudo sed -i 's/windowmode //g' /etc/portage/make.conf
+#var="0"
+#if test "$var" = "0"
+#then
+#sudo sed -i 's/USE="/USE="windowmode /g' /etc/portage/make.conf
+#fi
 sleep 2
 # libnotify ---- THUNAR
 sudo sed -i 's/libnotify //g' /etc/portage/make.conf
@@ -637,7 +684,7 @@ echo "Repositório funtoo atualizado!"
 
 # 10 INSTALANDO PROGRAMAS ADCIONAIS PARA A USUABILIDADE DO DESKTOP
 echo "Instalando programas"
-if ! sudo emerge -q media-libs/fontconfig-infinality net-misc/networkmanager app-misc/ranger app-editors/{mousepad,gvim} media-plugins/alsa-plugins media-sound/{moc,pulseaudio,alsa-utils} media-video/mplayer app-text/{odt2txt,poppler,mupdf} app-arch/{unrar,rar,unzip,zip,p7zip,atool} x11-misc/{numlockx,rofi,compton,urxvt-perls,urxvt-font-size} www-client/{google-chrome,w3m} media-gfx/{scrot,feh} x11-apps/{xbacklight,xfd,xsetroot} sys-fs/{ntfs3g,dosfstools} x11-terms/{rxvt-unicode,xfce4-terminal} media-fonts/{droid,dejavu,fantasque-sans-mono,fontawesome,ohsnap,artwiz-latin1,montecarlo} dev-util/ctags sys-libs/ncurses dev-python/pyflakes xfce-base/thunar xfce-extra/thunar-volman
+if ! sudo emerge -q media-libs/fontconfig-infinality net-misc/networkmanager app-misc/ranger app-editors/{mousepad,gvim} media-plugins/alsa-plugins media-sound/{moc,pulseaudio,alsa-utils} media-video/mplayer app-text/{odt2txt,poppler,mupdf} app-arch/{unrar,rar,unzip,zip,p7zip,atool} x11-misc/{numlockx,compton,urxvt-perls,urxvt-font-size} www-client/{google-chrome,w3m} media-gfx/{scrot,feh} x11-apps/{xbacklight,xfd,xsetroot} sys-fs/{ntfs3g,dosfstools} x11-terms/{rxvt-unicode,xfce4-terminal} media-fonts/{droid,dejavu,fantasque-sans-mono,fontawesome,ohsnap,artwiz-latin1,montecarlo} dev-util/ctags sys-libs/ncurses dev-python/pyflakes xfce-base/thunar xfce-extra/thunar-volman
     then
         echo 'ERRO'
         exit 1
@@ -733,74 +780,34 @@ if ! sudo eselect infinality set infinality
 #        exit 1
 fi
 echo -e '\033[01;34mInfinality configurado!\033[0m'
-sleep 2
-# MUDANDO FONTE ROFI
-if ! echo "rofi.font: misc Tamzen\ 12" >> ~/.config/rofi/config
-    then
-        echo 'ERRO configuração da fonte ROFI não adicionada'
-fi
-echo -e '\033[01;34mFonte do ROFI configurado!\033[0m'
+#sleep 2
+## MUDANDO FONTE ROFI
+#if ! echo "rofi.font: misc Tamzen\ 12" >> ~/.config/rofi/config
+#    then
+#        echo 'ERRO configuração da fonte ROFI não adicionada'
+#fi
+#echo -e '\033[01;34mFonte do ROFI configurado!\033[0m'
+#
+## MUDANDO TEMA ROFI
+#if ! echo "rofi.theme: /usr/share/rofi/themes//gruvbox-dark-soft.rasi" >> ~/.config/rofi/config
+#    then
+#        echo 'ERRO configuração do tema ROFI não adicionado'
+#fi
+#echo -e '\033[01;34mFonte do ROFI configurado!\033[0m'
+#
+## TIRANDO BOARDAS TEMAS ROFI
+#if ! sudo sed -i "s/border:           1;/border:           0;/g" /usr/share/rofi/themes/solarized_alternate.rasi
+#then
+#    echo "Não consegui tirar a borda do tema solarized alternate"
+#    exit 1
+#fi
+#sleep 2
+#if ! sudo sed -i "s/border:           1;/border:           0;/g" /usr/share/rofi/themes/gruvbox-dark-soft.rasi
+#then
+#    echo "Não consegui tirar a borda do tema gruvbox"
+#    exit 1
+#fi
 
-# MUDANDO TEMA ROFI
-if ! echo "rofi.theme: /usr/share/rofi/themes//gruvbox-dark-soft.rasi" >> ~/.config/rofi/config
-    then
-        echo 'ERRO configuração do tema ROFI não adicionado'
-fi
-echo -e '\033[01;34mFonte do ROFI configurado!\033[0m'
-
-# TIRANDO BOARDAS TEMAS ROFI
-if ! sudo sed -i "s/border:           1;/border:           0;/g" /usr/share/rofi/themes/solarized_alternate.rasi
-then
-    echo "Não consegui tirar a borda do tema solarized alternate"
-    exit 1
-fi
-sleep 2
-if ! sudo sed -i "s/border:           1;/border:           0;/g" /usr/share/rofi/themes/gruvbox-dark-soft.rasi
-then
-    echo "Não consegui tirar a borda do tema gruvbox"
-    exit 1
-fi
-sleep 2
-# DOWNLOAD DMENU2
-if ! wget https://bitbucket.org/melek/dmenu2/downloads/dmenu2-0.2.tar.gz ~/
-    then
-        echo 'ERRO não foi possivel baixar dmenu2'
-        exit 1
-fi
-echo -e '\033[01;34mDmenu2 baixado!\033[0m'
-sleep 1
-cd ~/
-# DESCOMPACTANDO PACOTE
-tar -zxf dmenu2-0.2.tar.gz
-echo -e '\033[01;34mPacote descompactado!\033[0m'
-sleep 1
-cd dmenu2-0.2
-sleep 1
-# COMPILANDO DMENU2
-if ! sudo make clean install
-    then
-        echo 'ERRO não foi possível copilar'
-        exit 1
-fi
-echo -e '\033[01;34mDmenu2 copilado/instalando!\033[0m'
-sleep 1
-cd ~/
-sleep 1
-# REMOVENDO PASTA
-if ! rm -r dmenu2-0.2
-    then
-        echo 'ERRO não consegui remover a pasta do dmenu2'
-        exit 1
-fi
-echo -e '\033[01;34mPasta do dmenu2 removida!\033[0m'
-sleep 1
-# REMOVENDO ARQUIVO TAR.GZ DO DMENU2
-if ! rm dmenu2-0.2.tar.gz
-    then
-        echo 'ERRO não foi possivel remover o tar.gz do dmenu2'
-        exit 1
-fi
-echo -e '\033[01;34mArquivo tar.gz do dmenu2 removido!\033[0m'
 ###
 
 Menu
@@ -955,56 +962,7 @@ Programas
 
 Tema(){
 
-# REMOVENDO CONFIGURAÇÕES ANTIGAS
-sudo rm -rf /usr/share/themes/{Vertex,Vertex-Dark,Vertex-Light,Vertex-Gnome-Shell,Vertex-Gnome-Shell-3.16,Vertex-Cinnamon}
-rm -rf ~/.local/share/themes/{Vertex,Vertex-Dark,Vertex-Light,Vertex-Gnome-Shell,Vertex-Gnome-Shell-3.16,Vertex-Cinnamon}
-rm -rf ~/.themes/{Vertex,Vertex-Dark,Vertex-Light,Vertex-Gnome-Shell,Vertex-Gnome-Shell-3.16,Vertex-Cinnamon}
-
-cd ~/
-
 sleep 1
-# CLONANDO O TEMA
-if ! git clone https://github.com/horst3180/vertex-theme --depth 1
-    then
-        echo 'ERRO não foi possível clonar o tema Vertex'
-        exit 1
-fi
-echo -e '\033[01;34mTema Vertex clonado com sucesso!\033[0m'
-sleep 1
-
-cd ~/vertex-theme
-
-sleep 1
-# INSTALANDO TEMA
-if ! sh autogen.sh --prefix=/usr
-    then
-        echo 'ERRO não foi possível usar sh'
-        exit 1
-fi
-echo -e '\033[01;34mInstação configurada!\033[0m'
-sleep 1
-# USANDO MAKE
-if ! sudo make install
-    then
-        echo 'ERRO não foi possível usar o make'
-        exit 1
-fi
-echo -e '\033[01;34mTema instalando!\033[0m'
-sleep 1
-# CLONANDO O TEMA DE ICONES
-# if ! git clone https://github.com/keeferrourke/la-capitaine-icon-theme.git ~/.icons/la-capitaine-icon-theme
-#     then
-#         echo 'ERRO não foi possivel clonar o tema dos icones la capitaine'
-#         exit 1
-# fi
-# echo -e '\033[01;34mTema de icones la capitaine clonado!\033[0m'
-# sleep 1
-# if ! wget -qO- https://raw.githubusercontent.com/PapirusDevelopmentTeam/papirus-icon-theme/master/install.sh | DESTDIR="$HOME/.icons" sh
-#     then
-#         echo 'ERRO não foi possivel clonar o tema dos icones papirus'
-#         exit 1
-# fi
-# echo -e '\033[01;34m>>>Tema de papirus clonado e instalado!\033[0m'
 
 # NOVO TEMA DE ICONES PREFERIDO
 
@@ -1031,6 +989,26 @@ if ! git clone https://github.com/Quebravel/mylinux-conf.git ~/mylinux-conf
         exit 1
 fi
 echo -e '\033[01;34mylinux-conf clonado!\033[0m'
+sleep 1
+
+# COPIANDO TEMA DE ICONES PREFERIDO
+if ! cp -r ~/mylinux-conf/.icons ~/
+    then
+        echo 'ERRO pasta .icons não encontrada'
+        exit 1
+fi
+echo -e '\033[01;34mIcones copiados com sucesso!\033[0m'
+sleep 1
+# COPIANDO A PASTA TEMA PREFERIDO
+if ! cp -r ~/mylinux-conf/.themes ~/
+    then
+        echo 'ERRO não foi possível copiar a pasta themes'
+        exit 1
+fi
+echo -e '\033[01;34mPasta themes copiada!\033[0m'
+
+sleep 1
+echo -e '\033[01;34m>>>Tema MediterraneanNight e Vibrancy-NonMono-Dark-Aqua instalandos!\033[0m'
 sleep 1
 # COPIANDO CONFIGURAÇÃO DO GTK2
 if ! cp ~/mylinux-conf/.gtkrc-2.0 ~/
