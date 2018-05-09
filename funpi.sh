@@ -966,20 +966,12 @@ sleep 1
 
 # NOVO TEMA DE ICONES PREFERIDO
 
-if ! sudo emerge x11-themes/greybird
+if ! sudo emerge -qn x11-themes/greybird x11-themes/gtk-engines-murrine
     then
         echo 'ERRO não foi possível installar o tema greybird'
         exit 1
 fi
 echo -e '\033[01;34mTema greybird instalando com sucesso!\033[0m'
-sleep 1
-
-echo '>>> VISTE O SITE PARA BAIXAR O TEMA DE ICONES'
-echo '>>> https://www.dropbox.com/s/qwd5j61us7i0euh/Vibrancy-Colors-GTK-Icon-Theme-v-2-7.tar.gz'
-echo '>>> DESCOMPACTE AS PASTAS DO ARQUIVO TAR.GZ NA PASTA /.icons/Vibrancy-Colors'
-echo '>>>                                                         /Vibrancy-Colors-Dark'
-echo '>>>                                                         /...'
-
 sleep 1
 
 # CLONANDO CONFIGURAÇÕES
@@ -992,7 +984,7 @@ echo -e '\033[01;34mylinux-conf clonado!\033[0m'
 sleep 1
 
 # COPIANDO TEMA DE ICONES PREFERIDO
-if ! cp -r ~/mylinux-conf/.icons ~/
+if ! cp -r ~/mylinux-conf/.icons ~/.icons
     then
         echo 'ERRO pasta .icons não encontrada'
         exit 1
@@ -1000,7 +992,7 @@ fi
 echo -e '\033[01;34mIcones copiados com sucesso!\033[0m'
 sleep 1
 # COPIANDO A PASTA TEMA PREFERIDO
-if ! cp -r ~/mylinux-conf/.themes ~/
+if ! cp -r ~/mylinux-conf/.themes ~/.themes
     then
         echo 'ERRO não foi possível copiar a pasta themes'
         exit 1
