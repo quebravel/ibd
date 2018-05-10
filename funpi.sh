@@ -982,14 +982,29 @@ if ! git clone https://github.com/Quebravel/mylinux-conf.git ~/mylinux-conf
 fi
 echo -e '\033[01;34mylinux-conf clonado!\033[0m'
 sleep 1
-
-# COPIANDO TEMA DE ICONES PREFERIDO
-if ! cp -r ~/mylinux-conf/.icons ~/.icons
+# CRIANDO PASTA .ICONS
+if ! mkdir ~/.icons
     then
-        echo 'ERRO pasta .icons não encontrada'
+        echo 'ERRO pasta já exite, tudo bem'
+fi
+echo -e '\033[01;34mPasta .icons criada com sucesso!\033[0m'
+sleep 1
+# BAIXANDO TEMA DE ICONES PREFERIDO
+if ! wget -P ~/.icons https://www.dropbox.com/s/sealvky0fzusfix/Vibrancy-Colors-GTK-Icon-Theme-v-2-7.tar.gz
+    then
+        echo 'ERRO não consegui baixar tema de icones vibrancy'
         exit 1
 fi
-echo -e '\033[01;34mIcones copiados com sucesso!\033[0m'
+echo -e '\033[01;34mIcones baixados com sucesso!\033[0m'
+sleep 1
+
+# DESCOMPACTAR OS ICONES
+if ! tar -vzxf ~/.icons/Vibrancy-Colors-GTK-Icon-Theme-v-2-7.tar.gz -C ~/.icons
+    then
+        echo 'ERRO não consegui descompactar o arquivo Vibrancy-Colors-GTK-Icon-Theme-v-2-7.tar.gz'
+        exit 1
+fi
+echo -e '\033[01;34mArquivo descompactado e conteúdo movido para a pasta icons!\033[0m'
 sleep 1
 # COPIANDO A PASTA TEMA PREFERIDO
 if ! cp -r ~/mylinux-conf/.themes ~/.themes
