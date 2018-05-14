@@ -698,7 +698,10 @@ if ! ranger --copy-config=all
         exit 1
 fi
 echo -e '\033[01;34mRanger confiugrações copiadas!\033[0m'
-
+sleep 1
+# CONFIGURANDO (PARA OS NAVEGADORES ACESSAREM ABRIREM O THUNAR QUANDO O DOWNLOAD TERMINAR)
+echo 'inode/directory=Thunar-folder-handler.desktop' >> ~/.local/share/applications/mimeapps.list
+sleep 1
 # RANGER PRÉ-VISUALIZAÇÃO DE IMAGENS (inicio da configuração)
 if ! sed -i 's/set preview_images false/set preview_images true/g' ~/.config/ranger/rc.conf
     then
