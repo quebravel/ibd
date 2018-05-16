@@ -394,7 +394,7 @@ if ! sudo emerge --update --deep --with-bdeps=y --newuse @world
         exit 1
 fi
 echo "Repositório funtoo atualizado!"
-
+sleep 1
 # Awesome
 echo "Instalando Awesome"
 if ! sudo emerge -qn x11-wm/awesome
@@ -403,7 +403,7 @@ if ! sudo emerge -qn x11-wm/awesome
         exit 1
 fi
 echo -e '\033[01;34mAwesome instalado!\033[0m'
-
+sleep 1
 # clonando configuração com git
 if ! git clone https://github.com/Quebravel/awesome.git ~/.config/awesome
     then
@@ -411,7 +411,55 @@ if ! git clone https://github.com/Quebravel/awesome.git ~/.config/awesome
         exit 1
 fi
 echo -e '\033[01;34m>>> Configurações clonadas!\033[0m'
-
+sleep 1
+# CLONANDO WIDGETS DE STREETTUTLER
+if ! git clone git@github.com:streetturtle/awesome-wm-widgets.git ~/.config/awesome/awesome-wm-widgets
+    then
+        echo 'ERRO não consegui clonar os widgets do streettutler'
+        exit 1
+fi
+echo -e '\033[01;34mWidget StreetTutler clonadas!\033[0m'
+sleep 1
+# MUDANDO POSIÇÃO DO ICONE DE BATERIA DO STREETTUTLER
+if ! sed -i 's/_, 0, 0, 3/_, 0, 0, 1/g' ~/.config/awesome/awesome-wm-widgets/battery-widget/battery.lua
+    then
+        echo 'ERRO não consegui ajustar a posição do icone da bateria'
+        exit 1
+fi
+echo -e '\033[01;34mPosição do icone da bateria ajustada!\033[0m'
+sleep 1
+# INSTALANDO ICONES ARC PARA AWESOME
+if ! git clone https://github.com/horst3180/arc-icon-theme --depth 1 ~/arc-icon-theme
+    then
+        echo 'ERRO não consegui clonar os icones arc'
+        exit 1
+fi
+echo -e '\033[01;34mIcones arc clonados!\033[0m'
+sleep 1
+cd ~/arc-icon-theme
+sleep 1
+if ! ./autogen.sh --prefix=/usr
+    then
+        echo 'ERRO não consegui configurar os icones arc'
+        exit 1
+fi
+echo -e '\033[01;34mIcones arc configurados!\033[0m'
+sleep 1
+# sudo make install
+if ! sudo make install
+    then
+        echo 'ERRO não consegui instalar os icones arc'
+        exit 1
+fi
+echo -e '\033[01;34mIcones arc instalados!\033[0m'
+sleep 1
+# REMOVENDO PASTA DE ICONES ARC DESNECESSARIA
+if ! rm -r ~/arc-icon-theme
+    then
+        echo 'ERRO não consegui remover a pasta do arc icones'
+        exit 1
+fi
+echo -e '\033[01;34mPasta arc icones removida!\033[0m'
 
 
 MenuX
