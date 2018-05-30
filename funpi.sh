@@ -460,7 +460,14 @@ if ! rm -r ~/arc-icon-theme
         exit 1
 fi
 echo -e '\033[01;34mPasta arc icones removida!\033[0m'
-
+sleep 1
+# ADICIONANDO MENU
+if ! git clone https://github.com/lcpz/awesome-freedesktop.git ~/.config/awesome/freedesktop
+    then
+        echo 'ERRO não consegui clonar freedesktop'
+        exit 1
+fi
+echo -e '\033[01;34mFreedesktop menu adicionado!\033[0m'
 
 MenuX
 }
