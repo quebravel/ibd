@@ -1083,6 +1083,16 @@ if ! cp ~/mylinux-conf/.gtkrc-2.0 ~/
 fi
 echo -e '\033[01;34mArquivo de configuração do GTK copiados!\033[0m'
 sleep 1
+
+# CONFIGURANDO TEMA NO CACHE
+if ! gtk-update-icon-cache /home/jonatas/.icons/Vibrancy-NonMono-Dark-Aqua/
+    then
+        echo 'ERRO não foi possivel configurar tema'
+        exit 1
+fi
+echo -e '\033[01;34mTema configurado com gtk-update-icon-cache!\033[0m'
+
+sleep 1
 # COPIANDO CONFIGURAÇÕES E THEMAS PARA MOC
 if ! cp ~/mylinux-conf/.moc ~/
     then
