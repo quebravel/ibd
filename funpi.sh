@@ -23,49 +23,49 @@ echo "        |MMMMMMMMMMMMMMMMMMMMMMMM MM'M/                 "
 echo "        |MMMMMMMMMMMMMMMMMMMMMMMMMMMM/                  "
    echo
 
-	echo -e "\033[1;34m |||||              Pós instalação basica                ||||| \033[0m"
-	echo
-	echo -e "\033[1;31;40m[ 1 ]\033[0m Instalar X/Xmonad/Awesome"
-	echo -e "\033[1;35;40m[ 2 ]\033[0m Instalar Programas Basicos (Executar com o X iniciado)"
-	echo -e "\033[1;33;40m[ 3 ]\033[0m Personalizar Vim/Terminal"
-	echo -e "\033[1;32;40m[ 4 ]\033[0m Configurar Teclado/Touchpad"
-	echo -e "\033[1;34;40m[ 5 ]\033[0m Configurar Drive Video/Áudio"
-	echo -e "\033[1;36;40m[ x ]\033[0m Sair"
-	echo
-	echo -n "Qual a opção desejada? "
-	read opcao
-	case $opcao in
-		1) MenuX ;;
-		2) Programas ;;
-		3) Vim ;;
-		4) Teclado ;;
-		5) Video ;;
-		x) exit ;;
-		*) "Opção desconhecida." ; echo ; Menu ;;
-	esac
+    echo -e "\033[1;34m |||||              Pós instalação basica                ||||| \033[0m"
+    echo
+    echo -e "\033[1;31;40m[ 1 ]\033[0m Instalar X/Xmonad/Awesome"
+    echo -e "\033[1;35;40m[ 2 ]\033[0m Instalar Programas Basicos (Executar com o X iniciado)"
+    echo -e "\033[1;33;40m[ 3 ]\033[0m Personalizar Vim/Terminal"
+    echo -e "\033[1;32;40m[ 4 ]\033[0m Configurar Teclado/Touchpad"
+    echo -e "\033[1;34;40m[ 5 ]\033[0m Configurar Drive Video/Áudio"
+    echo -e "\033[1;36;40m[ x ]\033[0m Sair"
+    echo
+    echo -n "Qual a opção desejada? "
+    read opcao
+    case $opcao in
+        1) MenuX ;;
+        2) Programas ;;
+        3) Vim ;;
+        4) Teclado ;;
+        5) Video ;;
+        x) exit ;;
+        *) "Opção desconhecida." ; echo ; Menu ;;
+    esac
 
 }
 
 MenuX(){
 
-	echo ""
-	echo -e "\033[1;34m |||||         Instalação da interface gráfica          ||||| \033[0m"
-	echo
-	echo -e "\033[1;31;40m[ 1 ]\033[0m X (Add a flag da sua GPU USE=vesa/intel+/radeon/nvidia)"
-	echo -e "\033[1;31;40m[ 2 ]\033[0m Xmonad WM"
-	echo -e "\033[1;31;40m[ 3 ]\033[0m Awesome WM"
-	echo -e "\033[1;31;40m[ b ]\033[0m Voltar"
-	echo
-	echo -n "Qual a opção desejada? "
-	read opcao
-	case $opcao in
-		1) X ;;
-		2) Xmonad ;;
-		3) Awesome ;;
-		b) Menu ;;
-		x) exit ;;
-		*) "Opção desconhecida." ; echo ; MenuX ;;
-	esac
+    echo ""
+    echo -e "\033[1;34m |||||         Instalação da interface gráfica          ||||| \033[0m"
+    echo
+    echo -e "\033[1;31;40m[ 1 ]\033[0m X (Add a flag da sua GPU USE=vesa/intel+/radeon/nvidia)"
+    echo -e "\033[1;31;40m[ 2 ]\033[0m Xmonad WM"
+    echo -e "\033[1;31;40m[ 3 ]\033[0m Awesome WM"
+    echo -e "\033[1;31;40m[ b ]\033[0m Voltar"
+    echo
+    echo -n "Qual a opção desejada? "
+    read opcao
+    case $opcao in
+        1) X ;;
+        2) Xmonad ;;
+        3) Awesome ;;
+        b) Menu ;;
+        x) exit ;;
+        *) "Opção desconhecida." ; echo ; MenuX ;;
+    esac
 
 }
 
@@ -200,7 +200,7 @@ fi
 
 # 1
 echo 'Git Clone do Xmonad'
-if ! git clone https://github.com/Quebravel/dotfiles-tilingwm.git ~/dotfiles-tilingwm
+if ! git clone https://github.com/quebravel/dotfiles-tilingwm.git ~/dotfiles-tilingwm
     then
         echo 'Não Clonou'
         exit 1
@@ -405,7 +405,7 @@ fi
 echo -e '\033[01;34mAwesome instalado!\033[0m'
 sleep 1
 # clonando configuração com git
-if ! git clone https://github.com/Quebravel/awesome.git ~/.config/awesome
+if ! git clone https://github.com/quebravel/awesome.git ~/.config/awesome
     then
         echo 'ERRO já existe a pasta ou sua internet não esta funcionado'
         exit 1
@@ -476,29 +476,29 @@ MenuX
 
 Programas(){
 
-	echo
-	echo -e "\033[1;34m |||||             Instalação de programas              |||||\033[0m"
-	echo
-	echo -e "\033[1;35;40m[ 1 ]\033[0m Programas enssenciais"
-	echo -e "\033[1;35;40m[ 2 ]\033[0m Netbeans (Baixe o jdk do site para /usr/portage/distfiles)"
+    echo
+    echo -e "\033[1;34m |||||             Instalação de programas              |||||\033[0m"
+    echo
+    echo -e "\033[1;35;40m[ 1 ]\033[0m Programas enssenciais"
+    echo -e "\033[1;35;40m[ 2 ]\033[0m Netbeans (Baixe o jdk do site para /usr/portage/distfiles)"
     echo -e "\033[1;35;40m[ 3 ]\033[0m Instalar e configurar Lightdm"
     echo -e "\033[1;35;40m[ 4 ]\033[0m Configurar o shutdown"
     echo -e "\033[1;35;40m[ 5 ]\033[0m Configurar o tema GTK/MOC"
     echo -e "\033[1;35;40m[ 6 ]\033[0m Configurar AUTO MOUNT Pendrive USB"
     echo -e "\033[1;35;40m[ b ]\033[0m Voltar"
-	echo
-	echo -n "Qual a opção desejada? "
-	read opcao
-	case $opcao in
-			1) Enssencial;;
-			2) Netbeans ;;
-			3) Lightdm ;;
-			4) Shutdown ;;
+    echo
+    echo -n "Qual a opção desejada? "
+    read opcao
+    case $opcao in
+            1) Enssencial;;
+            2) Netbeans ;;
+            3) Lightdm ;;
+            4) Shutdown ;;
             5) Tema ;;
             6) Pendrive ;;
-			b) Menu ;;
-			x) exit ;;
-			*) "Opção desconhecida." ; echo ; Programas ;;
+            b) Menu ;;
+            x) exit ;;
+            *) "Opção desconhecida." ; echo ; Programas ;;
     esac
 clear
 
@@ -1033,7 +1033,7 @@ echo -e '\033[01;34mTema greybird instalando com sucesso!\033[0m'
 sleep 1
 
 # CLONANDO CONFIGURAÇÕES
-if ! git clone https://github.com/Quebravel/mylinux-conf.git ~/mylinux-conf
+if ! git clone https://github.com/quebravel/mylinux-conf.git ~/mylinux-conf
     then
         echo 'ERRO não foi possível clonar mylinux-conf'
         exit 1
@@ -1144,25 +1144,25 @@ Programas
 #-------------------------------------------------------- VIM ------------------------------------------------------------
 Vim(){
 
-	echo
-	echo -e "\033[01;34m |||||              Personalização do Vim              ||||| \033[0m"
-	echo
-	echo -e "\033[1;33;40m[ 1 ]\033[0m Fonte Powerline"
-	echo -e "\033[1;33;40m[ 2 ]\033[0m Vim-plug e Plugins"
-	echo -e "\033[1;33;40m[ 3 ]\033[0m Fish shell"
-	echo -e "\033[1;33;40m[ 4 ]\033[0m Zsh shell"
-	echo -e "\033[1;33;40m[ b ]\033[0m Voltar"
-	echo
-	echo -n "Qual a opção desejada? "
-	read opcao
-	case $opcao in
-			1) FontPowerline ;;
-			2) Vimplug ;;
-			3) Fish ;;
-			4) Zsh ;;
-			b) Menu ;;
-			x) exit ;;
-			*) "Opção desconhecida." ; echo ; Vim ;;
+    echo
+    echo -e "\033[01;34m |||||              Personalização do Vim              ||||| \033[0m"
+    echo
+    echo -e "\033[1;33;40m[ 1 ]\033[0m Fonte Powerline"
+    echo -e "\033[1;33;40m[ 2 ]\033[0m Vim-plug e Plugins"
+    echo -e "\033[1;33;40m[ 3 ]\033[0m Fish shell"
+    echo -e "\033[1;33;40m[ 4 ]\033[0m Zsh shell"
+    echo -e "\033[1;33;40m[ b ]\033[0m Voltar"
+    echo
+    echo -n "Qual a opção desejada? "
+    read opcao
+    case $opcao in
+            1) FontPowerline ;;
+            2) Vimplug ;;
+            3) Fish ;;
+            4) Zsh ;;
+            b) Menu ;;
+            x) exit ;;
+            *) "Opção desconhecida." ; echo ; Vim ;;
     esac
 clear
 }
@@ -1255,7 +1255,7 @@ echo -e '\033[01;34mPasta Imagens criada!\033[0m'
 sleep 2
 
 # Airline 5 Clone arquivo .vimrc e .Xresources
-if ! git clone https://github.com/Quebravel/mylinux-conf.git ~/mylinux-conf
+if ! git clone https://github.com/quebravel/mylinux-conf.git ~/mylinux-conf
     then
         echo 'ERRO não foi possível clonar mylinux-conf'
         exit 1
@@ -1445,7 +1445,7 @@ fi
 echo -e '\033[01;34mFish shell instalado!\033[0m'
 sleep 2
 # Baixando configuração do tema
-if ! git clone https://github.com/Quebravel/mylinux-conf.git ~/mylinux-conf
+if ! git clone https://github.com/quebravel/mylinux-conf.git ~/mylinux-conf
     then
         echo 'ERRO não foi possível clonar mylinux-conf'
         exit 1
@@ -1574,7 +1574,7 @@ sleep 1
 # oh-my-zsh
 if ! sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
     then
-	sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
+    sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
     else
         echo 'ERRO não foi possivel instalar o oh-my-zsh'
         exit 1
@@ -1603,7 +1603,7 @@ if ! rm -rf ~/mylinux-conf
 fi
 
 # 1 clonado
-if ! git clone https://github.com/Quebravel/mylinux-conf.git ~/mylinux-conf.git
+if ! git clone https://github.com/quebravel/mylinux-conf.git ~/mylinux-conf.git
     then
         echo 'ERRO'
         exit 1
@@ -1640,27 +1640,27 @@ Menu
 
 
 Video(){
-	echo
-	echo -e "\033[1;34m |||||            Escolha o drive da sua GPU            |||||\033[0m"
-	echo
-	echo -e "\033[1;34;40m[ 1 ]\033[0m Configurar/Instalar Driver Intel"
-	echo -e "\033[1;34;40m[ 2 ]\033[0m Configurar/Instalar Driver Radeon"
-	echo -e "\033[1;34;40m[ 3 ]\033[0m Configurar/Instalar Driver Nvidia"
-	echo -e "\033[1;34;40m[ 4 ]\033[0m Configurar/Instalar Driver Virtualbox"
-	echo -e "\033[1;34;40m[ 5 ]\033[0m Configurar dbus/consolekit/alsasound/networkmanager"
-	echo -e "\033[1;34;40m[ b ]\033[0m Voltar"
-	echo
-	echo -n "Qual a opção desejada? "
-	read opcao
-	case $opcao in
-			1) Intel ;;
-			2) Radeon ;;
-			3) Nvidia ;;
-			4) Vbox ;;
-			5) Audio ;;
-			b) Menu ;;
-			x) exit ;;
-			*) "Opção desconhecida." ; echo ; Video ;;
+    echo
+    echo -e "\033[1;34m |||||            Escolha o drive da sua GPU            |||||\033[0m"
+    echo
+    echo -e "\033[1;34;40m[ 1 ]\033[0m Configurar/Instalar Driver Intel"
+    echo -e "\033[1;34;40m[ 2 ]\033[0m Configurar/Instalar Driver Radeon"
+    echo -e "\033[1;34;40m[ 3 ]\033[0m Configurar/Instalar Driver Nvidia"
+    echo -e "\033[1;34;40m[ 4 ]\033[0m Configurar/Instalar Driver Virtualbox"
+    echo -e "\033[1;34;40m[ 5 ]\033[0m Configurar dbus/consolekit/alsasound/networkmanager"
+    echo -e "\033[1;34;40m[ b ]\033[0m Voltar"
+    echo
+    echo -n "Qual a opção desejada? "
+    read opcao
+    case $opcao in
+            1) Intel ;;
+            2) Radeon ;;
+            3) Nvidia ;;
+            4) Vbox ;;
+            5) Audio ;;
+            b) Menu ;;
+            x) exit ;;
+            *) "Opção desconhecida." ; echo ; Video ;;
     esac
 clear
 }
@@ -1716,7 +1716,7 @@ fi
 echo -e '\033[01;34mDrive intel instalado!\033[0m'
 
 # 1 clonando pasta da intel
-if ! git clone https://github.com/Quebravel/mylinux-conf.git ~/mylinux-conf.git
+if ! git clone https://github.com/quebravel/mylinux-conf.git ~/mylinux-conf.git
     then
         echo 'ERRO'
         exit 1
@@ -1784,7 +1784,7 @@ fi
 echo -e '\033[01;34mDrive radeon instalado!\033[0m'
 
 # 1 clonando configuração
-if ! git clone https://github.com/Quebravel/mylinux-conf.git ~/mylinux-conf.git
+if ! git clone https://github.com/quebravel/mylinux-conf.git ~/mylinux-conf.git
     then
         echo 'ERRO git das configurações de teclado e videos não executado'
         exit 1
