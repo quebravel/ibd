@@ -8,7 +8,12 @@ $_sx xsetroot feh ranger redshift xset xrdb xsel python3-neovim bspwm sxhkd poly
 
 $_sx xcursor-vanilla-dmz-aa firefox-i18n-pt-BR firefox google-fonts-ttf
 
-
 sudo echo "blacklist pcspkr" >> /etc/modprobe.d/blacklist.conf
+
+sudo ln -s /usr/share/fontconfig/conf.avail/10-hinting-slight.conf /etc/fonts/conf.d/
+sudo ln -s /usr/share/fontconfig/conf.avail/10-sub-pixel-rgb.conf /etc/fonts/conf.d/
+sudo ln -s /usr/share/fontconfig/conf.avail/11-lcdfilter-default.conf /etc/fonts/conf.d/
+sudo ln -s /usr/share/fontconfig/conf.avail/50-user.conf /etc/fonts/conf.d/
+sudo ln -s /usr/share/fontconfig/conf.avail/70-yes-bitmaps.conf /etc/fonts/conf.d/
 
 exit 0
