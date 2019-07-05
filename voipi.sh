@@ -10,7 +10,7 @@ pulsemixer w3m-img numlockx xsel zathura-pdf-poppler adwaita-icon-theme
 
 $_sx xcursor-vanilla-dmz-aa firefox-i18n-pt-BR firefox google-fonts-ttf
 
-#$_sx unclutter-xfixes
+#$_sx unclutter
 
 echo 'blacklist pcspkr' | sudo tee /etc/modprobe.d/blacklist.conf
 
