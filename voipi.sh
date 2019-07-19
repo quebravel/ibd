@@ -6,7 +6,7 @@ $_sx -Su
 
 $_sx scrot xsetroot mpv feh ranger redshift xset xrdb xsel python3-neovim bspwm sxhkd polybar git wget ntfs-3g xorg-minimal /
 xorg-fonts xf86-video-amdgpu rxvt-unicode urxvt-perls xf86-input-{evdev,joystick,libinput} libEGL curl alsa-utils w3m-img /
-numlockx xsel zathura-pdf-poppler adwaita-icon-theme
+numlockx zathura-pdf-poppler adwaita-icon-theme
 
 #$_sx pulseaudio pamixer
 
