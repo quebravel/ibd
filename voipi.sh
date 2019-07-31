@@ -1,8 +1,22 @@
-  #!/bin/env bash
+#!/bin/env bash
 
 _sx="sudo xbps-install"
 
+unset wm_gj video
 $_sx -Suy
+
+usage(){
+echo "Opção inválida!
+            use:
+                -p                      Programas
+                -a                      Pulseaudio
+                -w<bspwm|awesome>       Window Manager + Opcao
+                -v<intel|amdgpu|nvidia  Video + opcao
+                -n                      Navegador qutebrowser
+                -b                      Remove bip
+                -f                      Instala bitmap fontes e configura"
+
+}
 
 # --- PROGRAMAS ---
 programas(){
@@ -52,16 +66,7 @@ while getopts ":paw:v:nbf" o; do
             ;;
         f) conf_font
             ;;
-        *) echo "Opção inválida!
-            use:
-                -p                      Programas
-                -a                      Pulseaudio
-                -w<bspwm|awesome>       Window Manager + Opcao
-                -v<intel|amdgpu|nvidia  Video + opcao
-                -n                      Navegador qutebrowser
-                -b                      Remove bip
-                -f                      Instala bitmap fontes e configura"
-           exit 1
+        h|?) usage
             ;;
     esac
 done
