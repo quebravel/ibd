@@ -3,7 +3,6 @@
 _sx="sudo xbps-install"
 
 unset wm_gj video
-$_sx -Suy
 
 usage(){
 echo "Opção inválida!
@@ -20,7 +19,7 @@ echo "Opção inválida!
 
 # --- PROGRAMAS ---
 programas(){
-    $_sx -y scrot xsetroot mpv feh ranger redshift xset xrdb xsel python3-neovim git wget ntfs-3g xorg-{minimal,fonts} rxvt-unicode urxvt-perls xf86-input-{evdev,joystick,libinput} libEGL curl alsa-utils w3m-img numlockx zathura-pdf-poppler adwaita-icon-theme neofetch htop xcursor-vanilla-dmz-aa
+    $_sx -Su && $_sx scrot xsetroot mpv feh ranger redshift xset xrdb xsel python3-neovim git wget ntfs-3g xorg-{minimal,fonts} rxvt-unicode urxvt-perls xf86-input-{evdev,joystick,libinput} libEGL curl alsa-utils w3m-img numlockx zathura-pdf-poppler adwaita-icon-theme neofetch htop xcursor-vanilla-dmz-aa
 }
 
 # --- AUDIO ---
@@ -71,6 +70,13 @@ while getopts ":paw:v:nbf" o; do
     esac
 done
 
+# --- SE NENHUM ARGUMENTO --
+if [[ $# -ge 1 ]]
+then
+   echo ""
+else
+    usage
+fi
 
 # --- WINDOW MANAGER --- [bspwm,awesome]
 if [[ ! -z $wm_gj ]]
