@@ -20,6 +20,7 @@ echo "Opção inválida!
 # --- PROGRAMAS ---
 programas(){
     $_sx -Su && $_sx scrot xsetroot mpv feh ranger redshift xset xrdb xsel python3-neovim git wget ntfs-3g xorg-{minimal,fonts} rxvt-unicode urxvt-perls xf86-input-{evdev,joystick,libinput} libEGL curl alsa-utils w3m-img numlockx zathura-pdf-poppler adwaita-icon-theme neofetch htop xcursor-vanilla-dmz-aa
+    # bat
 }
 
 # --- AUDIO ---
