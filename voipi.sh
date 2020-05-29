@@ -82,7 +82,7 @@ fi
 # --- WINDOW MANAGER --- [bspwm,awesome]
 if [[ ! -z $wm_gj ]]
 then
-    $_sx $wm_gj unclutter
+    $_sx $wm_gj unclutter-xfixes
     wget https://raw.githubusercontent.com/quebravel/dotfiles-conf/master/.xinitrc -P ~/
 fi
 
