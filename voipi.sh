@@ -19,7 +19,7 @@ echo "Opção inválida!
 
 # --- PROGRAMAS ---
 programas(){
-    $_sx -Su && $_sx scrot xsetroot mpv feh ranger redshift xset xrdb xsel python3-neovim git wget ntfs-3g xorg-{minimal,fonts} rxvt-unicode urxvt-perls xf86-input-{evdev,joystick,libinput} libEGL curl alsa-utils w3m-img numlockx zathura-pdf-poppler adwaita-icon-theme neofetch htop xcursor-vanilla-dmz-aa
+    $_sx -Su && $_sx scrot xsetroot mpv feh ranger redshift xset xrdb xsel python3-neovim git wget ntfs-3g xorg-{minimal,fonts} rxvt-unicode urxvt-perls xf86-input-{evdev,joystick,libinput} libEGL curl alsa-utils w3m-img zathura-pdf-poppler adwaita-icon-theme neofetch htop xcursor-vanilla-dmz-aa
     # bat
 }
 
@@ -82,7 +82,7 @@ fi
 # --- WINDOW MANAGER --- [bspwm,awesome]
 if [[ ! -z $wm_gj ]]
 then
-    $_sx $wm_gj unclutter-xfixes
+    $_sx $wm_gj unclutter-xfixes numlockx
     wget https://raw.githubusercontent.com/quebravel/dotfiles-conf/master/.xinitrc -P ~/
 fi
 
