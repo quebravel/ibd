@@ -19,7 +19,7 @@ echo "Opção inválida!
 
 # --- PROGRAMAS ---
 programas(){
-    $_sx -Su && $_sx xdo exa scrot xsetroot mpv feh ranger redshift xset xrdb xclip python3-neovim the_silver_searcher git wget ntfs-3g xorg-{minimal,fonts} rxvt-unicode urxvt-perls xf86-input-{evdev,joystick,libinput} libEGL curl alsa-utils w3m-img zathura-pdf-poppler adwaita-icon-theme neofetch htop xcursor-vanilla-dmz-aa
+    $_sx -Su && $_sx xdo xdotool exa maim xsetroot mpv feh ranger redshift xset xrdb xclip python3-neovim the_silver_searcher git wget ntfs-3g xorg-{minimal,fonts} rxvt-unicode urxvt-perls xf86-input-{evdev,joystick,libinput} libEGL curl alsa-utils w3m-img zathura-pdf-poppler adwaita-icon-theme neofetch htop xcursor-vanilla-dmz-aa
     # bat
 }
 
