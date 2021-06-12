@@ -19,13 +19,20 @@ echo "Opção inválida!
 
 # --- PROGRAMAS ---
 programas(){
-    $_sx -Su && $_sx xdo xdotool exa maim xsetroot mpv feh ranger redshift xset xrdb xclip python3-neovim the_silver_searcher git wget ntfs-3g xorg-{minimal,fonts} rxvt-unicode urxvt-perls xf86-input-{evdev,joystick,libinput} libEGL curl alsa-utils w3m-img zathura-pdf-poppler adwaita-icon-theme neofetch htop xcursor-vanilla-dmz-aa
+    $_sx -Su && $_sx xdo xdotool exa maim xsetroot mpv feh ranger xset xrdb xclip python3-neovim the_silver_searcher git wget ntfs-3g xorg-{minimal,fonts} rxvt-unicode urxvt-perls xf86-input-{evdev,joystick,libinput} libEGL curl alsa-utils w3m-img zathura-pdf-poppler adwaita-icon-theme pfetch htop xcursor-vanilla-dmz-aa
     # bat
+    mkdir -p ~/.icons/default
+    echo -e "[icon theme]\nInherits=Vanilla-DMZ-AA" >> ~/.icons/default/index.theme
+
+    mkdir -p ~/.config/gtk-3.0
+    echo -e "[Settings]\ngtk-cursor-theme-name=Vanilla-DMZ-AA" >> ~/.config/gtk-3.0/settings.ini
 }
 
 # --- AUDIO ---
 pulse(){
-    $_sx pulseaudio pamixer
+    $_sx pulseaudio PAmix alsa-plugins
+    sudo ln -s /etc/sv/dbus /var/service/ 
+    sudo ln -s /etc/sv/pulseaudio /var/service/ 
 }
 
 # --- NAVEGADOR ---
