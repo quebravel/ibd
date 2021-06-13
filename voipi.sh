@@ -21,11 +21,6 @@ echo "Opção inválida!
 programas(){
     $_sx -Su && $_sx xdo xdotool exa maim xsetroot mpv feh ranger xset xrdb xclip python3-neovim the_silver_searcher git wget ntfs-3g xorg-{minimal,fonts} rxvt-unicode urxvt-perls xf86-input-{evdev,joystick,libinput} libEGL curl alsa-utils w3m-img zathura-pdf-poppler adwaita-icon-theme pfetch htop xcursor-vanilla-dmz-aa
     # bat
-    mkdir -p ~/.icons/default
-    echo -e "[icon theme]\nInherits=Vanilla-DMZ-AA" >> ~/.icons/default/index.theme
-
-    mkdir -p ~/.config/gtk-3.0
-    echo -e "[Settings]\ngtk-cursor-theme-name=Vanilla-DMZ-AA" >> ~/.config/gtk-3.0/settings.ini
 }
 
 # --- AUDIO ---
