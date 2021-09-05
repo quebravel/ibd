@@ -11,17 +11,17 @@ echo "Opção inválida!
                 -a                      Pulseaudio
                 -w<bspwm|awesome>       Window Manager + Opcao
                 -v<intel|amdgpu|nvidia  Video + opcao
-                -n                      Navegador qutebrowser
+                -n                      qutebrowser + google chrome
                 -b                      Remove bip
-                -f                      Instala bitmap fontes e configura
-                -g                      Instala o google chrome
-                -z                      Instala e configura zsh"
+                -f                      Bitmap fontes e configura
+                -z                      Configura zsh
+                -t                      Tema gruvbox"
 
 }
 
 # --- PROGRAMAS ---
 programas(){
-    $_sx -Su && $_sx xdo xdotool exa maim xsetroot mpv feh xset xrdb xclip xsel python3-neovim python3-youtube-dl the_silver_searcher git wget ntfs-3g xorg-{minimal,fonts} rxvt-unicode urxvt-perls xf86-input-{evdev,joystick,libinput} libEGL curl alsa-utils w3m-img zathura-pdf-poppler adwaita-icon-theme pfetch htop xcursor-vanilla-dmz-aa mpd mpc ncmpcpp yad base-devel python3-devel jq vnstat nodejs go xtools cmake libX11-devel libXinerama-devel libXft-devel
+    $_sx -Su && $_sx xdo xdotool exa maim xsetroot mpv feh xset xrdb xclip xsel python3-neovim python3-youtube-dl the_silver_searcher git wget ntfs-3g xorg-{minimal,fonts} rxvt-unicode urxvt-perls xf86-input-{evdev,joystick,libinput} libEGL curl alsa-utils w3m-img zathura-pdf-poppler adwaita-icon-theme pfetch htop xcursor-vanilla-dmz-aa mpd mpc ncmpcpp yad base-devel python3-devel jq vnstat nodejs go xtools cmake libX11-devel libXinerama-devel libXft-devel python3-pip
     # bat
 }
 
@@ -37,6 +37,10 @@ navegador(){
     $_sx qutebrowser
     echo "Adicionando dicionário"
     /usr/share/qutebrowser/scripts/dictcli.py install pt-BR
+    echo -e "\nqutebrowser [ok]"
+
+    sh -c "$(wget -O- https://raw.githubusercontent.com/quebravel/myscripts/master/chrome-xbps-src.sh)"
+    echo -e "\ngoogle-chrome [ok]"
 }
 
 # --- REMOVER BIP ---
@@ -56,9 +60,9 @@ conf_font(){
     sudo ln -s /usr/share/fontconfig/conf.avail/70-yes-bitmaps.conf /etc/fonts/conf.d/
 }
 
-chrome(){
-    sh -c "$(wget -O- https://raw.githubusercontent.com/quebravel/myscripts/master/chrome-xbps-src.sh)"
-    echo -e "\ngoogle-chrome [ok]"
+gruvbox_theme(){
+    git clone https://github.com/jmattheis/gruvbox-dark-gtk ~/.themes/gruvbox-dark-gtk
+    git clone https://github.com/jmattheis/gruvbox-dark-icons-gtk ~/.icons/gruvbox-dark-icons-gtk
 }
 
 zsh_alias(){
@@ -66,7 +70,7 @@ zsh_alias(){
     echo -e "\nzsh [ok]"
 }
 
-while getopts ":paw:v:nbfgz" o; do
+while getopts ":paw:v:nbftz" o; do
     case "${o}" in
         p) programas
             ;;
@@ -82,7 +86,7 @@ while getopts ":paw:v:nbfgz" o; do
             ;;
         f) conf_font
             ;;
-        g) chrome
+        t) gruvbox_theme
             ;;
         z) zsh_alias
             ;;
@@ -102,7 +106,7 @@ fi
 # --- WINDOW MANAGER --- [bspwm,awesome]
 if [[ ! -z $wm_gj ]]
 then
-    $_sx $wm_gj unclutter-xfixes numlockx
+    $_sx $wm_gj unclutter-xfixes # numlockx
     wget https://raw.githubusercontent.com/quebravel/dotfiles-conf/master/.xinitrc -P ~/
 fi
 
