@@ -33,7 +33,9 @@ pulse(){
 
 # --- NAVEGADOR ---
 navegador(){
-    $_sx qutebrowser
+#    $_sx qutebrowser
+    echo "Adicionando dicionário"
+    /usr/share/qutebrowser/scripts/dictcli.py install pt-BR
 }
 
 # --- REMOVER BIP ---
