@@ -14,7 +14,8 @@ echo "Opção inválida!
                 -n                      Navegador qutebrowser
                 -b                      Remove bip
                 -f                      Instala bitmap fontes e configura
-                -g                      Instala o google chrome"
+                -g                      Instala o google chrome
+                -z                      Instala e configura zsh"
 
 }
 
@@ -60,7 +61,12 @@ chrome(){
     echo -e "\ngoogle-chrome [ok]"
 }
 
-while getopts ":paw:v:nbfg" o; do
+zsh_alias(){
+    sh -c "$(wget -q -O- https://raw.githubusercontent.com/quebravel/myscripts/master/script_zsh_alias.sh)"
+    echo -e "\nzsh [ok]"
+}
+
+while getopts ":paw:v:nbfgz" o; do
     case "${o}" in
         p) programas
             ;;
@@ -77,6 +83,8 @@ while getopts ":paw:v:nbfg" o; do
         f) conf_font
             ;;
         g) chrome
+            ;;
+        z) zsh_alias
             ;;
         h|?) usage
             ;;
