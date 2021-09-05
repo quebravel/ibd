@@ -13,13 +13,14 @@ echo "Opção inválida!
                 -v<intel|amdgpu|nvidia  Video + opcao
                 -n                      Navegador qutebrowser
                 -b                      Remove bip
-                -f                      Instala bitmap fontes e configura"
+                -f                      Instala bitmap fontes e configura
+                -g                      Instala o google chrome"
 
 }
 
 # --- PROGRAMAS ---
 programas(){
-    $_sx -Su && $_sx xdo xdotool exa maim xsetroot mpv feh xset xrdb xclip xsel python3-neovim python3-youtube-dl the_silver_searcher git wget ntfs-3g xorg-{minimal,fonts} rxvt-unicode urxvt-perls xf86-input-{evdev,joystick,libinput} libEGL curl alsa-utils w3m-img zathura-pdf-poppler adwaita-icon-theme pfetch htop xcursor-vanilla-dmz-aa mpd mpc ncmpcpp yad base-devel python3-devel jq vnstat nodejs xtools cmake libX11-devel libXinerama-devel libXft-devel
+    $_sx -Su && $_sx xdo xdotool exa maim xsetroot mpv feh xset xrdb xclip xsel python3-neovim python3-youtube-dl the_silver_searcher git wget ntfs-3g xorg-{minimal,fonts} rxvt-unicode urxvt-perls xf86-input-{evdev,joystick,libinput} libEGL curl alsa-utils w3m-img zathura-pdf-poppler adwaita-icon-theme pfetch htop xcursor-vanilla-dmz-aa mpd mpc ncmpcpp yad base-devel python3-devel jq vnstat nodejs go xtools cmake libX11-devel libXinerama-devel libXft-devel
     # bat
 }
 
@@ -52,7 +53,12 @@ conf_font(){
     sudo ln -s /usr/share/fontconfig/conf.avail/70-yes-bitmaps.conf /etc/fonts/conf.d/
 }
 
-while getopts ":paw:v:nbf" o; do
+chrome(){
+    sh -c "$(wget -O- https://raw.githubusercontent.com/quebravel/myscripts/master/chrome-xbps-src.sh)"
+    echo -e "\ngoogle-chrome [ok]"
+}
+
+while getopts ":paw:v:nbfg" o; do
     case "${o}" in
         p) programas
             ;;
@@ -68,6 +74,8 @@ while getopts ":paw:v:nbf" o; do
             ;;
         f) conf_font
             ;;
+        g) chrome
+            ;;
         h|?) usage
             ;;
     esac
@@ -76,7 +84,7 @@ done
 # --- SE NENHUM ARGUMENTO --
 if [[ $# -ge 1 ]]
 then
-   echo ""
+   echo ''
 else
     usage
 fi
@@ -99,10 +107,11 @@ then
      $_sx xf86-video-$video
 fi
 
+
 if [[ $video -ne "intel" || $video -ne "amdgpu" || $video -ne "nvidia" ]]
 then
     echo -e "Drive de video invalido\n use intel amdgpu nvidia"
     exit 1
 fi
 
-shift $(($OPTIND -1))
+ shift $(($OPTIND -1))
