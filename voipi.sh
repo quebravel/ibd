@@ -1,6 +1,6 @@
 #!/bin/env bash
 
-_sx="sudo xbps-install"
+_sx="sudo xbps-install -Sy"
 
 unset wm_gj video
 
@@ -8,33 +8,40 @@ usage(){
 echo "Opção inválida!
             use:
                 -p                      Programas
-                -a                      Pulseaudio
-                -w<bspwm|awesome>       Window Manager + Opcao
-                -v<intel|amdgpu|nvidia  Video + opcao
+                -a                      pulseaudio
+                -w <bspwm|awesome>      Window Manager + Opcao
+                -v <intel|amdgpu|nvidia Video + opcao
                 -n                      qutebrowser + google chrome
                 -b                      Remove bip
                 -f                      Bitmap fontes e configura
                 -z                      Configura zsh
-                -t                      Tema gruvbox"
+                -t                      Tema gruvbox
+                -m                      ncmpcpp + mpd + mpc"
 
 }
 
 # --- PROGRAMAS ---
 programas(){
-    $_sx -Su && $_sx xdo xdotool exa maim xsetroot mpv feh xset xrdb xclip xsel python3-neovim python3-youtube-dl the_silver_searcher git wget ntfs-3g xorg-{minimal,fonts} rxvt-unicode urxvt-perls xf86-input-{evdev,joystick,libinput} libEGL curl alsa-utils w3m-img zathura-pdf-poppler adwaita-icon-theme pfetch htop xcursor-vanilla-dmz-aa mpd mpc ncmpcpp base-devel python3-devel nodejs go xtools cmake libX11-devel libXinerama-devel libXft-devel python3-pip
-    # bat
+    $_sx xdo xdotool exa maim xsetroot mpv feh xset xrdb xclip xsel python3-neovim python3-youtube-dl the_silver_searcher git wget ntfs-3g xorg-{minimal,fonts} rxvt-unicode urxvt-perls xf86-input-{evdev,joystick,libinput} libEGL curl alsa-utils w3m-img zathura-pdf-poppler adwaita-icon-theme pfetch htop xcursor-vanilla-dmz-aa base-devel python3-devel nodejs go xtools cmake libX11-devel libXinerama-devel libXft-devel python3-pip sxiv alacritty xdg-user-dirs
+
+    # diretorios
+    xdg-user-dirs-update
+    sudo xbps-remove -Ry xdg-user-dirs
+
+    # dmenu2
+    sh -c "$(wget -O- https://raw.githubusercontent.com/quebravel/myscripts/master/script_dmenu2.sh)"
 }
 
 # --- AUDIO ---
 pulse(){
-    $_sx pulseaudio PAmix alsa-plugins
+    $_sx pulseaudio PAmix alsa-plugins dbus dbus-glib
     sudo ln -s /etc/sv/dbus /var/service/
     sudo ln -s /etc/sv/pulseaudio /var/service/
 }
 
 # --- NAVEGADOR ---
 navegador(){
-    $_sx qutebrowser
+    $_sx qutebrowser python3-adblock
     echo "Adicionando dicionário"
     /usr/share/qutebrowser/scripts/dictcli.py install pt-BR
     echo -e "\nqutebrowser [ok]"
@@ -61,6 +68,7 @@ conf_font(){
 }
 
 gruvbox_theme(){
+    mkdir -p ~/themes ~/icons
     git clone https://github.com/jmattheis/gruvbox-dark-gtk ~/.themes/gruvbox-dark-gtk
     git clone https://github.com/jmattheis/gruvbox-dark-icons-gtk ~/.icons/gruvbox-dark-icons-gtk
 }
@@ -70,7 +78,11 @@ zsh_alias(){
     echo -e "\nzsh [ok]"
 }
 
-while getopts ":paw:v:nbftz" o; do
+ncmpcpp_inst_conf(){
+    sh -c "$(wget -q -O- https://raw.githubusercontent.com/quebravel/myscripts/master/script_ncmpcpp_void.sh)"
+}
+
+while getopts ":paw:v:nbftzm" o; do
     case "${o}" in
         p) programas
             ;;
@@ -89,6 +101,8 @@ while getopts ":paw:v:nbftz" o; do
         t) gruvbox_theme
             ;;
         z) zsh_alias
+            ;;
+        m) ncmpcpp_inst_conf
             ;;
         h|?) usage
             ;;
@@ -124,7 +138,7 @@ fi
 
 if [[ $video -ne "intel" || $video -ne "amdgpu" || $video -ne "nvidia" ]]
 then
-    echo -e "Drive de video invalido\n use intel amdgpu nvidia"
+    echo -e "Drive de video invalido\n use intel ou amdgpu ou nvidia"
     exit 1
 fi
 
