@@ -22,7 +22,7 @@ echo "Opção inválida!
 
 # --- PROGRAMAS ---
 programas(){
-    $_sx xdo xdotool exa maim xsetroot mpv feh xset xrdb xclip xsel python3-neovim python3-youtube-dl the_silver_searcher git wget ntfs-3g xorg-{minimal,fonts} alacritty xf86-input-{evdev,joystick,libinput} libEGL curl alsa-utils w3m-img zathura-pdf-poppler adwaita-icon-theme pfetch htop xcursor-vanilla-dmz-aa base-devel python3-devel nodejs go xtools cmake libX11-devel libXinerama-devel libXft-devel python3-pip sxiv alacritty xdg-user-dirs ffmpeg
+    $_sx xdo xdotool exa maim xsetroot mpv feh xset xrdb xclip xsel python3-neovim python3-youtube-dl the_silver_searcher git wget ntfs-3g xorg-{minimal,fonts} xf86-input-{evdev,joystick,libinput} libEGL curl alsa-utils w3m-img zathura-pdf-poppler adwaita-icon-theme pfetch htop xcursor-vanilla-dmz-aa base-devel python3-devel nodejs go xtools cmake libX11-devel libXinerama-devel libXft-devel python3-pip sxiv alacritty xdg-user-dirs ffmpeg
 
     # diretorios
     xdg-user-dirs-update
