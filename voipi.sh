@@ -57,7 +57,7 @@ bip_remover(){
 
 # --- CONFIGURAR FONTES ---
 conf_font(){
-    $_sx google-fonts-ttf
+    $_sx google-fonts-ttf noto-fonts-emoji
     mkdir -p ~/.local/share/fonts/
     sleep 1
     git clone https://github.com/Tecate/bitmap-fonts.git ; cd bitmap-fonts; cp -avr bitmap/ ~/.local/share/fonts/ ; cd ../ ; rm -rf bitmap-fonts ; xset fp+ ~/.local/share/fonts/bitmap ; xset fp rehash ; fc-cache -f ~/.local/share/fonts/
