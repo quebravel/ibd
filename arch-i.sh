@@ -4,7 +4,15 @@ _so="sudo pacman -S"
 _s="sudo"
 
 programas(){
-$_so xdo mtools xdotool exa maim mpv feh xclip xsel python-pynvim yt-dlp the_silver_searcher git wget ntfs-3g xorg-{xsetroot,xset,xrdb,fonts} xf86-input-{evdev,libinput} curl alsa-utils zathura-pdf-poppler adwaita-icon-theme bpytop xcursor-vanilla-dmz-aa base-devel nodejs go cmake libxinerama libxft python-pip sxiv alacritty xdg-user-dirs ffmpeg pulseaudio
+$_so xdo mtools xdotool exa maim mpv feh xclip xsel python-pynvim yt-dlp the_silver_searcher git wget ntfs-3g xorg-{xsetroot,xset,xrdb,fonts} xf86-input-{evdev,libinput} curl zathura-pdf-poppler adwaita-icon-theme bpytop xcursor-vanilla-dmz-aa base-devel nodejs go cmake libxinerama libxft python-pip sxiv alacritty xdg-user-dirs ffmpeg
+}
+
+audio_pulseaudio(){
+$_so alsa-utils pulseaudio
+}
+
+audio_pipewire(){
+ $_so pipewire pipewire-alsa pipewire-audio pipewire-pulse
 }
 
 zshconfig(){
@@ -75,6 +83,10 @@ autoscript_git(){
 
 }
 
+yay_aur(){
+ helvum ly
+}
+
 programas
 zshconfig
 fontes
@@ -85,3 +97,6 @@ github_config
 configuracoes
 temas
 autoscript_git
+audio_pulseaudio
+# audio_pipewire
+# yay_aur
