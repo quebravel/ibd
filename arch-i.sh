@@ -2,9 +2,16 @@
 
 _so="sudo pacman -S"
 _s="sudo"
+_yay"yay -S"
 
 programas(){
-$_so xdo mtools xdotool exa maim mpv feh xclip xsel python-pynvim yt-dlp the_silver_searcher git wget ntfs-3g xorg-{xsetroot,xset,xrdb,fonts} xf86-input-{evdev,libinput} curl zathura-pdf-poppler adwaita-icon-theme bpytop xcursor-vanilla-dmz-aa base-devel nodejs go cmake libxinerama libxft python-pip sxiv alacritty xdg-user-dirs ffmpeg
+$_so xdo mtools xdotool exa maim mpv feh xclip xsel python-pynvim yt-dlp the_silver_searcher git wget ntfs-3g xorg-{xsetroot,xset,xrdb,fonts} xf86-input-{evdev,libinput} curl zathura-pdf-poppler adwaita-icon-theme bpytop xcursor-vanilla-dmz-aa base-devel nodejs go cmake libxinerama libxft python-pip sxiv alacritty xdg-user-dirs ffmpeg redshift unclutter
+}
+
+rangerfm(){
+$_so ranger ueberzug ffmpegthumbnailer
+
+sh -c "$(wget -O- https://raw.githubusercontent.com/quebravel/myscripts/master/script_ranger_arch.sh)"
 }
 
 audio_pulseaudio(){
@@ -12,7 +19,7 @@ $_so alsa-utils pulseaudio
 }
 
 audio_pipewire(){
- $_so pipewire pipewire-alsa pipewire-audio pipewire-pulse
+ $_so pipewire pipewire-alsa pipewire-audio pipewire-pulse helvum
 }
 
 zshconfig(){
@@ -83,8 +90,11 @@ autoscript_git(){
 
 }
 
-yay_aur(){
- helvum ly
+yay_aur_programas(){
+$_yay ly-git
+
+ sh -c "$(wget -O- https://raw.githubusercontent.com/quebravel/myscripts/master/script_ly.sh)"
+
 }
 
 programas
@@ -97,6 +107,7 @@ github_config
 configuracoes
 temas
 autoscript_git
-audio_pulseaudio
-# audio_pipewire
-# yay_aur
+# audio_pulseaudio
+audio_pipewire
+# yay_aur_programas
+# rangerfm
