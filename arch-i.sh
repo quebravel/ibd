@@ -8,6 +8,11 @@ programas(){
 $_so xdo mtools xdotool exa maim mpv feh xclip xsel python-pynvim yt-dlp the_silver_searcher git wget ntfs-3g xorg-{xsetroot,xset,xrdb,fonts} xf86-input-{evdev,libinput} curl zathura-pdf-poppler adwaita-icon-theme bpytop xcursor-vanilla-dmz-aa base-devel nodejs go cmake libxinerama libxft python-pip sxiv alacritty xdg-user-dirs ffmpeg redshift unclutter
 }
 
+playermusica(){
+$_so ncmpcpp mpd mpc
+echo 'execute o script_ncmpcpp.sh -a'
+}
+
 rangerfm(){
 $_so ranger ueberzug ffmpegthumbnailer
 
@@ -111,3 +116,4 @@ autoscript_git
 audio_pipewire
 # yay_aur_programas
 # rangerfm
+# playermusica
