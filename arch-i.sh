@@ -33,7 +33,7 @@ $_so zsh zsh-completions
 
 fontes(){
 # fonts
-$_so ttf-dejavu noto-fonts-emoji gnu-free-fonts
+$_so ttf-dejavu noto-fonts-emoji gnu-free-fonts noto-fonts-cjk
 }
 
 drive_video(){
