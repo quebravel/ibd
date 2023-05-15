@@ -4,8 +4,10 @@ _so="sudo pacman -S"
 _s="sudo"
 _yay"yay -S"
 
+sudo pacman -Syu
+
 programas(){
-$_so xdo mtools xdotool exa maim mpv feh xclip xsel python-pynvim yt-dlp the_silver_searcher git wget ntfs-3g xorg-{xsetroot,xset,xrdb,fonts} xf86-input-{evdev,libinput} curl zathura-pdf-poppler adwaita-icon-theme bpytop xcursor-vanilla-dmz-aa base-devel nodejs go cmake libxinerama libxft python-pip sxiv alacritty xdg-user-dirs ffmpeg redshift unclutter
+$_so --needed xdo mtools xdotool exa maim mpv feh xclip xsel python-pynvim yt-dlp the_silver_searcher git wget ntfs-3g xorg-{xsetroot,xset,xrdb,fonts} xf86-input-{evdev,libinput} curl zathura-pdf-poppler adwaita-icon-theme bpytop xcursor-vanilla-dmz-aa base-devel nodejs go cmake libxinerama libxft python-pip sxiv alacritty xdg-user-dirs ffmpeg redshift unclutter
 }
 
 playermusica(){
@@ -20,11 +22,11 @@ sh -c "$(wget -O- https://raw.githubusercontent.com/quebravel/myscripts/master/s
 }
 
 audio_pulseaudio(){
-$_so alsa-utils pulseaudio
+$_so alsa-utils pulseaudio # gst-plugins-{base,good,bad,ugly} gst-libav
 }
 
 audio_pipewire(){
- $_so pipewire pipewire-alsa pipewire-audio pipewire-pulse helvum
+ $_so pipewire pipewire-alsa pipewire-audio pipewire-pulse helvum # gst-plugin-pipewire
 }
 
 zshconfig(){
