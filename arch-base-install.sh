@@ -70,10 +70,10 @@ if [[ "$INSTALAR" == "s" ]]; then
   mkswap /dev/"${NMSD}2"
 
   echo -e "06 - Montando as partições ..."
+  mkdir /mnt/boot
+  mount /dev/"${NMSD}1" /mnt/boot
   swapon /dev/"${NMSD}2"
   mount /dev/"${NMSD}3" /mnt
-  # mkdir /mnt/boot
-  # mount /dev/"${NMSD}1" /mnt/boot
 
   echo -e "07 - Instalar a base ..."
   pacstrap -K /mnt base #base-devel linux linux-firmware
