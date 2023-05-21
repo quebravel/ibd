@@ -26,7 +26,7 @@ if [[ "$INSTALAR" == "s" ]]; then
   esac
 
   echo -e "02 - Testando conexão com a internet ..."
-  ping -c3 archlinux.org
+  ping -c1 archlinux.org
 
   echo -e "03 - Configurando o relógio"
   timedatectl set-ntp true
@@ -53,14 +53,15 @@ if [[ "$INSTALAR" == "s" ]]; then
   echo -e "07 - Instalar a base ..."
   pacstrap -K /mnt base #base-devel linux linux-firmware
 
-# copiando o script de instalação para o sistema
-  cp ./arch-base-install.sh /mnt/
-
   echo -e "08 - Gerando fstab ..."
   genfstab -U /mnt >> /mnt/etc/fstab
 
+# copiando o script de instalação para o sistema
+  cp ./arch-base-install.sh /mnt/
+  chmod +x /mnt/arch-base-install.sh
+
   echo -e "09 - Chroot ..."
-  arch-chroot /mnt ./arch-base-install.sh -c
+  arch-chroot /mnt ./"arch-base-install.sh" "-c"
 
   echo -e "10 - Desmontando as partições ..."
   umount -Rl /mnt
@@ -68,7 +69,7 @@ if [[ "$INSTALAR" == "s" ]]; then
   echo -e "11 - Remova o pendrive do computador e aperte [ENTER] ..."
   read -sn ENTER
 
-  reboot
+  # reboot
 
 else 
   exit 1
