@@ -178,15 +178,11 @@ esac
 
 echo -e "06 - Instalando o grub ..."
 pacman -S grub-efi-x86_64 efibootmgr --noconfirm
-sleep 3
-mkdir -p /mnt/boot/efi
-sleep 3
-mount /dev/sda1 /mnt/boot/efi
-sleep 3
-grub-install --target=x86_64-efi --efi-directory=/mnt/boot/efi --bootloader-id=GRUB --recheck
-sleep 3
+mkdir /mnt/boot
+mount /dev/sda1 /mnt/boot
+grub-install --target=x86_64-efi --efi-directory=/mnt/boot --bootloader-id=BOOT --recheck
+sleep 1
 grub-mkconfig -o /boot/grub/grub.cfg
-sleep 3
 
 } ### fim parteDOIS
 
