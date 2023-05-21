@@ -154,8 +154,8 @@ clear
 
 echo -e "06 - Instalando o grub ..."
 pacman -S efibootmgr grub --noconfirm #grub-efi-x86_64 libisoburn mtools
-# mkdir /mnt/boot
-# mount /dev/sda1 /mnt/boot
+mkdir /boot/efi
+mount /dev/sda1 /mnt/boot/efi
 grub-install --target=x86_64-efi --efi-directory=/boot/efi #--bootloader-id=BOOT --recheck
 grub-mkconfig -o /boot/grub/grub.cfg
 
