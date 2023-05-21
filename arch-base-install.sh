@@ -66,8 +66,8 @@ if [[ "$INSTALAR" == "s" ]]; then
   echo -e "06 - Montando as partições ..."
   swapon /dev/"${NMSD}2"
   mount /dev/"${NMSD}3" /mnt
-  mkdir /mnt/boot
-  mount /dev/"${NMSD}1" /mnt/boot
+  # mkdir /mnt/boot
+  # mount /dev/"${NMSD}1" /mnt/boot
 
   echo -e "07 - Instalar a base ..."
   pacstrap -K /mnt base #base-devel linux linux-firmware
@@ -184,10 +184,10 @@ case "$DSPSTV" in
 esac
 
 echo -e "06 - Instalando o grub ..."
-pacman -S efibootmgr grub-customizer #grub-efi-x86_64 --noconfirm
-mkdir /boot
-mount /dev/sda1 /boot
-grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --recheck
+pacman -S efibootmgr grub-efi-x86_64 --noconfirm
+# mkdir /boot
+mount /dev/sda1 /mnt/boot
+grub-install --target=x86_64-efi --efi-directory=/mnt/boot --bootloader-id=GRUB --recheck
 sleep 1
 grub-mkconfig -o /boot/grub/grub.cfg
 
