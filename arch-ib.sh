@@ -59,7 +59,7 @@ if [[ "$INSTALAR" == "s" ]]; then
   genfstab -U /mnt >> /mnt/etc/fstab
 
   echo -e "09 - Chroot ..."
-  arch-chroot ./arch-ib-continue.sh
+  arch-chroot /mnt ./arch-ib-continue.sh
 
   echo -e "10 - Desmontando as partições ..."
   exit
