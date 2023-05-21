@@ -53,7 +53,7 @@ if [[ "$INSTALAR" == "s" ]]; then
   mount /dev/"${NMSD}1" /mnt/boot
 
   echo -e "07 - Instalar a base ..."
-  pacstrap -K /mnt base base-devel linux linux-firmware
+  pacstrap -K /mnt base #base-devel linux linux-firmware
 
   cp ./arch-ib-continue.sh /mnt/
 
