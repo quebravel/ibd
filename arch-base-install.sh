@@ -56,9 +56,9 @@ if [[ "$INSTALAR" == "s" ]]; then
   # PART=$(fdisk -l | sed -n 1p | cut -d: -f2 | cut -d, -f1 | tr -d a-zA-Z" ")
   NMSD=$(fdisk -l | sed -n 1p | sed 's/.*dev//g;s/\///' | cut -d: -f1)
   # boot
-  (echo n; echo 1; echo; echo +200M; echo t; echo uefi; echo w) | fdisk /dev/"${NMSD}"
-  (echo n; echo 2; echo; echo +4G; echo t; echo 2; echo swap; echo w) | fdisk /dev/"${NMSD}"
-  (echo n; echo 3; echo; echo; echo w) | fdisk /dev/"${NMSD}"
+  (echo n; echo; echo; echo; echo +200M; echo t; echo uefi; echo w) | fdisk /dev/"${NMSD}"
+  (echo n; echo; echo; echo; echo +4G; echo t; echo; echo swap; echo w) | fdisk /dev/"${NMSD}"
+  (echo n; echo; echo; echo; echo; echo w) | fdisk /dev/"${NMSD}"
 
   echo -e "05 - Formatando as partições ..."
   mkfs.fat -F32 -n BOOT /dev/"${NMSD}1"
