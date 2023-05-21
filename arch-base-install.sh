@@ -184,8 +184,8 @@ case "$DSPSTV" in
 esac
 
 echo -e "06 - Instalando o grub ..."
-pacman -S efibootmgr grub-efi-x86_64 --noconfirm
-# mkdir /boot
+pacman -S efibootmgr grub-efi-x86_64 libisoburn mtools --noconfirm
+mkdir /mnt/boot
 mount /dev/sda1 /mnt/boot
 grub-install --target=x86_64-efi --efi-directory=/mnt/boot --bootloader-id=GRUB --recheck
 sleep 1
