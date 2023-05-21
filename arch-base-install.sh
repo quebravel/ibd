@@ -18,11 +18,13 @@ echo -e "Este é o instador do archlinux base ...\n"
 echo "[s]im          [n]ão ... "
 read -r -p "Deseja comercar a instalação? ... " INSTALAR
 
+NOMEDISK=$(fdisk -l | sed -n 1p | sed 's/.*dev//g;s/\///' | cut -d: -f1)
+
 echo "Limpar o disk sda"
 echo "[L]impar    [N]ao"
 read -r -p "Deseja limpar o disk sda? ... " limpadisco
 case "$limpadisco" in
-  l|L) dd if=/dev/zero of=/dev/sdX bs=1M
+  l|L) dd if=/dev/zero of=/dev/"${NOMEDISK}" bs=1M
   ;;
   n|N) echo "ok"
   ;;
