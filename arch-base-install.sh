@@ -3,15 +3,34 @@
 # Sxript para isntlar archlinux
 
 parteUM(){
+
+pacman -Syu
+
 clear
 cat <<EOF 
 ++++----++++----++++----++++----++++----++++----++++----++++----++++----++++----++++----++++----++++----++++----++++----++++----
 --++++----++++----++++----++++----++++----++++---- Instalador archlinux --++++----++++----++++----++++----++++----++++----++++--
 ++++----++++----++++----++++----++++----++++----++++----++++----++++----++++----++++----++++----++++----++++----++++----++++----
 EOF
-echo ""
+
+
+echo -e "Este é o instador do archlinux base ...\n"
 echo "[s]im          [n]ão ... "
 read -r -p "Deseja comercar a instalação? ... " INSTALAR
+
+echo "Limpar o disk sda"
+echo "[L]impar    [N]ao"
+read -r -p "Deseja limpar o disk sda? ... " limpadisco
+case "$limpadisco" in
+  l|L) dd if=/dev/zero of=/dev/sdX bs=1M
+  ;;
+  n|N) echo "ok"
+  ;;
+  *) echo default
+  ;;
+esac
+
+clear
 
 if [[ "$INSTALAR" == "s" ]]; then
   echo -e "01 - Configurando o teclado ..."
@@ -79,6 +98,8 @@ fi
 
 parteDOIS(){
 
+clear
+
 echo -e "01 - Timezone Localização ..."
 ln -sf /usr/share/zoneinfo/America/Belem /etc/localtime
 hwclock --systohc
@@ -88,6 +109,8 @@ sed -i 's/#pt_BR.U/pt_BR.U/' /etc/locale.gen
 locale-gen
 echo LANG=pt_BR.UTF-8 > /etc/locale.conf
 export LANG=pt_BR.UTF-8
+
+clear
 
 echo -e "03 - Teclado do sistema ..."
 read -r -p "[1] br-abnt2   [2] us-acentos  ... " TECLAVCON
@@ -105,6 +128,8 @@ echo "archlnx" > /etc/hostname
 _HOSTS="/etc/hosts\n127.0.0.1\tlocalhost\n::1\t\tlocalhost\n127.0.1.1\tarchlnx.linux\tmeuhostname"
 echo -e "$_HOSTS" > /etc/hosts
 
+clear
+
 echo -e "04 - Configurando usuário e o root ..."
 echo ":::::::::::::::::::::::"
 echo ""
@@ -113,8 +138,12 @@ read -r -p ":::... " USUARIO
 
 useradd -m -G users,wheel,power,storage -s /bin/bash $USUARIO
 
+clear
+
 echo "Senha do usuário ..."
 passwd $USUARIO
+
+clear
 
 echo "-:-:-:-:-:-:-:-:-"
 echo ""
@@ -133,6 +162,8 @@ else
   echo ""
 fi
 
+clear
+
 echo -e "Qual o seu dispositivo de internet?"
 read -r -p "[1] $DISPOSITIVO_01    [2] $DISPOSITIVO_02 ... " DSPSTV
 
@@ -150,9 +181,9 @@ pacman -S grub-efi-x86_64 efibootmgr --noconfirm
 sleep 3
 mkdir -p /mnt/boot/efi
 sleep 3
-mount /dev/sda1 /mnt/boot/efi/
+mount /dev/sda1 /mnt/boot/efi
 sleep 3
-grub-install --target=x86_64-efi --efi-directory=/mnt/boot/efi/ --bootloader-id=GRUB --recheck
+grub-install --target=x86_64-efi --efi-directory=/mnt/boot/efi --bootloader-id=GRUB --recheck
 sleep 3
 grub-mkconfig -o /boot/grub/grub.cfg
 sleep 3
