@@ -92,9 +92,6 @@ clear
 
   # reboot
 
-else 
-  exit 1
-fi
 } ### fim parteUM
 
 
