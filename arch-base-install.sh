@@ -70,13 +70,13 @@ if [[ "$INSTALAR" == "s" ]]; then
   mkswap /dev/"${NMSD}2"
 
   echo -e "06 - Montando as partições ..."
-  mkdir /mnt/boot
-  mount /dev/"${NMSD}1" /mnt/boot
+  mkdir /mnt/boot/efi
+  mount /dev/"${NMSD}1" /mnt/boot/efi
   swapon /dev/"${NMSD}2"
   mount /dev/"${NMSD}3" /mnt
 
   echo -e "07 - Instalar a base ..."
-  pacstrap -K /mnt base #base-devel linux linux-firmware
+  pacstrap -K /mnt base base-devel linux linux-firmware
 
   echo -e "08 - Gerando fstab ..."
   genfstab -U /mnt >> /mnt/etc/fstab
@@ -144,7 +144,24 @@ echo -e "$_HOSTS" > /etc/hosts
 
 clear
 
-echo -e "04 - Configurando usuário e o root ..."
+echo "-:-:-:-:-:-:-:-:-"
+echo ""
+echo "Crie a senha do ROOT"
+echo "Senha do ROOT ..."
+passwd
+
+clear
+
+echo -e "06 - Instalando o grub ..."
+pacman -S efibootmgr grub --noconfirm #grub-efi-x86_64 libisoburn mtools
+# mkdir /mnt/boot
+# mount /dev/sda1 /mnt/boot
+grub-install --target=x86_64-efi --efi-directory=/boot/efi #--bootloader-id=BOOT --recheck
+grub-mkconfig -o /boot/grub/grub.cfg
+
+clear
+
+echo -e "04 - Configurando usuário"
 echo ":::::::::::::::::::::::"
 echo ""
 echo "Qual o nome do usuário?"
@@ -157,11 +174,6 @@ passwd $USUARIO
 
 clear
 
-echo "-:-:-:-:-:-:-:-:-"
-echo ""
-echo "Crie a senha do ROOT"
-echo "Senha do ROOT ..."
-passwd
 
 echo -e "05 - Configurando a rede de internet ..."
 pacman -S sudo dhcpcd --noconfirm
@@ -189,12 +201,6 @@ case "$DSPSTV" in
   ;;
 esac
 
-echo -e "06 - Instalando o grub ..."
-pacman -S efibootmgr grub-efi-x86_64 libisoburn mtools --noconfirm
-mkdir /mnt/boot
-mount /dev/sda1 /mnt/boot
-grub-install --target=x86_64-efi --efi-directory=/mnt/boot --bootloader-id=BOOT --recheck
-grub-mkconfig -o /boot/grub/grub.cfg
 
 } ### fim parteDOIS
 
