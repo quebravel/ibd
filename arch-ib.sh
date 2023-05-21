@@ -55,6 +55,8 @@ if [[ "$INSTALAR" == "s" ]]; then
   echo -e "07 - Instalar a base ..."
   pacstrap -K /mnt base base-devel linux linux-firmware
 
+  cp ./arch-ib-continue.sh /mnt/
+
   echo -e "08 - Gerando fstab ..."
   genfstab -U /mnt >> /mnt/etc/fstab
 
