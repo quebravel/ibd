@@ -89,7 +89,7 @@ echo LANG=pt_BR.UTF-8 > /etc/locale.conf
 export LANG=pt_BR.UTF-8
 
 echo -e "03 - Teclado do sistema ..."
-read -r -p "[1] br-abnt2   [2] us-acentos  ..." TECLAVCON
+read -r -p "[1] br-abnt2   [2] us-acentos  ... " TECLAVCON
 case "$TECLAVCON" in
   1) echo "KEYMAP=br-abnt2" > /etc/vconsole.conf
   ;;
@@ -105,6 +105,8 @@ _HOSTS="/etc/hosts\n127.0.0.1\tlocalhost\n::1\t\tlocalhost\n127.0.1.1\tarchlnx.l
 echo -e "$_HOSTS" > /etc/hosts
 
 echo -e "04 - Configurando usuário e o root ..."
+echo ":::::::::::::::::::::::"
+echo ""
 echo "Qual o nome do usuário?"
 read -r -p ":::... " USUARIO
 
@@ -113,6 +115,8 @@ useradd -m -G users,wheel,power,storage -s /bin/bash $USUARIO
 echo "Senha do usuário ..."
 passwd $USUARIO
 
+echo "-:-:-:-:-:-:-:-:-"
+echo ""
 echo "Senha do ROOT ..."
 passwd
 
@@ -142,12 +146,15 @@ esac
 
 echo -e "06 - Instalando o grub ..."
 pacman -S grub-efi-x86_64 efibootmgr --noconfirm
+sleep 5
 mkdir -p /boot/efi
+sleep 5
 mount /dev/sda1 /boot/efi/
+sleep 5
 grub-install --target=x86_64-efi --efi-directory=/boot/efi/ --bootloader-id=GRUB --recheck
+sleep 5
 grub-mkconfig -o /boot/grub/grub.cfg
-
-exit
+sleep 5
 
 } ### fim parteDOIS
 
