@@ -86,7 +86,15 @@ if [[ "$INSTALAR" == "s" ]]; then
   umount -Rl /mnt
   
   echo -e "11 - Remova o pendrive do computador e aperte [ENTER] ..."
-  read -sn ENTER
+  read -r ENTER
+  case "$ENTER" in
+    *) reboot
+    ;;
+    c) exit
+    ;;
+    q) echo default
+    ;;
+  esac
 
   # reboot
 
@@ -176,10 +184,10 @@ case "$DSPSTV" in
 esac
 
 echo -e "06 - Instalando o grub ..."
-pacman -S grub-efi-x86_64 efibootmgr --noconfirm
+pacman -S efibootmgr grub-customizer #grub-efi-x86_64 --noconfirm
 mkdir /boot
 mount /dev/sda1 /boot
-grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=BOOT --recheck
+grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --recheck
 sleep 1
 grub-mkconfig -o /boot/grub/grub.cfg
 
