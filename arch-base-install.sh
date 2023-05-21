@@ -138,15 +138,14 @@ read -r -p ":::... " USUARIO
 
 useradd -m -G users,wheel,power,storage -s /bin/bash $USUARIO
 
-clear
-
-echo "Senha do usuário ..."
+echo "Crie a senha do usuário ..."
 passwd $USUARIO
 
 clear
 
 echo "-:-:-:-:-:-:-:-:-"
 echo ""
+echo "Crie a senha do ROOT"
 echo "Senha do ROOT ..."
 passwd
 
@@ -178,9 +177,9 @@ esac
 
 echo -e "06 - Instalando o grub ..."
 pacman -S grub-efi-x86_64 efibootmgr --noconfirm
-mkdir /mnt/boot
-mount /dev/sda1 /mnt/boot
-grub-install --target=x86_64-efi --efi-directory=/mnt/boot --bootloader-id=BOOT --recheck
+mkdir /boot
+mount /dev/sda1 /boot
+grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=BOOT --recheck
 sleep 1
 grub-mkconfig -o /boot/grub/grub.cfg
 
