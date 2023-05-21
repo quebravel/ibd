@@ -9,9 +9,9 @@ cat <<EOF
 --++++----++++----++++----++++----++++----++++---- Instalador archlinux --++++----++++----++++----++++----++++----++++----++++--
 ++++----++++----++++----++++----++++----++++----++++----++++----++++----++++----++++----++++----++++----++++----++++----++++----
 EOF
-
-echo "++++----++++----++++ [s]im          [n]ão ... "
-read -r -p "++++----++++----++++ Deseja comercar a instalação? ... " INSTALAR
+echo ""
+echo "[s]im          [n]ão ... "
+read -r -p "Deseja comercar a instalação? ... " INSTALAR
 
 if [[ "$INSTALAR" == "s" ]]; then
   echo -e "01 - Configurando o teclado ..."
@@ -51,7 +51,7 @@ if [[ "$INSTALAR" == "s" ]]; then
   mount /dev/"${NMSD}1" /mnt/boot
 
   echo -e "07 - Instalar a base ..."
-  pacstrap -K /mnt base base-devel linux linux-firmware
+  pacstrap -K /mnt base #base-devel linux linux-firmware
 
 # copiando o script de instalação para o sistema
   cp ./arch-base-install.sh /mnt/
