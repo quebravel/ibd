@@ -4,8 +4,6 @@
 
 parteUM(){
 
-pacman -Syu
-
 clear
 cat <<EOF 
 ++++----++++----++++----++++----++++----++++----++++----++++----++++----++++----++++----++++----++++----++++----++++----++++----
@@ -55,10 +53,16 @@ if [[ "$INSTALAR" == "s" ]]; then
   echo -e "04 - Particionando os discos do sistema ..."
   # PART=$(fdisk -l | sed -n 1p | cut -d: -f2 | cut -d, -f1 | tr -d a-zA-Z" ")
   NMSD=$(fdisk -l | sed -n 1p | sed 's/.*dev//g;s/\///' | cut -d: -f1)
-  # boot
-  (echo n; echo; echo; echo; echo +200M; echo t; echo uefi; echo w) | fdisk /dev/"${NMSD}"
-  (echo n; echo; echo; echo; echo +4G; echo t; echo; echo swap; echo w) | fdisk /dev/"${NMSD}"
-  (echo n; echo; echo; echo; echo; echo w) | fdisk /dev/"${NMSD}"
+
+  # fdisk
+  # (echo n; echo; echo; echo; echo +200M; echo t; echo uefi; echo w) | fdisk /dev/"${NMSD}"
+  # (echo n; echo; echo; echo; echo +4G; echo t; echo; echo swap; echo w) | fdisk /dev/"${NMSD}"
+  # (echo n; echo; echo; echo; echo; echo w) | fdisk /dev/"${NMSD}"
+
+  # gdisk
+  (echo o; echo y; echo n; echo; echo; echo +500M; echo ef00; echo w; echo Y) | gdisk /dev/"${NMSD}"
+  (echo n; echo; echo; echo +4G; echo 8200; echo w; echo Y) | gdisk /dev/"${NMSD}"
+  (echo n; echo; echo; echo; echo; echo w; echo Y) | gdisk /dev/"${NMSD}"
 
   echo -e "05 - Formatando as partições ..."
   mkfs.fat -F32 -n BOOT /dev/"${NMSD}1"
@@ -189,8 +193,7 @@ echo -e "06 - Instalando o grub ..."
 pacman -S efibootmgr grub-efi-x86_64 libisoburn mtools --noconfirm
 mkdir /mnt/boot
 mount /dev/sda1 /mnt/boot
-grub-install --target=x86_64-efi --efi-directory=/mnt/boot --bootloader-id=GRUB --recheck
-sleep 1
+grub-install --target=x86_64-efi --efi-directory=/mnt/boot --bootloader-id=BOOT --recheck
 grub-mkconfig -o /boot/grub/grub.cfg
 
 } ### fim parteDOIS
