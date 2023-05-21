@@ -18,7 +18,7 @@ read -r -p "Deseja comercar a instalação? ... " INSTALAR
 
 NOMEDISK=$(fdisk -l | sed -n 1p | sed 's/.*dev//g;s/\///' | cut -d: -f1)
 
-echo "Limpar o disk sda"
+echo "01 - Limpar o disk sda"
 echo "[L]impar    [N]ao"
 read -r -p "Deseja limpar o disk sda? ... " limpadisco
 case "$limpadisco" in
@@ -31,18 +31,6 @@ case "$limpadisco" in
 esac
 
 clear
-
-if [[ "$INSTALAR" == "s" ]]; then
-  echo -e "01 - Configurando o teclado ..."
-  read -r -p "[1] br-abnt2   [2] us-acentos  ... " TECLA
-  case "$TECLA" in
-    1) loadkeys br-abnt2
-    ;;
-    2) loadkeys us-acentos
-    ;;
-    *) echo "padrão"
-    ;;
-  esac
 
   echo -e "02 - Testando conexão com a internet ..."
   ping -c1 archlinux.org
