@@ -79,10 +79,13 @@ sleep 1
   echo -e "09 - Chroot ..."
   arch-chroot /mnt ./"arch-base-install.sh" "-c"
 
-  echo -e "10 - Desmontando as partições ..."
+  echo -e "10 removendo script"
+  mv /mnt/arch-base-install.sh /mnt/home/jonatas/
+
+  echo -e "11 - Desmontando as partições ..."
   umount -Rl /mnt
   
-  echo -e "11 - Remova o pendrive do computador e aperte [ENTER] ..."
+  echo -e "12 - Remova o pendrive do computador e aperte [ENTER] ..."
   read -r ENTER
   case "$ENTER" in
     *) reboot
