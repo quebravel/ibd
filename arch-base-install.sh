@@ -12,14 +12,15 @@ cat <<EOF
 EOF
 
 
+
 echo -e "Este é o instador do archlinux base ...\n"
-echo "[s]im          [n]ão ... "
+echo "1) Sim          2) Não ... "
 read -r -p "Deseja comercar a instalação? ... " INSTALAR
 
 NOMEDISK=$(fdisk -l | sed -n 1p | sed 's/.*dev//g;s/\///' | cut -d: -f1)
 
 echo "01 - Limpar o disk sda"
-echo "[L]impar    [N]ao"
+echo "L) Limpar   N) Nao"
 read -r -p "Deseja limpar o disk sda? ... " limpadisco
 case "$limpadisco" in
   l|L) dd if=/dev/zero of=/dev/"${NOMEDISK}" bs=1M
@@ -58,7 +59,7 @@ clear
   mkswap /dev/"${NMSD}2"
 
   echo -e "06 - Montando as partições ..."
-  mkdir /mnt/boot/efi
+  mkdir -p /mnt/boot/efi
   mount /dev/"${NMSD}1" /mnt/boot/efi
   swapon /dev/"${NMSD}2"
   mount /dev/"${NMSD}3" /mnt
@@ -72,6 +73,8 @@ clear
 # copiando o script de instalação para o sistema
   cp ./arch-base-install.sh /mnt/
   chmod +x /mnt/arch-base-install.sh
+
+sleep 1
 
   echo -e "09 - Chroot ..."
   arch-chroot /mnt ./"arch-base-install.sh" "-c"
@@ -139,9 +142,9 @@ clear
 
 echo -e "06 - Instalando o grub ..."
 pacman -S efibootmgr grub --noconfirm #grub-efi-x86_64 libisoburn mtools
-mkdir /boot/efi
+mkdir -p /mnt/boot/efi
 mount /dev/sda1 /mnt/boot/efi
-grub-install --target=x86_64-efi --efi-directory=/boot/efi #--bootloader-id=BOOT --recheck
+grub-install --target=x86_64-efi --efi-directory=/mnt/boot/efi #--bootloader-id=BOOT --recheck
 grub-mkconfig -o /boot/grub/grub.cfg
 
 clear
@@ -162,6 +165,7 @@ clear
 
 echo -e "05 - Configurando a rede de internet ..."
 pacman -S sudo dhcpcd --noconfirm
+
 
 DISPOSITIVO_01=`ip a | grep -i "2:" | sed -n 1p | cut -d: -f2 | tr -d " "`
 DISPOSITIVO_02=`ip a | grep -i "3:" | sed -n 1p | cut -d: -f2 | tr -d " "`
@@ -189,11 +193,25 @@ esac
 
 } ### fim parteDOIS
 
+# logando como root
+parteTres(){
+sed -ie s'/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL\njonatas ALL\=\(ROOT\) NOPASSWD\: \/usr\/bin\/systemctl poweroff\,\/usr\/bin\/systemctl halt\,\/usr\/bin\/systemctl reboot/'g /etc/sudoers
+
+
+# mirrorlist
+urlbrasil="https://archlinux.org/mirrorlist/?country=BR&protocol=http&protocol=https&ip_version=4"
+curl $urlbrasil -o mirrorlist.txt
+sed -i s'/#Server/Server/'g ./mirrorlist.txt
+mv /etc/pacman.d/mirrorlist /etc/pacman.d/bkp.mirrorlist
+mv ./mirrorlist.txt /etc/pacman.d/mirrorlist
+}
 
 case "$1" in
   -i) parteUM
   ;;
   -c) parteDOIS
+  ;;
+  -u) parteTres
   ;;
   *|-h|--help) echo -e "Ajuda:\n\t-i\t\tInstalação da base com pacstrap.\n\t-c\t\tContinuação da instalação com arch-chroot."
   ;;
