@@ -168,6 +168,7 @@ clear
 
 echo -e "05 - Configurando a rede de internet ..."
 pacman -S sudo dhcpcd --noconfirm
+sed -ie s'/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL'g /etc/sudoers
 
 
 DISPOSITIVO_01=`ip a | grep -i "2:" | sed -n 1p | cut -d: -f2 | tr -d " "`
@@ -198,7 +199,7 @@ esac
 
 # logando como root
 parteTres(){
-sed -ie s'/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL\njonatas ALL\=\(ROOT\) NOPASSWD\: \/usr\/bin\/systemctl poweroff\,\/usr\/bin\/systemctl halt\,\/usr\/bin\/systemctl reboot/'g /etc/sudoers
+sed -ie s'/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL'g /etc/sudoers
 
 
 # mirrorlist
@@ -207,6 +208,10 @@ curl $urlbrasil -o mirrorlist.txt
 sed -i s'/#Server/Server/'g ./mirrorlist.txt
 mv /etc/pacman.d/mirrorlist /etc/pacman.d/bkp.mirrorlist
 mv ./mirrorlist.txt /etc/pacman.d/mirrorlist
+sudo pacman -Sy
+
+# polkit para desligar/rebootar arch sem sudo
+sudo pacman -S polkit 
 }
 
 case "$1" in
@@ -216,6 +221,6 @@ case "$1" in
   ;;
   -u) parteTres
   ;;
-  *|-h|--help) echo -e "Ajuda:\n\t-i\t\tInstalação da base com pacstrap.\n\t-c\t\tContinuação da instalação com arch-chroot."
+  *|-h|--help) echo -e "Ajuda:\n\t-i\t\tInstalação da base com pacstrap.\n\t-c\t\tContinuação da instalação com arch-chroot.\n\t-u\t\tParte final da instalação."
   ;;
 esac
