@@ -23,7 +23,11 @@ echo "01 - Limpar o disk sda"
 echo "L) Limpar   N) Nao"
 read -r -p "Deseja limpar o disk sda? ... " limpadisco
 case "$limpadisco" in
-  l|L) dd if=/dev/zero of=/dev/"${NOMEDISK}" bs=1M
+  l|L) 
+    umount -Rl /mnt/boot/efi &> /dev/null
+    umount -Rl /mnt &> /dev/null
+    swapoff /dev/sda2 &> /dev/null
+    dd if=/dev/zero of=/dev/"${NOMEDISK}" bs=1M &> /dev/null
   ;;
   n|N) echo "ok"
   ;;
@@ -144,7 +148,7 @@ passwd
 clear
 
 echo -e "06 - Instalando o grub ..."
-pacman -S efibootmgr grub --noconfirm #grub-efi-x86_64 libisoburn mtools
+pacman -S efibootmgr grub-efi-x86_64 --noconfirm # libisoburn mtools
 mkdir -p /mnt/boot/efi
 mount /dev/sda1 /mnt/boot/efi
 grub-install --target=x86_64-efi --efi-directory=/mnt/boot/efi #--bootloader-id=BOOT --recheck
@@ -202,13 +206,13 @@ parteTres(){
 sed -ie s'/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL'g /etc/sudoers
 
 
-# mirrorlist
-urlbrasil="https://archlinux.org/mirrorlist/?country=BR&protocol=http&protocol=https&ip_version=4"
-curl $urlbrasil -o mirrorlist.txt
-sed -i s'/#Server/Server/'g ./mirrorlist.txt
-mv /etc/pacman.d/mirrorlist /etc/pacman.d/bkp.mirrorlist
-mv ./mirrorlist.txt /etc/pacman.d/mirrorlist
-sudo pacman -Sy
+# mirrorlist dando erro
+#urlbrasil="https://archlinux.org/mirrorlist/?country=BR&protocol=http&protocol=https&ip_version=4"
+#curl $urlbrasil -o mirrorlist.txt
+#sed -i s'/#Server/Server/'g ./mirrorlist.txt
+#mv /etc/pacman.d/mirrorlist /etc/pacman.d/bkp.mirrorlist
+#mv ./mirrorlist.txt /etc/pacman.d/mirrorlist
+#sudo pacman -Sy
 
 # polkit para desligar/rebootar arch sem sudo
 sudo pacman -S polkit 
