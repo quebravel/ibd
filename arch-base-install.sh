@@ -180,7 +180,7 @@ else
   echo ""
 fi
 
-sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/g' /etc/sudoers
+sed -ie s'/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/'g /etc/sudoers
 
 clear
 
@@ -199,18 +199,12 @@ esac
 
 } ### fim parteDOIS
 
-partTRES(){
-sed -ie s'/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/'g /etc/sudoers
-rm /root/arch-base-install.sh
-}
 
 case "$1" in
   -i) parteUM
   ;;
   -c) parteDOIS
   ;;
-  -r) partTRES
-  ;;
-  *|-h|--help) echo -e "Ajuda:\n\t-i\t\tInstalação da base com pacstrap.\n\t-c\t\tContinuação da instalação com arch-chroot.\n\t-r\t\tConfigurar usuario para usar sudo."
+  *|-h|--help) echo -e "Ajuda:\n\t-i\t\tInstalação da base com pacstrap.\n\t-c\t\tContinuação da instalação com arch-chroot."
   ;;
 esac
