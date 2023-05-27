@@ -83,8 +83,8 @@ sleep 1
   echo -e "09 - Chroot ..."
   arch-chroot /mnt ./"arch-base-install.sh" "-c"
 
-  echo -e "10 removendo script"
-  mv /mnt/arch-base-install.sh /mnt/home/jonatas/
+  echo "10 - Removendo script..."
+  rm /mnt/arch-base-install.sh
 
   echo -e "11 - Desmontando as partições ..."
   umount -Rl /mnt
@@ -94,9 +94,9 @@ sleep 1
   case "$ENTER" in
     *) reboot
     ;;
-    c) exit
+    c) echo exit
     ;;
-    q) echo default
+    q) echo exit
     ;;
   esac
 
@@ -139,9 +139,8 @@ echo -e "$_HOSTS" > /etc/hosts
 
 clear
 
-echo "-:-:-:-:-:-:-:-:-"
-echo ""
-echo "Crie a senha do ROOT"
+echo "ROOT"
+echo -e " \033[41;1;37m Crie a senha do ROOT \033[0m "
 echo "Senha do ROOT ..."
 passwd
 
@@ -157,23 +156,19 @@ grub-mkconfig -o /boot/grub/grub.cfg
 clear
 
 echo -e "04 - Configurando usuário"
-echo ":::::::::::::::::::::::"
-echo ""
-echo "Qual o nome do usuário?"
+echo -e " \033[44;1;37m Qual o nome do usuario? \033[0m "
 read -r -p ":::... " USUARIO
 
 useradd -m -G users,wheel,power,storage -s /bin/bash $USUARIO
 
-echo "Crie a senha do usuário ..."
+echo -e " \033[46;1;37m Crie a senha do usuário \033[0m "
 passwd $USUARIO
 
 clear
 
 
-echo -e "05 - Configurando a rede de internet ..."
-pacman -S sudo dhcpcd --noconfirm
-sed -ie s'/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL'g /etc/sudoers
-
+echo -e "05 - Configurando internet . polkit . sudo ..."
+pacman -S sudo dhcpcd polkit vi --noconfirm
 
 DISPOSITIVO_01=`ip a | grep -i "2:" | sed -n 1p | cut -d: -f2 | tr -d " "`
 DISPOSITIVO_02=`ip a | grep -i "3:" | sed -n 1p | cut -d: -f2 | tr -d " "`
@@ -183,6 +178,8 @@ if [[ -z $DISPOSITIVO_02 ]];then
 else
   echo ""
 fi
+
+sed -ie s'/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL'g /etc/sudoers
 
 clear
 
@@ -198,24 +195,12 @@ case "$DSPSTV" in
   ;;
 esac
 
+cp ./arch-base-install.sh /home/$USUARIO
 
 } ### fim parteDOIS
 
-# logando como root
-parteTres(){
+partTRES(){
 sed -ie s'/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL'g /etc/sudoers
-
-
-# mirrorlist dando erro
-#urlbrasil="https://archlinux.org/mirrorlist/?country=BR&protocol=http&protocol=https&ip_version=4"
-#curl $urlbrasil -o mirrorlist.txt
-#sed -i s'/#Server/Server/'g ./mirrorlist.txt
-#mv /etc/pacman.d/mirrorlist /etc/pacman.d/bkp.mirrorlist
-#mv ./mirrorlist.txt /etc/pacman.d/mirrorlist
-#sudo pacman -Sy
-
-# polkit para desligar/rebootar arch sem sudo
-sudo pacman -S polkit 
 }
 
 case "$1" in
@@ -223,8 +208,8 @@ case "$1" in
   ;;
   -c) parteDOIS
   ;;
-  -u) parteTres
+  -r) partTRES
   ;;
-  *|-h|--help) echo -e "Ajuda:\n\t-i\t\tInstalação da base com pacstrap.\n\t-c\t\tContinuação da instalação com arch-chroot.\n\t-u\t\tParte final da instalação."
+  *|-h|--help) echo -e "Ajuda:\n\t-i\t\tInstalação da base com pacstrap.\n\t-c\t\tContinuação da instalação com arch-chroot.\n\t-r\t\tConfigurar usuario para usar sudo."
   ;;
 esac
