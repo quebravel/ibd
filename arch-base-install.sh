@@ -180,7 +180,6 @@ else
   echo ""
 fi
 
-sed -ie s'/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/'g /etc/sudoers
 
 clear
 
@@ -195,6 +194,12 @@ case "$DSPSTV" in
   *) echo "Não configurar"
   ;;
 esac
+
+sed -ie s'/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/'g /etc/sudoers
+
+sed -i 's/#ParallelDownloads/ParallelDownloads/g' /etc/pacman.conf;
+
+sed -ie 's/#Color/Color\nILoveCandy/g' /etc/pacman.conf;
 
 
 } ### fim parteDOIS
