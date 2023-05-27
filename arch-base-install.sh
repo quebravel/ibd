@@ -88,6 +88,7 @@ sleep 1
 
   echo -e "11 - Desmontando as partições ..."
   umount -Rl /mnt
+  swapoff /dev/sda2
   
   echo -e "12 - Remova o pendrive do computador e aperte [ENTER] ..."
   read -r ENTER
@@ -179,7 +180,7 @@ else
   echo ""
 fi
 
-sed -ie s'/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL'g /etc/sudoers
+sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/g' /etc/sudoers
 
 clear
 
@@ -195,12 +196,12 @@ case "$DSPSTV" in
   ;;
 esac
 
-cp ./arch-base-install.sh /home/$USUARIO
 
 } ### fim parteDOIS
 
 partTRES(){
-sed -ie s'/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL'g /etc/sudoers
+sed -ie s'/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/'g /etc/sudoers
+rm /root/arch-base-install.sh
 }
 
 case "$1" in
