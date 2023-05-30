@@ -17,7 +17,7 @@ echo -e "Este é o instador do archlinux base ...\n"
 echo "1) Sim          2) Não ... "
 read -r -p "Deseja comercar a instalação? ... " INSTALAR
 
-NOMEDISK=$(fdisk -l | sed -n 1p | sed 's/.*dev//g;s/\///' | cut -d: -f1)
+NMSD=$(fdisk -l | sed -n 1p | sed 's/.*dev//g;s/\///' | cut -d: -f1)
 
 echo "01 - Limpar o disk sda"
 echo "L) Limpar   N) Nao"
@@ -27,7 +27,8 @@ case "$limpadisco" in
     umount -Rl /mnt/boot/efi &> /dev/null
     umount -Rl /mnt &> /dev/null
     swapoff /dev/sda2 &> /dev/null
-    dd if=/dev/zero of=/dev/"${NOMEDISK}" bs=1M &> /dev/null
+    # dd if=/dev/zero of=/dev/"${NOMEDISK}" bs=1M &> /dev/null
+    (echo d; echo d; echo d; echo w) | fdisk /dev/${NMSD} &> /dev/null
   ;;
   n|N) echo "ok"
   ;;
@@ -45,7 +46,6 @@ clear
 
   echo -e "04 - Particionando os discos do sistema ..."
   # PART=$(fdisk -l | sed -n 1p | cut -d: -f2 | cut -d, -f1 | tr -d a-zA-Z" ")
-  NMSD=$(fdisk -l | sed -n 1p | sed 's/.*dev//g;s/\///' | cut -d: -f1)
 
   # fdisk
   # (echo n; echo; echo; echo; echo +200M; echo t; echo uefi; echo w) | fdisk /dev/"${NMSD}"
