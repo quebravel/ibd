@@ -24,11 +24,11 @@ echo "L) Limpar   N) Nao"
 read -r -p "Deseja limpar o disk sda? ... " limpadisco
 case "$limpadisco" in
   l|L) 
-    umount -Rl /mnt/boot/efi &> /dev/null
-    umount -Rl /mnt &> /dev/null
-    swapoff /dev/sda2 &> /dev/null
+umount -Rl /mnt;
+umount -Rl /mnt/boot/efi;
+swapoff /dev/sda2;
     # dd if=/dev/zero of=/dev/"${NOMEDISK}" bs=1M &> /dev/null
-    (echo d; echo d; echo d; echo w) | fdisk /dev/${NMSD} &> /dev/null
+(echo d; echo d; echo d; echo w) | fdisk /dev/${NMSD} &> /dev/null
   ;;
   n|N) echo "ok"
   ;;
@@ -40,6 +40,12 @@ clear
 
   echo -e "02 - Testando conexão com a internet ..."
   ping -c1 archlinux.org
+  pacman -Sy pacman-contrib
+  cat /etc/pacman.d/mirrorlist
+  sleep 2
+  cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
+  echo "Rankeando as mirrors ..."
+  rankmirrors -n 6 /etc/pacman.d/mirrorlist.backup > /etc/pacman.d/mirrorlist
 
   echo -e "03 - Configurando o relógio"
   timedatectl set-ntp true
