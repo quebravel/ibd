@@ -195,10 +195,12 @@ case "$DSPSTV" in
   ;;
 esac
 
-sed -ie s'/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/'g /etc/sudoers
-
-sed -i 's/#ParallelDownloads/ParallelDownloads/g' /etc/pacman.conf;
-
+echo "5.1 - Configurando pacman e sudo ... "
+# desomentando grupo de usuario wheel
+sed -i '/%wheel ALL=(ALL:ALL) ALL/s/^#//' /etc/sudoers
+# ativando downloads paraleros
+sed -i '/ParallelDownloads/s/^#//' /etc/pacman.conf;
+# adicionando cores e tema pacman
 sed -ie 's/#Color/Color\nILoveCandy/g' /etc/pacman.conf;
 
 
@@ -213,3 +215,4 @@ case "$1" in
   *|-h|--help) echo -e "Ajuda:\n\t-i\t\tInstalação da base com pacstrap.\n\t-c\t\tContinuação da instalação com arch-chroot."
   ;;
 esac
+
