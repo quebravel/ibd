@@ -1,6 +1,14 @@
 #!/bin/bash
 
 # Sxript para isntlar archlinux
+# TODO
+# 1) - para usar os comandos chroot sem entrar 
+# arch_chroot() {
+#	arch-chroot $MOUNTPOINT /bin/bash -c "${1}"
+# }
+# 2) hotname configurar corretamente
+# 	arch_chroot "sed -i '/127.0.0.1/s/$/ '${host_name}'/' /etc/hosts"
+#   arch_chroot "sed -i '/::1/s/$/ '${host_name}'/' /etc/hosts"
 
 parteUM(){
 
