@@ -69,12 +69,12 @@ esac
 rankeando_mirrors(){
 
   echo -e "02 - Rankeando mirrors ..."
-pacman -Sy pacman-contrib
+pacman -S pacman-contrib --noconfirm
 cat /etc/pacman.d/mirrorlist
 
-  sleep 0.2
 cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
-rankmirrors -n 6 /etc/pacman.d/mirrorlist.backup > /etc/pacman.d/mirrorlist
+rankmirrors -n 8 /etc/pacman.d/mirrorlist.backup > /etc/pacman.d/mirrorlist
+cat /etc/pacman.d/mirrorlist
 }
 
 relogio(){
@@ -111,7 +111,7 @@ mount /dev/"${NMSD}3" ${MOUNTPOINT}
 instalando_kernel(){
 
   echo -e "07 - Instalar a base ..."
-pacstrap -K "${MOUNTPOINT}" base base-devel linux linux-firmware
+pacstrap "${MOUNTPOINT}" base base-devel linux #linux-firmware
 }
 
 gerando_fstab_uefi(){
@@ -153,7 +153,7 @@ esac
 
 nome_host(){
 
- echo "Criar nome do Hostname [ex: archlinux]: "
+ echo -e " \033[42;1;37m Criar nome do Hostname (ex: archlinux): \033[0m "
 read -r HOSTS
 
 arch_chroot "sed -i '/127.0.0.1/s/$/ '${HOSTS}'/' /etc/hosts"
@@ -165,7 +165,6 @@ echo "$HOSTS" >"${MOUNTPOINT}"/etc/hostname
 
 senha_root(){
 
- echo "SENHA ROOT"
  echo -e " \033[41;1;37m Adicionando a senha do ROOT \033[0m "
  echo "Crie a senha do ROOT ..."
 arch_chroot "passwd"
@@ -173,7 +172,7 @@ arch_chroot "passwd"
 
 instalando_bootloader(){
  echo -e "06 - Instalando o grub ..." # libisoburn mtools
-pacstrap "${MOUNTPOINT}" efibootmgr grub-efi-x86_64 dosfstools --needed --noconfirm
+pacstrap ${MOUNTPOINT} efibootmgr grub-efi-x86_64 dosfstools --needed --noconfirm
 # arch_chroot "mkdir -p ${MOUNTPOINT}${EFI_MOUNTPOINT}"
 # arch_chroot "mount /dev/"${NMSD}1" ${MOUNTPOINT}${EFI_MOUNTPOINT}"
 arch_chroot "grub-install --target=x86_64-efi --efi-directory=${EFI_MOUNTPOINT} --bootloader-id=arch_grub --recheck"
