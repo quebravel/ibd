@@ -174,8 +174,8 @@ arch_chroot "passwd"
 instalando_bootloader(){
  echo -e "06 - Instalando o grub ..." # libisoburn mtools
 pacstrap "${MOUNTPOINT}" efibootmgr grub-efi-x86_64 dosfstools --needed --noconfirm
-arch_chroot "mkdir -p ${MOUNTPOINT}${EFI_MOUNTPOINT}"
-arch_chroot "mount /dev/"${NMSD}1" ${MOUNTPOINT}${EFI_MOUNTPOINT}"
+# arch_chroot "mkdir -p ${MOUNTPOINT}${EFI_MOUNTPOINT}"
+# arch_chroot "mount /dev/"${NMSD}1" ${MOUNTPOINT}${EFI_MOUNTPOINT}"
 arch_chroot "grub-install --target=x86_64-efi --efi-directory=${EFI_MOUNTPOINT} --bootloader-id=arch_grub --recheck"
 arch_chroot "grub-mkconfig -o /boot/grub/grub.cfg"
 }
