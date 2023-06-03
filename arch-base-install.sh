@@ -2,108 +2,264 @@
 
 # Sxript para isntlar archlinux
 # TODO
-# 1) - para usar os comandos chroot sem entrar 
-# arch_chroot() {
-#	arch-chroot $MOUNTPOINT /bin/bash -c "${1}"
-# }
-# 2) hotname configurar corretamente
-# 	arch_chroot "sed -i '/127.0.0.1/s/$/ '${host_name}'/' /etc/hosts"
-#   arch_chroot "sed -i '/::1/s/$/ '${host_name}'/' /etc/hosts"
 
-parteUM(){
+# MOUNTPOINTS
+EFI_MOUNTPOINT="/boot" # para uefi
+MOUNTPOINT="/mnt"
 
+# NOME DO DISCO
+NMSD=$(fdisk -l | sed -n 1p | sed 's/.*dev//g;s/\///' | cut -d: -f1)
+
+arch_chroot() {
+	arch-chroot $MOUNTPOINT /bin/bash -c "${1}"
+}
+# if [[ -f $(pwd)/shr_fncs ]]; then
+# 	source shr_fncs
+# else
+# 	echo "shr_fncs nao encontrado"
+# 	exit 1
+# fi
+
+inicio(){
 clear
+
 cat <<EOF 
-++++----++++----++++----++++----++++----++++----++++----++++----++++----++++----++++----++++----++++----++++----++++----++++----
---++++----++++----++++----++++----++++----++++---- Instalador archlinux --++++----++++----++++----++++----++++----++++----++++--
-++++----++++----++++----++++----++++----++++----++++----++++----++++----++++----++++----++++----++++----++++----++++----++++----
+++++----++++----++++----++++----++++----++++----++++----++++----++++----++
+--++++----++++----++++---- Instalador archlinux --++++----++++----++++----
+++++----++++----++++----++++----++++----++++----++++----++++----++++----++
+
+                  Este é o meu instalador da base Arch Linux 
+                  pessoal  com todos as minhas preferencias 
+                  de    instalaçao,   fique   livre  para  
+                  modificar  e  utilzar como quiser.
 EOF
 
 
+ echo -e "\n"
+ echo "S) Sim          N) Não ... "
+ read -r -p "Deseja comercar a instalação? ... " INSTALAR
 
-echo -e "Este é o instador do archlinux base ...\n"
-echo "1) Sim          2) Não ... "
-read -r -p "Deseja comercar a instalação? ... " INSTALAR
+case "$INSTALAR" in
+  S|s) echo "comecando"
+  ;;
+  N|n) exit 0
+  ;;
+  *) inicio
+  ;;
+esac
 
-NMSD=$(fdisk -l | sed -n 1p | sed 's/.*dev//g;s/\///' | cut -d: -f1)
+}
 
-echo "01 - Limpar o disk sda"
-echo "L) Limpar   N) Nao"
-read -r -p "Deseja limpar o disk sda? ... " limpadisco
-case "$limpadisco" in
+umount_partitions() {
+
+
+ echo "01 - Limpar o sistema que possa existir no seu dico $NMSD"
+ echo "L) Limpar   N) Nao"
+ read -r -p "Deseja limpar o disk sda? ... " limpadisco
+ case "$limpadisco" in
   l|L) 
-umount -Rl /mnt;
-umount -Rl /mnt/boot/efi;
-swapoff /dev/sda2;
+umount -Rl "${MOUNTPOINT}"
+umount -Rl "${MOUNTPOINT}""${EFI_MOUNTPOINT}"
+# umount -Rl /mnt/boot/efi;
+swapoff -a;
     # dd if=/dev/zero of=/dev/"${NOMEDISK}" bs=1M &> /dev/null
-(echo d; echo d; echo d; echo w) | fdisk /dev/${NMSD} &> /dev/null
+(echo d; echo; echo d; echo;echo d; echo; echo w) | fdisk /dev/${NMSD} &> /dev/null
   ;;
   n|N) echo "ok"
   ;;
   *) echo default
   ;;
 esac
+}
+
+
+rankeando_mirrors(){
+
+  echo -e "02 - Rankeando mirrors ..."
+pacman -Sy pacman-contrib --noconfirm
+cat /etc/pacman.d/mirrorlist
+
+cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
+
+echo "Espere um momento enquanto faço um rank com os 8 melhores mirrors ..."
+
+if ! rankmirrors -n 8 /etc/pacman.d/mirrorlist.backup > /etc/pacman.d/mirrorlist; then
+ rm /etc/pacman.d/mirrorlist && mv /etc/pacman.d/mirrorlist.backup /etc/pacman.d/mirrorlist
+fi
+
+cat /etc/pacman.d/mirrorlist
+}
+
+relogio(){
+
+  echo -e "03 - Configurando o relógio"
+timedatectl set-ntp true
+}
+
+particionamento(){
+
+  echo -e "04 - Particionando os discos do sistema ..."
+(echo o; echo y; echo n; echo; echo; echo +500M; echo ef00; echo w; echo Y) | gdisk /dev/"${NMSD}"
+(echo n; echo; echo; echo +4G; echo 8200; echo w; echo Y) | gdisk /dev/"${NMSD}"
+(echo n; echo; echo; echo; echo; echo w; echo Y) | gdisk /dev/"${NMSD}"
+}
+
+formatando(){
+
+  echo -e "05 - Formatando as partições ..."
+mkfs.fat -F32 /dev/"${NMSD}1"
+mkfs.ext4 /dev/"${NMSD}3"
+mkswap /dev/"${NMSD}2"
+
+# for dir in proc dev sys etc bin sbin var usr lib lib64 tmp; do
+#     mkdir /mnt/chrootdir/$dir && mount --bind /$dir /mnt/chrootdir/$dir
+# done
+
+}
+
+montando_particoes(){
+
+  echo -e "06 - Montando as partições ..."
+mkdir -p "${MOUNTPOINT}""${EFI_MOUNTPOINT}"
+mount /dev/"${NMSD}1" "${MOUNTPOINT}""${EFI_MOUNTPOINT}"
+swapon /dev/"${NMSD}2"
+mount /dev/"${NMSD}3" "${MOUNTPOINT}"
+}
+
+instalando_kernel(){
+
+  echo -e "07 - Instalar a base ..."
+pacstrap "${MOUNTPOINT}" base base-devel linux linux-firmware
+}
+
+gerando_fstab_uefi(){
+  
+  echo -e "08 - Gerando fstab ..."
+genfstab -t PARTUUID -p "${MOUNTPOINT}" >>"${MOUNTPOINT}"/etc/fstab
+}
+
+# ----- arch-chroot /
+#
+zona_horario(){
+
+ echo -e "01 - Timezone Localização ..."
+arch_chroot "ln -sf /usr/share/zoneinfo/America/Belem /etc/localtime"
+arch_chroot "hwclock --systohc"
+}
+
+idioma_portugues(){
+
+ echo -e "02 - Idioma ..."
+arch_chroot "sed -i 's/#pt_BR.U/pt_BR.U/' /etc/locale.gen"
+arch_chroot "locale-gen"
+arch_chroot "echo LANG=pt_BR.UTF-8 > /etc/locale.conf"
+arch_chroot "export LANG=pt_BR.UTF-8"
+}
+
+teclado_layout(){
+ echo -e "\n"
+ echo -e "03 - Teclado do sistema ..."
+ read -r -p "[1] br-abnt2   [2] us-acentos  ... " TECLAVCON
+case "$TECLAVCON" in
+  1) arch_chroot "echo 'KEYMAP=br-abnt2' > /etc/vconsole.conf"
+  ;;
+  2) arch_chroot "echo 'KEYMAP=us-acentos' > /etc/vconsole.conf"
+  ;;
+  *) echo "padrão"
+  ;;
+esac
+}
+
+nome_host(){
+
+ echo -e "\n"
+ echo -e " \033[42;1;37m Criar nome do Hostname (ex: archlinux) \033[0m "
+ read -r -p "-> " HOSTS
+
+arch_chroot "sed -i '/127.0.0.1/s/$/ '${HOSTS}'/' /etc/hosts"
+arch_chroot "sed -i '/::1/s/$/ '${HOSTS}'/' /etc/hosts"
+
+echo "$HOSTS" >"${MOUNTPOINT}"/etc/hostname
+}
+
+
+senha_root(){
+
+ echo -e "\n"
+ echo -e " \033[41;1;37m Adicionando a senha do ROOT \033[0m "
+ echo "Crie a senha do ROOT ..."
+arch_chroot "passwd"
+}
+
+instalando_bootloader(){
+ echo -e "06 - Instalando o grub ..." # libisoburn mtools
+pacstrap "${MOUNTPOINT}" efibootmgr grub-efi-x86_64 dosfstools --needed --noconfirm
+arch_chroot "mkdir -p "${MOUNTPOINT}""${EFI_MOUNTPOINT}""
+arch_chroot "mount /dev/"${NMSD}1" "${MOUNTPOINT}""${EFI_MOUNTPOINT}""
+arch_chroot "grub-install --target=x86_64-efi --efi-directory=${MOUNTPOINT}${EFI_MOUNTPOINT} --bootloader-id=arch_grub --recheck"
+arch_chroot "grub-mkconfig -o /boot/grub/grub.cfg"
+}
+
+criando_usuario_senha(){
+
+ echo -e "\n"
+ echo -e "04 - Configurando usuário"
+ echo -e " \033[44;1;37m Qual o nome do usuario? \033[0m "
+ read -r -p "-> " USUARIO
+
+arch_chroot "useradd -m -G users,wheel,power,storage -s /bin/bash $USUARIO"
+
+ echo -e " \033[46;1;37m Crie a senha do usuário \033[0m "
+arch_chroot "passwd $USUARIO"
+}
+
+pacotes_extras(){
+
+ echo "5.1 - Instalando complementos importantes ..."
+pacstrap "${MOUNTPOINT}" sudo dhcpcd polkit vi --noconfirm --needed
+}
+
+configurando_sudo(){
+
+ echo "5.2 - Configurando pacman e sudo ... "
+# desomentando grupo de usuario wheel
+arch_chroot "sed -i '/%wheel ALL=(ALL:ALL) ALL/s/^#//' /etc/sudoers"
+# ativando downloads paraleros
+arch_chroot "sed -i '/ParallelDownloads/s/^#//' /etc/pacman.conf"
+# adicionando cores e tema pacman
+arch_chroot "sed -ie 's/#Color/Color\nILoveCandy/g' /etc/pacman.conf"
+}
+
+internet_configuracao(){
+
+ echo -e "05 - Configurando internet ..."
+SEM_FIO_DEV=$(ip link | grep wl | awk '{print $2}' | sed 's/://' | sed '1!d')
+COM_FIO_DEV=$(ip link | grep "ens\|eno\|enp" | awk '{print $2}' | sed 's/://' | sed '1!d')
+
+if [[ -n $SEM_FIO_DEV ]]; then
+	pacstrap "${MOUNTPOINT}" iwd --needed
+else
+	if [[ -n $COM_FIO_DEV ]]; then
+		arch_chroot "systemctl enable dhcpcd@${COM_FIO_DEV}.service"
+	fi
+fi
+}
+
+
+#
+# ----- \ chroot
+
+desmontando_particoes(){
+
+  echo -e "11 - Desmontando as partições ..."
+umount -Rl ${MOUNTPOINT}
+swapoff -a
+}
+
+saindo_da_instacao(){
 
 clear
 
-  echo -e "02 - Testando conexão com a internet ..."
-  ping -c1 archlinux.org
-  pacman -Sy pacman-contrib
-  cat /etc/pacman.d/mirrorlist
-  sleep 2
-  cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
-  echo "Rankeando as mirrors ..."
-  rankmirrors -n 6 /etc/pacman.d/mirrorlist.backup > /etc/pacman.d/mirrorlist
-
-  echo -e "03 - Configurando o relógio"
-  timedatectl set-ntp true
-
-  echo -e "04 - Particionando os discos do sistema ..."
-  # PART=$(fdisk -l | sed -n 1p | cut -d: -f2 | cut -d, -f1 | tr -d a-zA-Z" ")
-
-  # fdisk
-  # (echo n; echo; echo; echo; echo +200M; echo t; echo uefi; echo w) | fdisk /dev/"${NMSD}"
-  # (echo n; echo; echo; echo; echo +4G; echo t; echo; echo swap; echo w) | fdisk /dev/"${NMSD}"
-  # (echo n; echo; echo; echo; echo; echo w) | fdisk /dev/"${NMSD}"
-
-  # gdisk
-  (echo o; echo y; echo n; echo; echo; echo +500M; echo ef00; echo w; echo Y) | gdisk /dev/"${NMSD}"
-  (echo n; echo; echo; echo +4G; echo 8200; echo w; echo Y) | gdisk /dev/"${NMSD}"
-  (echo n; echo; echo; echo; echo; echo w; echo Y) | gdisk /dev/"${NMSD}"
-
-  echo -e "05 - Formatando as partições ..."
-  mkfs.fat -F32 -n BOOT /dev/"${NMSD}1"
-  mkfs.ext4 /dev/"${NMSD}3"
-  mkswap /dev/"${NMSD}2"
-
-  echo -e "06 - Montando as partições ..."
-  mkdir -p /mnt/boot/efi
-  mount /dev/"${NMSD}1" /mnt/boot/efi
-  swapon /dev/"${NMSD}2"
-  mount /dev/"${NMSD}3" /mnt
-
-  echo -e "07 - Instalar a base ..."
-  pacstrap -K /mnt base base-devel linux linux-firmware
-
-  echo -e "08 - Gerando fstab ..."
-  genfstab -U /mnt >> /mnt/etc/fstab
-
-# copiando o script de instalação para o sistema
-  cp ./arch-base-install.sh /mnt/
-  chmod +x /mnt/arch-base-install.sh
-
-sleep 1
-
-  echo -e "09 - Chroot ..."
-  arch-chroot /mnt ./"arch-base-install.sh" "-c"
-
-  echo "10 - Removendo script..."
-  rm /mnt/arch-base-install.sh
-
-  echo -e "11 - Desmontando as partições ..."
-  umount -Rl /mnt
-  swapoff /dev/sda2
-  
   echo -e "12 - Remova o pendrive do computador e aperte [ENTER] ..."
   read -r ENTER
   case "$ENTER" in
@@ -114,119 +270,25 @@ sleep 1
     q) echo exit
     ;;
   esac
+}
 
-  # reboot
-
-} ### fim parteUM
-
-
-parteDOIS(){
-
-clear
-
-echo -e "01 - Timezone Localização ..."
-ln -sf /usr/share/zoneinfo/America/Belem /etc/localtime
-hwclock --systohc
-
-echo -e "02 - Idioma ..."
-sed -i 's/#pt_BR.U/pt_BR.U/' /etc/locale.gen
-locale-gen
-echo LANG=pt_BR.UTF-8 > /etc/locale.conf
-export LANG=pt_BR.UTF-8
-
-clear
-
-echo -e "03 - Teclado do sistema ..."
-read -r -p "[1] br-abnt2   [2] us-acentos  ... " TECLAVCON
-case "$TECLAVCON" in
-  1) echo "KEYMAP=br-abnt2" > /etc/vconsole.conf
-  ;;
-  2) echo "KEYMAP=us-acentos" > /etc/vconsole.conf
-  ;;
-  *) echo "padrão"
-  ;;
-esac
-
-echo "archlnx" > /etc/hostname
-
-_HOSTS="/etc/hosts\n127.0.0.1\tlocalhost\n::1\t\tlocalhost\n127.0.1.1\tarchlnx.linux\tmeuhostname"
-echo -e "$_HOSTS" > /etc/hosts
-
-clear
-
-echo "ROOT"
-echo -e " \033[41;1;37m Crie a senha do ROOT \033[0m "
-echo "Senha do ROOT ..."
-passwd
-
-clear
-
-echo -e "06 - Instalando o grub ..."
-pacman -S efibootmgr grub-efi-x86_64 --noconfirm # libisoburn mtools
-mkdir -p /mnt/boot/efi
-mount /dev/sda1 /mnt/boot/efi
-grub-install --target=x86_64-efi --efi-directory=/mnt/boot/efi #--bootloader-id=BOOT --recheck
-grub-mkconfig -o /boot/grub/grub.cfg
-
-clear
-
-echo -e "04 - Configurando usuário"
-echo -e " \033[44;1;37m Qual o nome do usuario? \033[0m "
-read -r -p ":::... " USUARIO
-
-useradd -m -G users,wheel,power,storage -s /bin/bash $USUARIO
-
-echo -e " \033[46;1;37m Crie a senha do usuário \033[0m "
-passwd $USUARIO
-
-clear
-
-
-echo -e "05 - Configurando internet . polkit . sudo ..."
-pacman -S sudo dhcpcd polkit vi --noconfirm
-
-DISPOSITIVO_01=`ip a | grep -i "2:" | sed -n 1p | cut -d: -f2 | tr -d " "`
-DISPOSITIVO_02=`ip a | grep -i "3:" | sed -n 1p | cut -d: -f2 | tr -d " "`
-
-if [[ -z $DISPOSITIVO_02 ]];then
-  DISPOSITIVO_02="Não tem outro dispositivo"
-else
-  echo ""
-fi
-
-
-clear
-
-echo -e "Qual o seu dispositivo de internet?"
-read -r -p "[1] $DISPOSITIVO_01    [2] $DISPOSITIVO_02 ... " DSPSTV
-
-case "$DSPSTV" in
-  1) systemctl enable dhcpcd@${DISPOSITIVO_01}.service
-  ;;
-  2) systemctl enable dhcpcd@${DISPOSITIVO_02}.service
-  ;;
-  *) echo "Não configurar"
-  ;;
-esac
-
-echo "5.1 - Configurando pacman e sudo ... "
-# desomentando grupo de usuario wheel
-sed -i '/%wheel ALL=(ALL:ALL) ALL/s/^#//' /etc/sudoers
-# ativando downloads paraleros
-sed -i '/ParallelDownloads/s/^#//' /etc/pacman.conf;
-# adicionando cores e tema pacman
-sed -ie 's/#Color/Color\nILoveCandy/g' /etc/pacman.conf;
-
-
-} ### fim parteDOIS
-
-
-case "$1" in
-  -i) parteUM
-  ;;
-  -c) parteDOIS
-  ;;
-  *|-h|--help) echo -e "Ajuda:\n\t-i\t\tInstalação da base com pacstrap.\n\t-c\t\tContinuação da instalação com arch-chroot."
-  ;;
-esac
-
+umount_partitions
+rankeando_mirrors
+relogio
+particionamento
+formatando
+montando_particoes
+instalando_kernel
+gerando_fstab_uefi
+zona_horario
+idioma_portugues
+teclado_layout
+nome_host
+senha_root
+instalando_bootloader
+criando_usuario_senha
+pacotes_extras
+configurando_sudo
+internet_configuracao
+desmontando_particoes
+saindo_da_instacao
