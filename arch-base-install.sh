@@ -60,7 +60,13 @@ umount_partitions() {
  echo "L) Limpar   N) Nao"
  read -r -p "Deseja limpar o disk sda? ... " limpadisco
  case "$limpadisco" in
-  l|L) desmontar_particoes && ( (echo d; echo; echo d; echo;echo d; echo; echo w) | fdisk /dev/${NMSD} &> /dev/null ) && (dd if=/dev/zero of=/dev/"${NMSD}" bs=1M) &> /dev/null
+  l|L) 
+   desmontar_particoes
+   umount -Rl /mnt/boot
+   umount -Rl /mnt
+   swapoff -a
+   (echo d; echo 1; echo d; echo 2; echo d; echo w) | fdisk /dev/${NMSD}
+   #&& dd if=/dev/zero of=/dev/"${NMSD}" bs=1M
   ;;
   n|N) echo "ok"
   ;;
@@ -101,9 +107,10 @@ particionamento(){
 # (echo n; echo; echo; echo +4G; echo 8200; echo w; echo Y) | gdisk /dev/"${NMSD}"
 # (echo n; echo; echo; echo; echo; echo w; echo Y) | gdisk /dev/"${NMSD}"
 # FDISK
-(echo o; echo n; echo; echo; echo; echo +200M; echo Y; echo t; echo; echo uefi; echo a; echo w) | fdisk /dev/"${NMSD}" &> /dev/null
-(echo n; echo; echo; echo; echo +4G; echo Y; echo t; echo; echo swap; echo w) | fdisk /dev/"${NMSD}" &> /dev/null
-(echo n; echo p; echo 3; echo; echo; echo w) | fdisk /dev/"${NMSD}" &> /dev/null
+(echo o; echo n; echo p; echo 1; echo; echo +200M; echo Y; echo t; echo; echo uefi; echo a; echo w) | fdisk /dev/"${NMSD}"
+(echo n; echo p; echo 2; echo; echo +4G; echo Y; echo t; echo 2; echo swap; echo w) | fdisk /dev/"${NMSD}"
+(echo n; echo p; echo 3; echo; echo; echo w) | fdisk /dev/"${NMSD}"
+(echo w) | fdisk /dev/"${NMSD}"
 
 }
 
