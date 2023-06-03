@@ -99,9 +99,14 @@ timedatectl set-ntp true
 particionamento(){
 
   echo -e "04 - Particionando os discos do sistema ..."
+  # gdisk
 (echo o; echo y; echo n; echo; echo; echo +500M; echo ef00; echo w; echo Y) | gdisk /dev/"${NMSD}"
 (echo n; echo; echo; echo +4G; echo 8200; echo w; echo Y) | gdisk /dev/"${NMSD}"
 (echo n; echo; echo; echo; echo; echo w; echo Y) | gdisk /dev/"${NMSD}"
+ # fdisk
+# (echo o; echo n; echo; echo; echo; echo +200M;echo Y; echo t; echo; echo uefi; echo a; echo w) | fdisk /dev/"${NMSD}";
+# (echo n; echo; echo; echo; echo +4G; echo t; echo; echo swap; echo w) | fdisk /dev/"${NMSD}";
+# (echo n; echo; echo; echo; echo; echo w) | fdisk /dev/"${NMSD}";
 }
 
 formatando(){
