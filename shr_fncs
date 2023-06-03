@@ -1,9 +1,0 @@
-#!/bin/bash
-# partes retirado de script de https://github.com/helmuthdu/aui
-
-
-
-# Usar arch-chroot
-arch_chroot() {
-	arch-chroot $MOUNTPOINT /bin/bash -c "${1}"
-}
