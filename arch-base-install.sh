@@ -3,6 +3,7 @@
 # Sxript para isntlar archlinux
 # TODO
 
+
 # MOUNTPOINTS
 EFI_MOUNTPOINT="/boot" # para uefi
 MOUNTPOINT="/mnt"
@@ -10,15 +11,18 @@ MOUNTPOINT="/mnt"
 # NOME DO DISCO
 NMSD=$(fdisk -l | sed -n 1p | sed 's/.*dev//g;s/\///' | cut -d: -f1)
 
+# ARCH-CHROOT
 arch_chroot() {
 	arch-chroot $MOUNTPOINT /bin/bash -c "${1}"
 }
-# if [[ -f $(pwd)/shr_fncs ]]; then
-# 	source shr_fncs
-# else
-# 	echo "shr_fncs nao encontrado"
-# 	exit 1
-# fi
+# DESMONTAR PARTICOES
+desmontar_particoes() {
+	particoes_montadas=($(lsblk | grep "${MOUNTPOINT}" | awk '{print $7}' | sort -r))
+	swapoff -a
+	for i in "${particoes_montadas[@]}"; do
+		umount "$i"
+	done
+}
 
 inicio(){
 clear
@@ -52,18 +56,11 @@ esac
 
 umount_partitions() {
 
-
  echo "01 - Limpar o sistema que possa existir no seu dico $NMSD"
  echo "L) Limpar   N) Nao"
  read -r -p "Deseja limpar o disk sda? ... " limpadisco
  case "$limpadisco" in
-  l|L) 
-umount -Rl "${MOUNTPOINT}"
-umount -Rl "${MOUNTPOINT}""${EFI_MOUNTPOINT}"
-# umount -Rl /mnt/boot/efi;
-swapoff -a;
-    # dd if=/dev/zero of=/dev/"${NOMEDISK}" bs=1M &> /dev/null
-(echo d; echo; echo d; echo;echo d; echo; echo w) | fdisk /dev/${NMSD} &> /dev/null
+  l|L) desmontar_particoes && ( (echo d; echo; echo d; echo;echo d; echo; echo w) | fdisk /dev/${NMSD} &> /dev/null ) && (dd if=/dev/zero of=/dev/"${NMSD}" bs=1M) &> /dev/null
   ;;
   n|N) echo "ok"
   ;;
@@ -81,7 +78,7 @@ cat /etc/pacman.d/mirrorlist
 
 cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
 
-echo "Espere um momento enquanto faço um rank com os 8 melhores mirrors ..."
+echo -e "\nEspere um momento enquanto faço um rank com os 8 melhores mirrors ..."
 
 if ! rankmirrors -n 8 /etc/pacman.d/mirrorlist.backup > /etc/pacman.d/mirrorlist; then
  rm /etc/pacman.d/mirrorlist && mv /etc/pacman.d/mirrorlist.backup /etc/pacman.d/mirrorlist
@@ -99,14 +96,15 @@ timedatectl set-ntp true
 particionamento(){
 
   echo -e "04 - Particionando os discos do sistema ..."
-  # gdisk
-(echo o; echo y; echo n; echo; echo; echo +500M; echo ef00; echo w; echo Y) | gdisk /dev/"${NMSD}"
-(echo n; echo; echo; echo +4G; echo 8200; echo w; echo Y) | gdisk /dev/"${NMSD}"
-(echo n; echo; echo; echo; echo; echo w; echo Y) | gdisk /dev/"${NMSD}"
- # fdisk
-# (echo o; echo n; echo; echo; echo; echo +200M;echo Y; echo t; echo; echo uefi; echo a; echo w) | fdisk /dev/"${NMSD}";
-# (echo n; echo; echo; echo; echo +4G; echo t; echo; echo swap; echo w) | fdisk /dev/"${NMSD}";
-# (echo n; echo; echo; echo; echo; echo w) | fdisk /dev/"${NMSD}";
+# GDISK
+# (echo o; echo y; echo n; echo; echo; echo +500M; echo ef00; echo w; echo Y) | gdisk /dev/"${NMSD}"
+# (echo n; echo; echo; echo +4G; echo 8200; echo w; echo Y) | gdisk /dev/"${NMSD}"
+# (echo n; echo; echo; echo; echo; echo w; echo Y) | gdisk /dev/"${NMSD}"
+# FDISK
+(echo o; echo n; echo; echo; echo; echo +200M; echo Y; echo t; echo; echo uefi; echo a; echo w) | fdisk /dev/"${NMSD}" &> /dev/null
+(echo n; echo; echo; echo; echo +4G; echo Y; echo t; echo; echo swap; echo w) | fdisk /dev/"${NMSD}" &> /dev/null
+(echo n; echo p; echo 3; echo; echo; echo w) | fdisk /dev/"${NMSD}" &> /dev/null
+
 }
 
 formatando(){
@@ -115,11 +113,6 @@ formatando(){
 mkfs.fat -F32 /dev/"${NMSD}1"
 mkfs.ext4 /dev/"${NMSD}3"
 mkswap /dev/"${NMSD}2"
-
-# for dir in proc dev sys etc bin sbin var usr lib lib64 tmp; do
-#     mkdir /mnt/chrootdir/$dir && mount --bind /$dir /mnt/chrootdir/$dir
-# done
-
 }
 
 montando_particoes(){
@@ -297,3 +290,4 @@ configurando_sudo
 internet_configuracao
 desmontando_particoes
 saindo_da_instacao
+
