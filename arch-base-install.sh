@@ -108,8 +108,11 @@ particionamento(){
 # (echo n; echo; echo; echo; echo; echo w; echo Y) | gdisk /dev/"${NMSD}"
 # FDISK
 (echo o; echo n; echo p; echo 1; echo; echo +200M; echo Y; echo t; echo; echo uefi; echo a; echo w) | fdisk /dev/"${NMSD}"
+  sleep 0.2
 (echo n; echo p; echo 2; echo; echo +4G; echo Y; echo t; echo 2; echo swap; echo w) | fdisk /dev/"${NMSD}"
+  sleep 0.2
 (echo n; echo p; echo 3; echo; echo; echo w) | fdisk /dev/"${NMSD}"
+  sleep 0.2
 (echo w) | fdisk /dev/"${NMSD}"
 
 }
@@ -117,17 +120,24 @@ particionamento(){
 formatando(){
 
   echo -e "05 - Formatando as partições ..."
+  sleep 0.2
 mkfs.vfat -F32 /dev/"${NMSD}1"
+  sleep 0.2
 mkfs.ext4 /dev/"${NMSD}3"
+  sleep 0.2
 mkswap /dev/"${NMSD}2"
 }
 
 montando_particoes(){
 
   echo -e "06 - Montando as partições ..."
+  sleep 0.2
 mount /dev/"${NMSD}3" "${MOUNTPOINT}"
+  sleep 0.2
 mkdir -p "${MOUNTPOINT}""${EFI_MOUNTPOINT}"
+  sleep 0.2
 mount /dev/"${NMSD}1" "${MOUNTPOINT}""${EFI_MOUNTPOINT}"
+  sleep 0.2
 swapon /dev/"${NMSD}2"
 }
 
