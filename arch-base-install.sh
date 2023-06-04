@@ -117,7 +117,7 @@ particionamento(){
 formatando(){
 
   echo -e "05 - Formatando as partições ..."
-mkfs.fat -F32 /dev/"${NMSD}1"
+mkfs.vfat -F32 /dev/"${NMSD}1"
 mkfs.ext4 /dev/"${NMSD}3"
 mkswap /dev/"${NMSD}2"
 }
@@ -125,10 +125,10 @@ mkswap /dev/"${NMSD}2"
 montando_particoes(){
 
   echo -e "06 - Montando as partições ..."
+mount /dev/"${NMSD}3" "${MOUNTPOINT}"
 mkdir -p "${MOUNTPOINT}""${EFI_MOUNTPOINT}"
 mount /dev/"${NMSD}1" "${MOUNTPOINT}""${EFI_MOUNTPOINT}"
 swapon /dev/"${NMSD}2"
-mount /dev/"${NMSD}3" "${MOUNTPOINT}"
 }
 
 instalando_kernel(){
