@@ -1,7 +1,9 @@
 #!/bin/bash
 
 # Sxript para isntlar archlinux
-# TODO finishi
+#TODO finishi
+#ADD 
+#
 
 
 # MOUNTPOINTS
@@ -319,6 +321,7 @@ COM_FIO_DEV=$(ip link | grep "ens\|eno\|enp" | awk '{print $2}' | sed 's/://' | 
 
 if [[ -n $SEM_FIO_DEV ]]; then
 	pacstrap "${MOUNTPOINT}" iwd --needed
+	arch_chroot "systemctl enable iwd.service"
 else
 	if [[ -n $COM_FIO_DEV ]]; then
 		arch_chroot "systemctl enable dhcpcd@${COM_FIO_DEV}.service"
