@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Sxript para isntlar archlinux
-# TODO
+# TODO finishi
 
 
 # MOUNTPOINTS
@@ -24,6 +24,8 @@ desmontar_particoes() {
 	done
 }
 
+# [ -d /sys/firmware/efi ] && sistema_boot="UEFI" || sistema_boot="BIOS"
+
 inicio(){
 clear
 
@@ -33,9 +35,17 @@ cat <<EOF
 ++++----++++----++++----++++----++++----++++----++++----++++----++++----++
 
                   Este é o meu instalador da base Arch Linux 
-                  pessoal  com todos as minhas preferencias 
-                  de    instalaçao,   fique   livre  para  
-                  modificar  e  utilzar como quiser.
+                  pessoal  com todos as minhas  preferencias 
+                  de instalaçao, fique livre para  modeficar  
+                  e  utilzar como quiser.
+
+                  O script já detecta se o sistema de boot é 
+                  BIOS ou UEFI.
+
+                  Instala e configura  o  SUDO,  DHCPCD,  VI
+                  POLKIT,   LINUX-FIRMWARE   e   LINUX-DEVEL
+
+++++----++++----++++----++++----++++----++++----++++----++++----++++----++
 EOF
 
 
@@ -56,6 +66,8 @@ esac
 
 umount_partitions() {
 
+NMSD=$(fdisk -l | sed -n 1p | sed 's/.*dev//g;s/\///' | cut -d: -f1)
+
  echo "01 - Limpar o sistema que possa existir no seu dico $NMSD"
  echo "L) Limpar   N) Nao"
  read -r -p "Deseja limpar o disk sda? ... " limpadisco
@@ -66,6 +78,7 @@ umount_partitions() {
    umount -Rl /mnt
    swapoff -a
    (echo d; echo 1; echo d; echo 2; echo d; echo w) | fdisk /dev/${NMSD}
+   (echo rm 1; echo rm 2; echo rm 3; echo quit) | parted /dev/${NMSD}
    #&& dd if=/dev/zero of=/dev/"${NMSD}" bs=1M
   ;;
   n|N) echo "ok"
@@ -99,13 +112,10 @@ relogio(){
 timedatectl set-ntp true
 }
 
-particionamento(){
+particionamento_uefi(){
+NMSD=$(fdisk -l | sed -n 1p | sed 's/.*dev//g;s/\///' | cut -d: -f1)
 
-  echo -e "04 - Particionando os discos do sistema ..."
-# GDISK
-# (echo o; echo y; echo n; echo; echo; echo +500M; echo ef00; echo w; echo Y) | gdisk /dev/"${NMSD}"
-# (echo n; echo; echo; echo +4G; echo 8200; echo w; echo Y) | gdisk /dev/"${NMSD}"
-# (echo n; echo; echo; echo; echo; echo w; echo Y) | gdisk /dev/"${NMSD}"
+  echo -e "04 - Particionando os discos do sistema  em UEFI ..."
 # FDISK
 (echo o; echo n; echo p; echo 1; echo; echo +200M; echo Y; echo t; echo; echo uefi; echo a; echo w) | fdisk /dev/"${NMSD}"
   sleep 0.2
@@ -113,13 +123,25 @@ particionamento(){
   sleep 0.2
 (echo n; echo p; echo 3; echo; echo; echo w) | fdisk /dev/"${NMSD}"
   sleep 0.2
-(echo w) | fdisk /dev/"${NMSD}"
 
+# PARTED
+# (echo mkpart "EFI" fat32 1MiB 301MiB; echo set 1 esp on; echo mkpart "swap" linux-swap 301MiB 4.3GiB; echo mkpart "root" ext4 4.3GiB 100%; echo quit) | parted /dev/"${NMSD}"
 }
 
-formatando(){
+particionamento_bios(){
+NMSD=$(fdisk -l | sed -n 1p | sed 's/.*dev//g;s/\///' | cut -d: -f1)
 
-  echo -e "05 - Formatando as partições ..."
+  echo -e "04 - Particionando os discos do sistema  em BIOS ..."
+
+  # PARTED
+(echo mkpart primary ext4 1MiB 100%; echo set 1 boot on; echo quit) | parted /dev/"${NMSD}"
+}
+
+
+formatando_uefi(){
+NMSD=$(fdisk -l | sed -n 1p | sed 's/.*dev//g;s/\///' | cut -d: -f1)
+
+  echo -e "05 - Formatar as partições UEFI ..."
   sleep 0.2
 mkfs.vfat -F32 /dev/"${NMSD}1"
   sleep 0.2
@@ -128,7 +150,17 @@ mkfs.ext4 /dev/"${NMSD}3"
 mkswap /dev/"${NMSD}2"
 }
 
-montando_particoes(){
+formatando_bios(){
+NMSD=$(fdisk -l | sed -n 1p | sed 's/.*dev//g;s/\///' | cut -d: -f1)
+
+  echo -e "05 - Formatar as partições BIOS ..."
+  sleep 0.2
+mkfs.ext4 /dev/"${NMSD}1"
+}
+
+
+montando_particoes_uefi(){
+NMSD=$(fdisk -l | sed -n 1p | sed 's/.*dev//g;s/\///' | cut -d: -f1)
 
   echo -e "06 - Montando as partições ..."
   sleep 0.2
@@ -141,13 +173,33 @@ mount /dev/"${NMSD}1" "${MOUNTPOINT}""${EFI_MOUNTPOINT}"
 swapon /dev/"${NMSD}2"
 }
 
+montando_particoes_bios(){
+NMSD=$(fdisk -l | sed -n 1p | sed 's/.*dev//g;s/\///' | cut -d: -f1)
+
+  echo -e "06 - Montando as partições ..."
+  sleep 0.2
+mount /dev/"${NMSD}1" "${MOUNTPOINT}"
+}
+
+qual_boot(){
+if [[ -d /sys/firmware/efi ]]; then
+   particionamento_uefi
+   formatando_uefi
+   montando_particoes_uefi
+else
+   particionamento_bios
+   formatando_bios
+   montando_particoes_bios
+fi
+}
+
 instalando_kernel(){
 
   echo -e "07 - Instalar a base ..."
 pacstrap "${MOUNTPOINT}" base base-devel linux linux-firmware
 }
 
-gerando_fstab_uefi(){
+gerando_fstab(){
   
   echo -e "08 - Gerando fstab ..."
 genfstab -t PARTUUID -p "${MOUNTPOINT}" >>"${MOUNTPOINT}"/etc/fstab
@@ -206,13 +258,27 @@ senha_root(){
 arch_chroot "passwd"
 }
 
-instalando_bootloader(){
+instalando_bootloader_uefi(){
  echo -e "06 - Instalando o grub ..." # libisoburn mtools
 pacstrap "${MOUNTPOINT}" efibootmgr grub-efi-x86_64 dosfstools --needed --noconfirm
 arch_chroot "mkdir -p "${MOUNTPOINT}""${EFI_MOUNTPOINT}""
 arch_chroot "mount /dev/"${NMSD}1" "${MOUNTPOINT}""${EFI_MOUNTPOINT}""
 arch_chroot "grub-install --target=x86_64-efi --efi-directory=${MOUNTPOINT}${EFI_MOUNTPOINT} --bootloader-id=arch_grub --recheck"
 arch_chroot "grub-mkconfig -o /boot/grub/grub.cfg"
+}
+
+instalando_bootloader_bios(){
+pacstrap "${MOUNTPOINT}" grub --needed --noconfirm
+arch_chroot "grub-install --target=i386-pc --recheck /dev/${NMSD}"
+arch_chroot "grub-mkconfig -o /boot/grub/grub.cfg"
+}
+
+instalando_bootloader(){
+if [[ -d /sys/firmware/efi ]]; then
+ instalando_bootloader_uefi
+else
+ instalando_bootloader_bios
+fi
 }
 
 criando_usuario_senha(){
@@ -290,11 +356,9 @@ clear
 umount_partitions
 rankeando_mirrors
 relogio
-particionamento
-formatando
-montando_particoes
+qual_boot
 instalando_kernel
-gerando_fstab_uefi
+gerando_fstab
 zona_horario
 idioma_portugues
 teclado_layout
@@ -307,4 +371,5 @@ configurando_sudo
 internet_configuracao
 desmontando_particoes
 saindo_da_instacao
+
 
