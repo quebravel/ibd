@@ -299,7 +299,7 @@ arch_chroot "passwd $USUARIO"
 pacotes_extras(){
 
  echo "5.1 - Instalando complementos importantes ..."
-pacstrap "${MOUNTPOINT}" sudo dhcpcd polkit vi --noconfirm --needed
+pacstrap "${MOUNTPOINT}" sudo dhcpcd polkit vi openssh --noconfirm --needed
 }
 
 configurando_sudo(){
@@ -315,7 +315,7 @@ arch_chroot "sed -ie 's/#Color/Color\nILoveCandy/g' /etc/pacman.conf"
 
 internet_configuracao(){
 
- echo -e "05 - Configurando internet ..."
+ echo -e "06 - Configurando internet ..."
 SEM_FIO_DEV=$(ip link | grep wl | awk '{print $2}' | sed 's/://' | sed '1!d')
 COM_FIO_DEV=$(ip link | grep "ens\|eno\|enp" | awk '{print $2}' | sed 's/://' | sed '1!d')
 
@@ -327,6 +327,42 @@ else
 		arch_chroot "systemctl enable dhcpcd@${COM_FIO_DEV}.service"
 	fi
 fi
+}
+
+ssh_configuracao(){
+
+arch_chroot	"sed -i '/Port 22/s/^#//' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/Protocol 2/s/^#//' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/HostKey \/etc\/ssh\/ssh_host_rsa_key/s/^#//' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/HostKey \/etc\/ssh\/ssh_host_dsa_key/s/^#//' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/HostKey \/etc\/ssh\/ssh_host_ecdsa_key/s/^#//' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/KeyRegenerationInterval/s/^#//' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/ServerKeyBits/s/^#//' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/SyslogFacility/s/^#//' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/LogLevel/s/^#//' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/LoginGraceTime/s/^#//' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/PermitRootLogin/s/^#//' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/HostbasedAuthentication no/s/^#//' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/StrictModes/s/^#//' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/RSAAuthentication/s/^#//' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/PubkeyAuthentication/s/^#//' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/IgnoreRhosts/s/^#//' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/PermitEmptyPasswords/s/^#//' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/AllowTcpForwarding/s/^#//' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/AllowTcpForwarding no/d' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/X11Forwarding/s/^#//' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/X11Forwarding/s/no/yes/' /etc/ssh/sshd_config"
+arch_chroot	"sed -i -e '/\tX11Forwarding yes/d' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/X11DisplayOffset/s/^#//' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/X11UseLocalhost/s/^#//' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/PrintMotd/s/^#//' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/PrintMotd/s/yes/no/' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/PrintLastLog/s/^#//' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/TCPKeepAlive/s/^#//' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/the setting of/s/^/#/' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/RhostsRSAAuthentication and HostbasedAuthentication/s/^/#/' /etc/ssh/sshd_config"
+
+arch_chroot "systemctl enable ssdh"
 }
 
 
@@ -372,6 +408,7 @@ criando_usuario_senha
 pacotes_extras
 configurando_sudo
 internet_configuracao
+ssh_configuracao
 desmontando_particoes
 saindo_da_instacao
 
