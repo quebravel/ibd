@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# Sxript para isntlar archlinux
+# Script para instalar o sistema base archlinux
+# Baseado e com pedaços das aulas do youtuber terminal root e do script famoso aui do helmultdu
 #TODO finishi
 #ADD 
 #
@@ -11,7 +12,32 @@ EFI_MOUNTPOINT="/boot" # para uefi
 MOUNTPOINT="/mnt"
 
 # NOME DO DISCO
-NMSD=$(fdisk -l | sed -n 1p | sed 's/.*dev//g;s/\///' | cut -d: -f1)
+# export NMSD=$(fdisk -l | sed -n 1p | sed 's/.*dev//g;s/\///' | cut -d: -f1)
+
+contains_element() {
+	#verificar se existe um elemento em uma string
+	for e in "${@:2}"; do [[ "$e" == "$1" ]] && break; done
+}
+
+selecionar_dispositivo() {
+	devices_list=($(lsblk -d | awk '{print $1}' | grep 'sd\|hd\|vd\|nvme\|mmcblk'))
+	# PS3="$prompt1"
+	echo -e "Dispositivos conectados:\n"
+	lsblk -lnp -I 2,3,8,9,22,34,56,57,58,65,66,67,68,69,70,71,72,91,128,129,130,131,132,133,134,135,259 | awk '{print $1,$4,$6,$7}' | column -t
+	echo -e "\n"
+	echo -e "Selecione o dispositivo para o particionamento:\n"
+	select device in "${devices_list[@]}"; do
+		if contains_element "${device}" "${devices_list[@]}"; then
+			echo $device
+			export NMSD=$device
+			break
+		else
+			echo "opçao invalida"
+			selecionar_dispositivo
+		fi
+	done
+	# BOOT_MOUNTPOINT=$device
+}
 
 # ARCH-CHROOT
 arch_chroot() {
@@ -68,7 +94,7 @@ esac
 
 umount_partitions() {
 
-NMSD=$(fdisk -l | sed -n 1p | sed 's/.*dev//g;s/\///' | cut -d: -f1)
+#NMSD=$(fdisk -l | sed -n 1p | sed 's/.*dev//g;s/\///' | cut -d: -f1)
 
  echo "01 - Limpar o sistema que possa existir no seu dico $NMSD"
  echo "L) Limpar   N) Nao"
@@ -80,7 +106,7 @@ NMSD=$(fdisk -l | sed -n 1p | sed 's/.*dev//g;s/\///' | cut -d: -f1)
    umount -Rl /mnt
    swapoff -a
    (echo d; echo 1; echo d; echo 2; echo d; echo w) | fdisk /dev/${NMSD}
-   (echo rm 1; echo rm 2; echo rm 3; echo quit) | parted /dev/${NMSD}
+   (echo rm 1; echo rm 2; echo rm 3; echo rm 4; echo quit) | parted /dev/${NMSD}
    #&& dd if=/dev/zero of=/dev/"${NMSD}" bs=1M
   ;;
   n|N) echo "ok"
@@ -94,18 +120,21 @@ esac
 rankeando_mirrors(){
 
   echo -e "02 - Rankeando mirrors ..."
-pacman -Sy pacman-contrib --noconfirm
+pacman -Sy pacman-contrib --noconfirm --needed
 cat /etc/pacman.d/mirrorlist
+if [[ ! -f /etc/pacman.d/mirrorlist.backup ]]; then
+  cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
 
-cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
+  echo -e "\nEspere um momento enquanto faço um rank com os 8 melhores mirrors ..."
 
-echo -e "\nEspere um momento enquanto faço um rank com os 8 melhores mirrors ..."
-
-if ! rankmirrors -n 8 /etc/pacman.d/mirrorlist.backup > /etc/pacman.d/mirrorlist; then
- rm /etc/pacman.d/mirrorlist && mv /etc/pacman.d/mirrorlist.backup /etc/pacman.d/mirrorlist
+  if ! rankmirrors -n 8 /etc/pacman.d/mirrorlist.backup > /etc/pacman.d/mirrorlist; then
+   rm /etc/pacman.d/mirrorlist && mv /etc/pacman.d/mirrorlist.backup /etc/pacman.d/mirrorlist
+  fi
+cat /etc/pacman.d/mirrorlist
+else
+  echo "Mirros já foram ranqueados ..."
+  sleep 1
 fi
-
-cat /etc/pacman.d/mirrorlist
 }
 
 relogio(){
@@ -115,7 +144,7 @@ timedatectl set-ntp true
 }
 
 particionamento_uefi(){
-NMSD=$(fdisk -l | sed -n 1p | sed 's/.*dev//g;s/\///' | cut -d: -f1)
+#NMSD=$(fdisk -l | sed -n 1p | sed 's/.*dev//g;s/\///' | cut -d: -f1)
 
   echo -e "04 - Particionando os discos do sistema  em UEFI ..."
 # FDISK
@@ -131,17 +160,18 @@ NMSD=$(fdisk -l | sed -n 1p | sed 's/.*dev//g;s/\///' | cut -d: -f1)
 }
 
 particionamento_bios(){
-NMSD=$(fdisk -l | sed -n 1p | sed 's/.*dev//g;s/\///' | cut -d: -f1)
+#NMSD=$(fdisk -l | sed -n 1p | sed 's/.*dev//g;s/\///' | cut -d: -f1)
 
   echo -e "04 - Particionando os discos do sistema  em BIOS ..."
 
   # PARTED
-(echo mkpart primary ext4 1MiB 100%; echo set 1 boot on; echo quit) | parted /dev/"${NMSD}"
+# (echo mkpart primary ext4 1MiB 100%; echo set 1 boot on; echo quit) | parted /dev/"${NMSD}"
+(echo o; echo n; echo p; echo 1; echo; echo; echo a; echo w) | fdisk /dev/"${NMSD}"
 }
 
 
 formatando_uefi(){
-NMSD=$(fdisk -l | sed -n 1p | sed 's/.*dev//g;s/\///' | cut -d: -f1)
+#NMSD=$(fdisk -l | sed -n 1p | sed 's/.*dev//g;s/\///' | cut -d: -f1)
 
   echo -e "05 - Formatar as partições UEFI ..."
   sleep 0.2
@@ -153,7 +183,7 @@ mkswap /dev/"${NMSD}2"
 }
 
 formatando_bios(){
-NMSD=$(fdisk -l | sed -n 1p | sed 's/.*dev//g;s/\///' | cut -d: -f1)
+#NMSD=$(fdisk -l | sed -n 1p | sed 's/.*dev//g;s/\///' | cut -d: -f1)
 
   echo -e "05 - Formatar as partições BIOS ..."
   sleep 0.2
@@ -162,7 +192,7 @@ mkfs.ext4 /dev/"${NMSD}1"
 
 
 montando_particoes_uefi(){
-NMSD=$(fdisk -l | sed -n 1p | sed 's/.*dev//g;s/\///' | cut -d: -f1)
+#NMSD=$(fdisk -l | sed -n 1p | sed 's/.*dev//g;s/\///' | cut -d: -f1)
 
   echo -e "06 - Montando as partições ..."
   sleep 0.2
@@ -176,7 +206,7 @@ swapon /dev/"${NMSD}2"
 }
 
 montando_particoes_bios(){
-NMSD=$(fdisk -l | sed -n 1p | sed 's/.*dev//g;s/\///' | cut -d: -f1)
+#NMSD=$(fdisk -l | sed -n 1p | sed 's/.*dev//g;s/\///' | cut -d: -f1)
 
   echo -e "06 - Montando as partições ..."
   sleep 0.2
@@ -392,6 +422,7 @@ clear
   esac
 }
 
+selecionar_dispositivo
 umount_partitions
 rankeando_mirrors
 relogio
