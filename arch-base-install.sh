@@ -119,7 +119,7 @@ umount_partitions() {
  read -rep "$(echo -e $CAC) - Deseja LIMPAR o disco $(echo -e $NMSD)? - (s,n) ... " LIMPADISCO
  case "$LIMPADISCO" in
   s|S) 
-    echo -e "$PROSS - DESMONTAGEN DE DISCOS."
+    echo -en "$PROSS - DESMONTAGEN DE DISCOS."
    desmontar_particoes
    umount -Rl /mnt/boot &>> $INSTLOG
    umount -Rl /mnt &>> $INSTLOG
@@ -140,13 +140,13 @@ rankeando_mirrors(){
 
   echo -e "$CNT - RANKEANDO MIRRORS"
   pacman -Sy pacman-contrib --noconfirm --needed &>> $INSTLOG
-  cat /etc/pacman.d/mirrorlist
+  # cat /etc/pacman.d/mirrorlist
 if [[ ! -f /etc/pacman.d/mirrorlist.backup ]]; then
   cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
 
   echo -e "\n $CNT - ESPERE UM MOMENTO ENQUANTO FAÇO UM RANK COM OS 8 MELHORES MIRRORS."
 
-  echo -e "$PROSS] - RANQUEAMENTO."
+  echo -en "$PROSS] - RANQUEAMENTO."
 if ! rankmirrors -n 8 /etc/pacman.d/mirrorlist.backup > /etc/pacman.d/mirrorlist; then
    rm /etc/pacman.d/mirrorlist && mv /etc/pacman.d/mirrorlist.backup /etc/pacman.d/mirrorlist
 fi
@@ -168,7 +168,7 @@ particionamento_uefi(){
 #NMSD=$(fdisk -l | sed -n 1p | sed 's/.*dev//g;s/\///' | cut -d: -f1)
 
 # FDISK
-echo -e "$PROSS - PARTICIONAMENTO."
+echo -en "$PROSS - PARTICIONAMENTO."
 (echo o; echo n; echo p; echo 1; echo; echo +200M; echo Y; echo t; echo; echo uefi; echo a; echo w) | fdisk /dev/"${NMSD}" &>> $INSTLOG
   sleep 0.2
 (echo n; echo p; echo 2; echo; echo +4G; echo Y; echo t; echo 2; echo swap; echo w) | fdisk /dev/"${NMSD}" &>> $INSTLOG
@@ -186,7 +186,7 @@ particionamento_bios(){
 
   # PARTED
 # (echo mkpart primary ext4 1MiB 100%; echo set 1 boot on; echo quit) | parted /dev/"${NMSD}"
-echo -e "$PROSS - PARTICIONAMENTO."
+echo -en "$PROSS - PARTICIONAMENTO."
   sleep 0.2
 (echo o; echo n; echo p; echo 1; echo; echo; echo a; echo w) | fdisk /dev/"${NMSD}" &>> $INSTLOG & show_progress $!
   sleep 0.2
@@ -197,7 +197,7 @@ echo -e "$PROSS - PARTICIONAMENTO."
 formatando_uefi(){
 #NMSD=$(fdisk -l | sed -n 1p | sed 's/.*dev//g;s/\///' | cut -d: -f1)
 
-echo -e "$PROSS - FORMATAÇAO."
+echo -en "$PROSS - FORMATAÇAO."
   sleep 0.2
 mkfs.vfat -F32 /dev/"${NMSD}1" &>> $INSTLOG
   sleep 0.2
@@ -211,7 +211,7 @@ mkswap /dev/"${NMSD}2" &>> $INSTLOG & show_progress $!
 formatando_bios(){
 #NMSD=$(fdisk -l | sed -n 1p | sed 's/.*dev//g;s/\///' | cut -d: -f1)
 
-echo -e "$PROSS - FORMATAÇAO."
+echo -en "$PROSS - FORMATAÇAO."
   sleep 0.2
 mkfs.ext4 /dev/"${NMSD}1" &>> $INSTLOG & show_progress $!
   sleep 0.2
@@ -258,7 +258,7 @@ fi
 instalando_kernel(){
 echo -e "$CNT - VAMOS BAIXAR O KERNEL AGORA."
   sleep 0.2
-  echo -e "$PROSS - PACSTRAP."
+  echo -en "$PROSS - PACSTRAP."
 pacstrap "${MOUNTPOINT}" base base-devel linux linux-firmware &>> $INSTLOG & show_progress $!
  sleep 0.2
   echo -e "$COK - FINALIZADO DOWNLOAD DO KERNEL."
@@ -327,7 +327,7 @@ arch_chroot "passwd"
 }
 
 instalando_bootloader_uefi(){
- echo -e "$PROSS - INSTALAÇAO GRUB."
+ echo -en "$PROSS - INSTALAÇAO GRUB."
 sleep 0.2
 pacstrap "${MOUNTPOINT}" efibootmgr grub-efi-x86_64 dosfstools --needed --noconfirm &>> $INSTLOG
 arch_chroot "mkdir -p "${MOUNTPOINT}""${EFI_MOUNTPOINT}"" &>> $INSTLOG
@@ -339,7 +339,7 @@ sleep 0.2
 }
 
 instalando_bootloader_bios(){
- echo -e "$PROSS - INSTALAÇAO GRUB."
+ echo -en "$PROSS - INSTALAÇAO GRUB."
 sleep 0.2
 pacstrap "${MOUNTPOINT}" grub --needed --noconfirm &>> $INSTLOG
 arch_chroot "grub-install --target=i386-pc --recheck /dev/${NMSD}" &>> $INSTLOG
@@ -369,7 +369,7 @@ sleep 0.2
 }
 
 pacotes_extras(){
-echo -e "$PROSS - INSTALAÇAO DE PACOTES EXTRAS."
+echo -en "$PROSS - INSTALAÇAO DE PACOTES EXTRAS."
 pacstrap "${MOUNTPOINT}" sudo dhcpcd polkit vi openssh --noconfirm --needed &>> $INSTLOG & show_progress $!
  echo -e "$CNT - COMPLEMENTOS IMPORTANTES INSTALADOS."
 }
