@@ -394,6 +394,7 @@ COM_FIO_DEV=$(ip link | grep "ens\|eno\|enp" | awk '{print $2}' | sed 's/://' | 
 if [[ -n $SEM_FIO_DEV ]]; then
 	pacstrap "${MOUNTPOINT}" iwd --needed &>> $INSTLOG
 	arch_chroot "systemctl enable iwd.service" &>> $INSTLOG
+	arch_chroot "systemctl enable dhcpcd" &>> $INSTLOG
 else
 	if [[ -n $COM_FIO_DEV ]]; then
 		arch_chroot "systemctl enable dhcpcd@${COM_FIO_DEV}.service" &>> $INSTLOG
