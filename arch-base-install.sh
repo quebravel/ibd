@@ -150,7 +150,8 @@ if [[ ! -f /etc/pacman.d/mirrorlist.backup ]]; then
 if ! rankmirrors -n 8 /etc/pacman.d/mirrorlist.backup > /etc/pacman.d/mirrorlist; then
    rm /etc/pacman.d/mirrorlist && mv /etc/pacman.d/mirrorlist.backup /etc/pacman.d/mirrorlist
 fi
-  cat /etc/pacman.d/mirrorlist
+  # cat /etc/pacman.d/mirrorlist
+  tail -n 10 /etc/pacman.d/mirrorlist | head -n 1
   echo -e "$COK - MIRROS RANQUEADAS."
 else
   echo -e "$CAT - MIRROS JÁ FORAM RANQUEADOS ANTES."
