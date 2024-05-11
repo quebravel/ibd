@@ -323,8 +323,12 @@ echo -e "$COK - HOSTS."
 
 senha_root(){
 
- echo -e "$CAC - Crie a senha do $(echo -e "\e[1;31m")ROOT$(echo -e "\e[0m")."
-arch_chroot "passwd"
+  echo -e "$CAC - Crie a senha do $(echo -e "\e[1;31m")ROOT$(echo -e "\e[0m")."
+  if ! arch_chroot "passwd"
+  then
+    echo "ERROU A SENHA ROOT"
+    senha_root
+  fi
 }
 
 instalando_bootloader_uefi(){
@@ -364,7 +368,11 @@ criando_usuario_senha(){
 arch_chroot "useradd -m -G users,wheel,power,storage,input -s /bin/bash $USUARIO"
 
 echo -e "$CAC - Crie a senha do usuário."
-arch_chroot "passwd $USUARIO"
+if ! arch_chroot "passwd $USUARIO"
+then
+  echo "ERROU A SENHA ROOT"
+  criando_usuario_senha
+fi
 sleep 0.2
  echo -e "$COK - USUÁRIO $USUARIO"
 }
