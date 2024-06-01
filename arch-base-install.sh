@@ -404,6 +404,7 @@ if [[ -n $SEM_FIO_DEV ]]; then
 	pacstrap "${MOUNTPOINT}" iwd --needed &>> $INSTLOG
 	arch_chroot "systemctl enable iwd.service" &>> $INSTLOG
 	arch_chroot "systemctl enable dhcpcd" &>> $INSTLOG
+  	arch_chroot "echo EnableNetworkConfiguration=true > /etc/iwd/main.conf" &>> $INSTLOG
 else
 	if [[ -n $COM_FIO_DEV ]]; then
 		arch_chroot "systemctl enable dhcpcd@${COM_FIO_DEV}.service" &>> $INSTLOG
