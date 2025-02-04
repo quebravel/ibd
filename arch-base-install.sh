@@ -380,7 +380,7 @@ sleep 0.2
 
 pacotes_extras(){
 echo -en "$PROSS - INSTALAÇAO DE PACOTES EXTRAS."
-pacstrap "${MOUNTPOINT}" sudo dhcpcd polkit vi openssh --noconfirm --needed &>> $INSTLOG & show_progress $!
+pacstrap "${MOUNTPOINT}" sudo networkmanager polkit vi openssh --noconfirm --needed &>> $INSTLOG & show_progress $!
  echo -e "$CNT - COMPLEMENTOS IMPORTANTES INSTALADOS."
 }
 
