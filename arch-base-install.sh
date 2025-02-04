@@ -404,12 +404,13 @@ COM_FIO_DEV=$(ip link | grep "ens\|eno\|enp" | awk '{print $2}' | sed 's/://' | 
 if [[ -n $SEM_FIO_DEV ]]; then
 	pacstrap "${MOUNTPOINT}" iwd --needed &>> $INSTLOG
 	arch_chroot "systemctl enable iwd.service" &>> $INSTLOG
-	arch_chroot "systemctl enable dhcpcd" &>> $INSTLOG
+	arch_chroot "systemctl enable NetworkManager.service" &>> $INSTLOG
   	arch_chroot "echo EnableNetworkConfiguration=true > /etc/iwd/main.conf" &>> $INSTLOG
 else
-	if [[ -n $COM_FIO_DEV ]]; then
-		arch_chroot "systemctl enable dhcpcd@${COM_FIO_DEV}.service" &>> $INSTLOG
-	fi
+	# if [[ -n $COM_FIO_DEV ]]; then
+		# arch_chroot "systemctl enable dhcpcd@${COM_FIO_DEV}.service" &>> $INSTLOG
+	# fi
+ 	echo "OK"
 fi
 sleep 0.2
  echo -e "$COK - DISPOSITIVO DE INTERNET"
