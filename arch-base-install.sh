@@ -91,8 +91,9 @@ cat <<EOF
                   O script já detecta se o sistema de boot é 
                   BIOS ou UEFI.
 
-                  Instala e configura  o  SUDO,  DHCPCD,  VI
-                  POLKIT,   LINUX-FIRMWARE   e   LINUX-DEVEL
+                  Instala e configura  o  SUDO,  VI, POLKIT,
+                  NETWORKMANAGER      LINUX-FIRMWARE      e   
+		  LINUX-DEVEL
 
 ++++----++++----++++----++++----++++----++++----++++----++++----++++----++
 EOF
