@@ -92,8 +92,7 @@ cat <<EOF
                   BIOS ou UEFI.
 
                   Instala e configura  o  SUDO,  VI, POLKIT,
-                  NETWORKMANAGER      LINUX-FIRMWARE      e   
-		  LINUX-DEVEL
+                  LINUX-FIRMWARE         e       LINUX-DEVEL
 
 ++++----++++----++++----++++----++++----++++----++++----++++----++++----++
 EOF
@@ -380,7 +379,7 @@ sleep 0.2
 
 pacotes_extras(){
 echo -en "$PROSS - INSTALAÇAO DE PACOTES EXTRAS."
-pacstrap "${MOUNTPOINT}" sudo networkmanager polkit vi openssh --noconfirm --needed &>> $INSTLOG & show_progress $!
+pacstrap "${MOUNTPOINT}" sudo polkit vi openssh --noconfirm --needed &>> $INSTLOG & show_progress $!
  echo -e "$CNT - COMPLEMENTOS IMPORTANTES INSTALADOS."
 }
 
