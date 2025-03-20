@@ -479,6 +479,11 @@ sleep 0.2
 echo -e "$COK - SSH."
 }
 
+dns_config() {
+  arch_chroot "echo "nameserver 8.8.8.8"" > /etc/resolv.conf
+  arch_chroot "echo "nameserver 8.8.4.4"" >> /etc/resolv.conf
+  arch_chroot "chattr +i /etc/resolv.conf"
+}
 
 #
 # ----- \ chroot
@@ -523,6 +528,7 @@ pacotes_extras
 configurando_sudo
 internet_configuracao
 ssh_configuracao
+dns_config
 desmontando_particoes
 saindo_da_instacao
 
