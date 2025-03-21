@@ -405,9 +405,9 @@ if [[ -n $SEM_FIO_DEV ]]; then
 	arch_chroot "systemctl enable iwd.service" &>> $INSTLOG
 	# arch_chroot "systemctl enable NetworkManager.service" &>> $INSTLOG
   	# arch_chroot "echo EnableNetworkConfiguration=true > /etc/iwd/main.conf" &>> $INSTLOG
-   	arch_chroot 'echo -e "[Match] \nName=$SEM_FIO_DEV \n\n[Link] \nRequiredForOnline=routable \n\n[Network] \nDHCP=yes \n\n[DHCPv4] \n\nRouteMetric=600 \n\n[IPv6AcceptRA] \nRouteMetric=600" > /etc/systemd/network/25-wireless.network' &>> $INSTLOG
+   	arch_chroot "echo -e "[Match] \nName=$SEM_FIO_DEV \n\n[Link] \nRequiredForOnline=routable \n\n[Network] \nDHCP=yes \n\n[DHCPv4] \n\nRouteMetric=600 \n\n[IPv6AcceptRA] \nRouteMetric=600" > /etc/systemd/network/25-wireless.network" &>> $INSTLOG
 
-	  arch_chroot 'echo -e "[Match] \nName=$COM_FIO_DEV \n\n[Link] \nRequiredForOnline=routable \n\n[Network] \nDHCP=yes \n\n[DHCPv4] \nRouteMetric=100 \n\n[IPv6AcceptRA] \nRouteMetric=100" > /etc/systemd/network/20-wired.network' &>> $INSTLOG
+	  arch_chroot "echo -e "[Match] \nName=$COM_FIO_DEV \n\n[Link] \nRequiredForOnline=routable \n\n[Network] \nDHCP=yes \n\n[DHCPv4] \nRouteMetric=100 \n\n[IPv6AcceptRA] \nRouteMetric=100" > /etc/systemd/network/20-wired.network" &>> $INSTLOG
 
  	  arch_chroot "systemctl enable systemd-networkd.service"
   	arch_chroot "systemctl enable systemd-resolved.service"
