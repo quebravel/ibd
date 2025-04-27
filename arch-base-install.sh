@@ -467,6 +467,23 @@ dns_config() {
   arch_chroot "chattr +i /etc/resolv.conf"
 }
 
+nvim_simples() {
+  arch_chroot "mkdir -p /root/.config/nvim/"
+  arch_chroot "echo -e 'vim.o.number = true' >> /root/.config/nvim/init.lua" 
+  arch_chroot "echo -e 'vim.o.wrap = true' >> /root/.config/nvim/init.lua" 
+  arch_chroot "echo -e 'vim.o.tabstop = 2' >> /root/.config/nvim/init.lua" 
+  arch_chroot "echo -e 'vim.o.shiftwidth = 2' >> /root/.config/nvim/init.lua" 
+  arch_chroot "echo -e 'vim.o.smartcase = true' >> /root/.config/nvim/init.lua" 
+  arch_chroot "echo -e 'vim.o.ignorecase = true' >> /root/.config/nvim/init.lua" 
+  arch_chroot "echo -e 'vim.o.hlsearch = false' >> /root/.config/nvim/init.lua" 
+  arch_chroot "echo -e 'vim.o.signcolumn = "yes"' >> /root/.config/nvim/init.lua" 
+  arch_chroot "echo -e 'local ok_theme = pcall(vim.cmd.colorscheme, "retrobox")' >> /root/.config/nvim/init.lua" 
+  arch_chroot "echo -e 'if not ok_theme then' >> /root/.config/nvim/init.lua" 
+  arch_chroot "echo -e '  vim.cmd.colorscheme("habamax")' >> /root/.config/nvim/init.lua" 
+  arch_chroot "echo -e 'end' >> /root/.config/nvim/init.lua" 
+  arch_chroot "echo -e 'vim.g.mapleader = vim.keycode("<Space>")' >> /root/.config/nvim/init.lua" 
+}
+
 #
 # ----- \ chroot
 
@@ -511,6 +528,7 @@ configurando_sudo
 internet_configuracao
 ssh_configuracao
 dns_config
+nvim_simples
 desmontando_particoes
 saindo_da_instacao
 
