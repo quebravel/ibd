@@ -477,11 +477,10 @@ nvim_simples() {
   arch_chroot "echo -e 'vim.o.ignorecase = true' >> /root/.config/nvim/init.lua" 
   arch_chroot "echo -e 'vim.o.hlsearch = false' >> /root/.config/nvim/init.lua" 
   arch_chroot "echo -e 'vim.o.signcolumn = "yes"' >> /root/.config/nvim/init.lua" 
-  arch_chroot "echo -e 'local ok_theme = pcall(vim.cmd.colorscheme, "retrobox")' >> /root/.config/nvim/init.lua" 
+  arch_chroot "echo -e 'local ok_theme = pcall(vim.cmd.colorscheme, \"retrobox\")' >> /root/.config/nvim/init.lua" 
   arch_chroot "echo -e 'if not ok_theme then' >> /root/.config/nvim/init.lua" 
-  arch_chroot "echo -e '  vim.cmd.colorscheme("habamax")' >> /root/.config/nvim/init.lua" 
+  arch_chroot "echo -e '  vim.cmd.colorscheme(\"habamax\")' >> /root/.config/nvim/init.lua" 
   arch_chroot "echo -e 'end' >> /root/.config/nvim/init.lua" 
-  arch_chroot "echo -e 'vim.g.mapleader = vim.keycode("<Space>")' >> /root/.config/nvim/init.lua" 
 }
 
 #
