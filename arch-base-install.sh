@@ -526,7 +526,7 @@ pacotes_extras
 configurando_sudo
 internet_configuracao
 ssh_configuracao
-dns_config
+# dns_config
 nvim_simples
 desmontando_particoes
 saindo_da_instacao
