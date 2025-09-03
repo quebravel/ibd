@@ -6,6 +6,8 @@
 #ADD 
 #
 
+# ARQUETERUA DO PROCESSADOR AMD64
+ARCH=x86_64
 
 # MOUNTPOINTS
 EFI_MOUNTPOINT="/boot" # para uefi
@@ -62,8 +64,8 @@ selecionar_dispositivo() {
 }
 
 # ARCH-CHROOT mudar <-
-arch_chroot() {
-	arch-chroot $MOUNTPOINT /bin/bash -c "${1}"
+void_xchroot() {
+	xchroot $MOUNTPOINT /bin/bash -c "${1}"
 }
 # DESMONTAR PARTICOES
 desmontar_particoes() {
@@ -135,3 +137,156 @@ umount_partitions() {
   ;;
 esac
 }
+
+rankeando_mirrors(){
+  # padrão
+  REPO=https://repo-default.voidlinux.org/current
+}
+
+relogio(){
+timedatectl set-ntp true
+  echo -e "$COK - RELÓGIO CONFIGURADO."
+}
+
+# -> inicio detecta bios/uefi automatico -->
+particionamento_uefi(){
+#NMSD=$(fdisk -l | sed -n 1p | sed 's/.*dev//g;s/\///' | cut -d: -f1)
+
+# FDISK
+echo -en "$PROSS - PARTICIONAMENTO."
+(echo o; echo n; echo p; echo 1; echo; echo +500M; echo Y; echo t; echo; echo uefi; echo a; echo w) | fdisk /dev/"${NMSD}" &>> $INSTLOG
+  sleep 0.2
+(echo n; echo p; echo 2; echo; echo +4G; echo Y; echo t; echo 2; echo swap; echo w) | fdisk /dev/"${NMSD}" &>> $INSTLOG
+  sleep 0.2
+(echo n; echo p; echo 3; echo; echo; echo w) | fdisk /dev/"${NMSD}" &>> $INSTLOG & show_progress $!
+  sleep 0.2
+
+# PARTED
+# (echo mkpart "EFI" fat32 1MiB 301MiB; echo set 1 esp on; echo mkpart "swap" linux-swap 301MiB 4.3GiB; echo mkpart "root" ext4 4.3GiB 100%; echo quit) | parted /dev/"${NMSD}"
+  echo -e "$COK - O DISCO DO SISTEMA FOI PARTICIONADO PARA UEFI."
+}
+
+particionamento_bios(){
+#NMSD=$(fdisk -l | sed -n 1p | sed 's/.*dev//g;s/\///' | cut -d: -f1)
+
+  # PARTED
+# (echo mkpart primary ext4 1MiB 100%; echo set 1 boot on; echo quit) | parted /dev/"${NMSD}"
+echo -en "$PROSS - PARTICIONAMENTO."
+  sleep 0.2
+(echo o; echo n; echo p; echo 1; echo; echo; echo a; echo w) | fdisk /dev/"${NMSD}" &>> $INSTLOG & show_progress $!
+  sleep 0.2
+  echo -e "$COK - O DISCO DO SISTEMA FOI PARTICIONADO PARA BIOS."
+}
+
+
+formatando_uefi(){
+#NMSD=$(fdisk -l | sed -n 1p | sed 's/.*dev//g;s/\///' | cut -d: -f1)
+
+echo -en "$PROSS - FORMATAÇAO."
+  sleep 0.2
+mkfs.vfat -F32 /dev/"${NMSD}1" &>> $INSTLOG
+  sleep 0.2
+mkfs.ext4 /dev/"${NMSD}3" &>> $INSTLOG
+  sleep 0.2
+mkswap /dev/"${NMSD}2" &>> $INSTLOG & show_progress $!
+  sleep 0.2
+  echo -e "$COK - PARTIÇÕES FORMATADAS."
+}
+
+formatando_bios(){
+#NMSD=$(fdisk -l | sed -n 1p | sed 's/.*dev//g;s/\///' | cut -d: -f1)
+
+echo -en "$PROSS - FORMATAÇAO."
+  sleep 0.2
+mkfs.ext4 /dev/"${NMSD}1" &>> $INSTLOG & show_progress $!
+  sleep 0.2
+  echo -e "$COK - PARTIÇÕES FORMATADAS."
+}
+
+
+montando_particoes_uefi(){
+#NMSD=$(fdisk -l | sed -n 1p | sed 's/.*dev//g;s/\///' | cut -d: -f1)
+
+  sleep 0.2
+mount /dev/"${NMSD}3" "${MOUNTPOINT}"
+  sleep 0.2
+mkdir -p "${MOUNTPOINT}""${EFI_MOUNTPOINT}"
+  sleep 0.2
+mount /dev/"${NMSD}1" "${MOUNTPOINT}""${EFI_MOUNTPOINT}"
+  sleep 0.2
+swapon /dev/"${NMSD}2"
+  sleep 0.2
+  echo -e "$COK - PARTIÇOES MONTADAS."
+}
+
+montando_particoes_bios(){
+#NMSD=$(fdisk -l | sed -n 1p | sed 's/.*dev//g;s/\///' | cut -d: -f1)
+
+  sleep 0.2
+mount /dev/"${NMSD}1" "${MOUNTPOINT}"
+  sleep 0.2
+  echo -e "$COK - PARTIÇOES MONTADAS."
+}
+
+# principal boo/uefi
+qual_boot(){
+if [[ -d /sys/firmware/efi ]]; then
+   particionamento_uefi
+   formatando_uefi
+   montando_particoes_uefi
+else
+   particionamento_bios
+   formatando_bios
+   montando_particoes_bios
+fi
+}
+#<- fim detecta bios/uefi automatico
+
+instalando_kernel(){
+echo -e "$CNT - VAMOS BAIXAR O KERNEL AGORA."
+  sleep 0.2
+  echo -en "$PROSS - XBPS."
+  mkdir -p /mnt/var/db/xbps/keys
+  cp /var/db/xbps/keys/* /mnt/var/db/xbps/keys/
+  XBPS_ARCH=$ARCH xbps-install -S -r "${MOUNTPOINT}" -R "$REPO" base-system
+ sleep 0.2
+  echo -e "$COK - FINALIZADO DOWNLOAD DO KERNEL."
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+inicio
+selecionar_dispositivo
+umount_partitions
+rankeando_mirrors
+relogio
+qual_boot
+instalando_kernel
+#gerando_fstab
+#zona_horario
+#idioma_portugues
+#teclado_layout
+#nome_host
+#senha_root
+#instalando_bootloader
+#criando_usuario_senha
+#pacotes_extras
+#configurando_sudo
+#internet_configuracao
+#ssh_configuracao
+## dns_config
+#nvim_simples
+#desmontando_particoes
+#saindo_da_instacao
