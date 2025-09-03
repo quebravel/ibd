@@ -25,7 +25,7 @@ CAT="[\e[1;37mATENCAO\e[0m]" #branco
 CWR="[\e[1;35mALERTA\e[0m]" #roxo claro
 CAC="[\e[1;33mACAO\e[0m]" #amarelo
 INSTLOG="$HOME/install.log"
-hIN_INST="&>> $INSTLOG & show_progress $!"
+#hIN_INST="&>> $INSTLOG & show_progress $!"
 PROSS="[\e[1;35mEXECUTANDO\e[0m"
 
 # show_progress() {
@@ -128,7 +128,7 @@ umount_partitions() {
    umount -Rl /mnt &>> $INSTLOG
    swapoff -a &>> $INSTLOG
    (echo d; echo 1; echo d; echo 2; echo d; echo w) | fdisk /dev/${NMSD} &>> $INSTLOG
-   (echo rm 1; echo rm 2; echo rm 3; echo rm 4; echo quit) | parted /dev/${NMSD} &>> $INSTLOG & show_progress $!
+   (echo rm 1; echo rm 2; echo rm 3; echo rm 4; echo quit) | parted /dev/${NMSD} # &>> $INSTLOG & show_progress $!
    #&& dd if=/dev/zero of=/dev/"${NMSD}" bs=1M
   ;;
   n|N) echo -e "$CAT - O DISCO NAO SERÁ FORMATADO."
@@ -143,10 +143,11 @@ rankeando_mirrors(){
   REPO=https://repo-default.voidlinux.org/current
 }
 
-relogio(){
-timedatectl set-ntp true
-  echo -e "$COK - RELÓGIO CONFIGURADO."
-}
+# --> não vai funcionar, acho que não precisa configurar
+# relogio(){
+# timedatectl set-ntp true
+#   echo -e "$COK - RELÓGIO CONFIGURADO."
+# }
 
 # -> inicio detecta bios/uefi automatico -->
 particionamento_uefi(){
@@ -158,7 +159,7 @@ echo -en "$PROSS - PARTICIONAMENTO."
   sleep 0.2
 (echo n; echo p; echo 2; echo; echo +4G; echo Y; echo t; echo 2; echo swap; echo w) | fdisk /dev/"${NMSD}" &>> $INSTLOG
   sleep 0.2
-(echo n; echo p; echo 3; echo; echo; echo w) | fdisk /dev/"${NMSD}" &>> $INSTLOG & show_progress $!
+(echo n; echo p; echo 3; echo; echo; echo w) | fdisk /dev/"${NMSD}" # &>> $INSTLOG & show_progress $!
   sleep 0.2
 
 # PARTED
@@ -173,7 +174,7 @@ particionamento_bios(){
 # (echo mkpart primary ext4 1MiB 100%; echo set 1 boot on; echo quit) | parted /dev/"${NMSD}"
 echo -en "$PROSS - PARTICIONAMENTO."
   sleep 0.2
-(echo o; echo n; echo p; echo 1; echo; echo; echo a; echo w) | fdisk /dev/"${NMSD}" &>> $INSTLOG & show_progress $!
+(echo o; echo n; echo p; echo 1; echo; echo; echo a; echo w) | fdisk /dev/"${NMSD}" # &>> $INSTLOG & show_progress $!
   sleep 0.2
   echo -e "$COK - O DISCO DO SISTEMA FOI PARTICIONADO PARA BIOS."
 }
@@ -188,7 +189,7 @@ mkfs.vfat -F32 /dev/"${NMSD}1" &>> $INSTLOG
   sleep 0.2
 mkfs.ext4 /dev/"${NMSD}3" &>> $INSTLOG
   sleep 0.2
-mkswap /dev/"${NMSD}2" &>> $INSTLOG & show_progress $!
+mkswap /dev/"${NMSD}2" # &>> $INSTLOG & show_progress $!
   sleep 0.2
   echo -e "$COK - PARTIÇÕES FORMATADAS."
 }
@@ -198,7 +199,7 @@ formatando_bios(){
 
 echo -en "$PROSS - FORMATAÇAO."
   sleep 0.2
-mkfs.ext4 /dev/"${NMSD}1" &>> $INSTLOG & show_progress $!
+mkfs.ext4 /dev/"${NMSD}1" # &>> $INSTLOG & show_progress $!
   sleep 0.2
   echo -e "$COK - PARTIÇÕES FORMATADAS."
 }
@@ -271,7 +272,7 @@ inicio
 selecionar_dispositivo
 umount_partitions
 rankeando_mirrors
-relogio
+#relogio <-- verificar se é preciso
 qual_boot
 instalando_kernel
 #gerando_fstab
