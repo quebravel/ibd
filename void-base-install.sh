@@ -9,6 +9,12 @@
 # ARQUETERUA DO PROCESSADOR AMD64
 ARCH=x86_64
 
+# MIRRORS
+# padrão
+# REPO=https://repo-default.voidlinux.org/current
+# chicago
+REPO=https://mirrors.servercentral.com/voidlinux
+
 # MOUNTPOINTS
 EFI_MOUNTPOINT="/boot" # para uefi
 MOUNTPOINT="/mnt"
@@ -138,10 +144,6 @@ umount_partitions() {
 esac
 }
 
-rankeando_mirrors(){
-  # padrão
-  REPO=https://repo-default.voidlinux.org/current
-}
 
 # --> não vai funcionar, acho que não precisa configurar
 # relogio(){
@@ -243,21 +245,38 @@ fi
 }
 #<- fim detecta bios/uefi automatico
 
-instalando_kernel(){
+base_install(){
 echo -e "$CNT - VAMOS BAIXAR O KERNEL AGORA."
   sleep 0.2
-  echo -en "$PROSS - XBPS."
+  echo -en "$PROSS - XBPS method."
   mkdir -p /mnt/var/db/xbps/keys
   cp /var/db/xbps/keys/* /mnt/var/db/xbps/keys/
-  XBPS_ARCH=$ARCH xbps-install -S -r "${MOUNTPOINT}" -R "$REPO" base-system
+  XBPS_ARCH="${ARCH}" xbps-install -S -r "${MOUNTPOINT}" -R "${REPO}" base-system
  sleep 0.2
   echo -e "$COK - FINALIZADO DOWNLOAD DO KERNEL."
 }
 
+gerando_fstab(){
+  xgenfstab -U "${MOUNTPOINT}" > /mnt/etc/fstab 
+}
 
 
+nome_host(){
+  HOSTS="void"
+  void_xchroot echo "$HOSTS" > /etc/hostname
+  # void_xchroot "sed -i '/127.0.0.1/s/$/ '${HOSTS}'/' /etc/hosts"
+  # void_xchroot "sed -i '/::1/s/$/ '${HOSTS}'/' /etc/hosts"
+}
 
+idioma_portugues(){
+  "sed -i 's/#pt_BR.U/pt_BR.U/' /mnt/etc/default/libc-locales" 
 
+  void_xchroot "echo LANG=pt_BR.UTF-8 > /etc/locale.conf"
+  sleep 0.2
+  void_xchroot "export LANG=pt_BR.UTF-8"
+  sleep 0.2
+  export LANG=pt_BR.UTF-8
+}
 
 
 
@@ -271,15 +290,14 @@ echo -e "$CNT - VAMOS BAIXAR O KERNEL AGORA."
 inicio
 selecionar_dispositivo
 umount_partitions
-rankeando_mirrors
 #relogio <-- verificar se é preciso
 qual_boot
-instalando_kernel
-#gerando_fstab
+base_install
+gerando_fstab
+nome_host
 #zona_horario
-#idioma_portugues
+idioma_portugues
 #teclado_layout
-#nome_host
 #senha_root
 #instalando_bootloader
 #criando_usuario_senha
