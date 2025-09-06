@@ -8,6 +8,8 @@
 
 # ARQUETERUA DO PROCESSADOR AMD64
 ARCH=x86_64
+# TECLADO
+KEYMAP=us
 
 # MIRRORS
 # padrão
@@ -69,10 +71,10 @@ selecionar_dispositivo() {
 	# BOOT_MOUNTPOINT=$device
 }
 
-# ARCH-CHROOT mudar <-
-void_xchroot() {
-	xchroot $MOUNTPOINT /bin/bash -c "${1}"
-}
+# CHROOT mudar <-
+# chroot "${MOUNTPOINT}"() {
+# 	chroot $MOUNTPOINT "${1}"
+# }
 # DESMONTAR PARTICOES
 desmontar_particoes() {
 	particoes_montadas=($(lsblk | grep "${MOUNTPOINT}" | awk '{print $7}' | sort -r))
@@ -263,18 +265,18 @@ gerando_fstab(){
 # Entering the Chroot
 nome_host(){
   HOSTS="void"
-  void_xchroot "echo "$HOSTS" > /etc/hostname"
-  # void_xchroot "sed -i '/127.0.0.1/s/$/ '${HOSTS}'/' /etc/hosts"
-  # void_xchroot "sed -i '/::1/s/$/ '${HOSTS}'/' /etc/hosts"
+  chroot "${MOUNTPOINT}" echo "$HOSTS" > /etc/hostname
+  # chroot "${MOUNTPOINT}" "sed -i '/127.0.0.1/s/$/ '${HOSTS}'/' /etc/hosts"
+  # chroot "${MOUNTPOINT}" "sed -i '/::1/s/$/ '${HOSTS}'/' /etc/hosts"
 }
 
 # Installation Configuration
 idioma_portugues(){
-  void_xchroot "sed -i 's/#pt_BR.U/pt_BR.U/' /mnt/etc/default/libc-locales" 
-  # void_xchroot "echo LANG=pt_BR.UTF-8 > /etc/locale.conf"
-  void_xchroot "xbps-reconfigure -f glibc-locales"
+  chroot "${MOUNTPOINT}" sed -i 's/#pt_BR.U/pt_BR.U/' /etc/default/libc-locales
+  # chroot "${MOUNTPOINT}" "echo LANG=pt_BR.UTF-8 > /etc/locale.conf"
+  chroot "${MOUNTPOINT}" xbps-reconfigure -f glibc-locales
   sleep 0.2
-  void_xchroot "export LANG=pt_BR.UTF-8"
+  chroot "${MOUNTPOINT}" export LANG=pt_BR.UTF-8
   sleep 0.2
   export LANG=pt_BR.UTF-8
 }
@@ -282,7 +284,7 @@ idioma_portugues(){
 # Set a Root Password
 senha_root(){
   echo -e "$CAC - Crie a senha do $(echo -e "\e[1;31m")ROOT$(echo -e "\e[0m")."
-  if ! void_xchroot "passwd"
+  if ! chroot "${MOUNTPOINT}" passwd
   then
     echo "ERROU A SENHA ROOT"
     senha_root
@@ -292,38 +294,38 @@ senha_root(){
 # Enable services
 ssh_configuracao(){
 
-arch_chroot	"sed -i '/Port 22/s/^#//' /etc/ssh/sshd_config"
-arch_chroot	"sed -i '/Protocol 2/s/^#//' /etc/ssh/sshd_config"
-arch_chroot	"sed -i '/HostKey \/etc\/ssh\/ssh_host_rsa_key/s/^#//' /etc/ssh/sshd_config"
-arch_chroot	"sed -i '/HostKey \/etc\/ssh\/ssh_host_dsa_key/s/^#//' /etc/ssh/sshd_config"
-arch_chroot	"sed -i '/HostKey \/etc\/ssh\/ssh_host_ecdsa_key/s/^#//' /etc/ssh/sshd_config"
-arch_chroot	"sed -i '/KeyRegenerationInterval/s/^#//' /etc/ssh/sshd_config"
-arch_chroot	"sed -i '/ServerKeyBits/s/^#//' /etc/ssh/sshd_config"
-arch_chroot	"sed -i '/SyslogFacility/s/^#//' /etc/ssh/sshd_config"
-arch_chroot	"sed -i '/LogLevel/s/^#//' /etc/ssh/sshd_config"
-arch_chroot	"sed -i '/LoginGraceTime/s/^#//' /etc/ssh/sshd_config"
-arch_chroot	"sed -i '/PermitRootLogin/s/^#//' /etc/ssh/sshd_config"
-arch_chroot	"sed -i '/HostbasedAuthentication no/s/^#//' /etc/ssh/sshd_config"
-arch_chroot	"sed -i '/StrictModes/s/^#//' /etc/ssh/sshd_config"
-arch_chroot	"sed -i '/RSAAuthentication/s/^#//' /etc/ssh/sshd_config"
-arch_chroot	"sed -i '/PubkeyAuthentication/s/^#//' /etc/ssh/sshd_config"
-arch_chroot	"sed -i '/IgnoreRhosts/s/^#//' /etc/ssh/sshd_config"
-arch_chroot	"sed -i '/PermitEmptyPasswords/s/^#//' /etc/ssh/sshd_config"
-arch_chroot	"sed -i '/AllowTcpForwarding/s/^#//' /etc/ssh/sshd_config"
-arch_chroot	"sed -i '/AllowTcpForwarding no/d' /etc/ssh/sshd_config"
-arch_chroot	"sed -i '/X11Forwarding/s/^#//' /etc/ssh/sshd_config"
-arch_chroot	"sed -i '/X11Forwarding/s/no/yes/' /etc/ssh/sshd_config"
-arch_chroot	"sed -i -e '/\tX11Forwarding yes/d' /etc/ssh/sshd_config"
-arch_chroot	"sed -i '/X11DisplayOffset/s/^#//' /etc/ssh/sshd_config"
-arch_chroot	"sed -i '/X11UseLocalhost/s/^#//' /etc/ssh/sshd_config"
-arch_chroot	"sed -i '/PrintMotd/s/^#//' /etc/ssh/sshd_config"
-arch_chroot	"sed -i '/PrintMotd/s/yes/no/' /etc/ssh/sshd_config"
-arch_chroot	"sed -i '/PrintLastLog/s/^#//' /etc/ssh/sshd_config"
-arch_chroot	"sed -i '/TCPKeepAlive/s/^#//' /etc/ssh/sshd_config"
-arch_chroot	"sed -i '/the setting of/s/^/#/' /etc/ssh/sshd_config"
-arch_chroot	"sed -i '/RhostsRSAAuthentication and HostbasedAuthentication/s/^/#/' /etc/ssh/sshd_config"
+chroot "${MOUNTPOINT}"	sed -i '/Port 22/s/^#//' /etc/ssh/sshd_config
+chroot "${MOUNTPOINT}"	sed -i '/Protocol 2/s/^#//' /etc/ssh/sshd_config
+chroot "${MOUNTPOINT}"	sed -i '/HostKey \/etc\/ssh\/ssh_host_rsa_key/s/^#//' /etc/ssh/sshd_config
+chroot "${MOUNTPOINT}"	sed -i '/HostKey \/etc\/ssh\/ssh_host_dsa_key/s/^#//' /etc/ssh/sshd_config
+chroot "${MOUNTPOINT}"	sed -i '/HostKey \/etc\/ssh\/ssh_host_ecdsa_key/s/^#//' /etc/ssh/sshd_config
+chroot "${MOUNTPOINT}"	sed -i '/KeyRegenerationInterval/s/^#//' /etc/ssh/sshd_config
+chroot "${MOUNTPOINT}"	sed -i '/ServerKeyBits/s/^#//' /etc/ssh/sshd_config
+chroot "${MOUNTPOINT}"	sed -i '/SyslogFacility/s/^#//' /etc/ssh/sshd_config
+chroot "${MOUNTPOINT}"	sed -i '/LogLevel/s/^#//' /etc/ssh/sshd_config
+chroot "${MOUNTPOINT}"	sed -i '/LoginGraceTime/s/^#//' /etc/ssh/sshd_config
+chroot "${MOUNTPOINT}"	sed -i '/PermitRootLogin/s/^#//' /etc/ssh/sshd_config
+chroot "${MOUNTPOINT}"	sed -i '/HostbasedAuthentication no/s/^#//' /etc/ssh/sshd_config
+chroot "${MOUNTPOINT}"	sed -i '/StrictModes/s/^#//' /etc/ssh/sshd_config
+chroot "${MOUNTPOINT}"	sed -i '/RSAAuthentication/s/^#//' /etc/ssh/sshd_config
+chroot "${MOUNTPOINT}"	sed -i '/PubkeyAuthentication/s/^#//' /etc/ssh/sshd_config
+chroot "${MOUNTPOINT}"	sed -i '/IgnoreRhosts/s/^#//' /etc/ssh/sshd_config
+chroot "${MOUNTPOINT}"	sed -i '/PermitEmptyPasswords/s/^#//' /etc/ssh/sshd_config
+chroot "${MOUNTPOINT}"	sed -i '/AllowTcpForwarding/s/^#//' /etc/ssh/sshd_config
+chroot "${MOUNTPOINT}"	sed -i '/AllowTcpForwarding no/d' /etc/ssh/sshd_config
+chroot "${MOUNTPOINT}"	sed -i '/X11Forwarding/s/^#//' /etc/ssh/sshd_config
+chroot "${MOUNTPOINT}"	sed -i '/X11Forwarding/s/no/yes/' /etc/ssh/sshd_config
+chroot "${MOUNTPOINT}"	sed -i -e '/\tX11Forwarding yes/d' /etc/ssh/sshd_config
+chroot "${MOUNTPOINT}"	sed -i '/X11DisplayOffset/s/^#//' /etc/ssh/sshd_config
+chroot "${MOUNTPOINT}"	sed -i '/X11UseLocalhost/s/^#//' /etc/ssh/sshd_config
+chroot "${MOUNTPOINT}"	sed -i '/PrintMotd/s/^#//' /etc/ssh/sshd_config
+chroot "${MOUNTPOINT}"	sed -i '/PrintMotd/s/yes/no/' /etc/ssh/sshd_config
+chroot "${MOUNTPOINT}"	sed -i '/PrintLastLog/s/^#//' /etc/ssh/sshd_config
+chroot "${MOUNTPOINT}"	sed -i '/TCPKeepAlive/s/^#//' /etc/ssh/sshd_config
+chroot "${MOUNTPOINT}"	sed -i '/the setting of/s/^/#/' /etc/ssh/sshd_config
+chroot "${MOUNTPOINT}"	sed -i '/RhostsRSAAuthentication and HostbasedAuthentication/s/^/#/' /etc/ssh/sshd_config
 
-arch_chroot "systemctl enable sshd"
+chroot "${MOUNTPOINT}" ln -s /etc/sv/sshd /etc/runit/runsvdir/default/
 sleep 0.2
 echo -e "$COK - SSH."
 }
@@ -336,21 +338,21 @@ COM_FIO_DEV=$(ip link | grep "ens\|eno\|enp" | awk '{print $2}' | sed 's/://' | 
 if [[ -n $SEM_FIO_DEV ]]; then
   # XBPS_ARCH=$ARCH xbps-install -S -r /mnt -R "$REPO" iwd
 	# pacstrap "${MOUNTPOINT}" iwd --needed &>> $INSTLOG
-	void_xchroot "xbps-install -Sy iwd"
-	void_xchroot "ln -s /etc/sv/iwd /etc/runit/runsvdir/default/"
+	chroot "${MOUNTPOINT}" xbps-install -Sy iwd
+	chroot "${MOUNTPOINT}" ln -s /etc/sv/iwd /etc/runit/runsvdir/default/
 
   echo "SEM FIO OK"
 elif [[ -n $COM_FIO_DEV ]]; then
 
-		void_xchroot "ln -s /etc/sv/dhcpcd /etc/runit/runsvdir/default/"
+		chroot "${MOUNTPOINT}" ln -s /etc/sv/dhcpcd /etc/runit/runsvdir/default/
 
  	echo "COM FIO OK"
 fi
 
 sleep 0.2
 
- 	arch_chroot "systemctl enable systemd-networkd.service"
-  arch_chroot "systemctl enable systemd-resolved.service"
+ 	chroot "${MOUNTPOINT}" systemctl enable systemd-networkd.service
+  chroot "${MOUNTPOINT}" systemctl enable systemd-resolved.service
 
 sleep 0.2
 
@@ -362,10 +364,10 @@ criando_usuario_senha(){
 
  read -rep "$(echo -e $CAC) - Qual o nome do $(echo -e $LETRA)usuário$(echo -e $RESET)? -> " USUARIO
 
-void_xchroot "useradd -m -G users,wheel,video,audio,storage,input -s /bin/bash $USUARIO"
+chroot "${MOUNTPOINT}" useradd -m -G users,wheel,video,audio,storage,input -s /bin/bash $USUARIO
 
 echo -e "$CAC - Crie a senha do usuário."
-if ! void_xchroot "passwd $USUARIO"
+if ! chroot "${MOUNTPOINT}" passwd "$USUARIO"
 then
   echo "ERROU A SENHA ROOT"
   criando_usuario_senha
@@ -374,14 +376,85 @@ sleep 0.2
  echo -e "$COK - USUÁRIO $USUARIO"
 }
 
-# root
+# usuario
 configurando_sudo(){
 
 # desomentando grupo de usuario wheel
-void_xchroot "sed -i '/%wheel ALL=(ALL:ALL) ALL/s/^#//' /etc/sudoers"
+chroot "${MOUNTPOINT}" sed -i '/%wheel ALL=(ALL:ALL) ALL/s/^# //' /etc/sudoers
 sleep 0.2
 
  echo -e "$COK - CONFIGURADO VOID E SUDO."
+}
+
+zona_horario(){
+
+# chroot "${MOUNTPOINT}" "ln -sf /usr/share/zoneinfo/America/Belem /etc/localtime"
+ln -s "/usr/share/zoneinfo/Amereica/Belem" "${MOUNTPOINT}/etc/localtime"
+# chroot "${MOUNTPOINT}" "hwclock --systohc"
+chroot "${MOUNTPOINT}" xbps-reconfigure -f glibc-locales
+sleep 0.2
+ echo -e "$COK - TIMEZONE LOCALIZAÇAO."
+}
+
+teclado_layout(){
+    if [ "${KEYMAP}" != "us" ] ; then
+        sed -i "s:\"es\":\"${KEYMAP}\":" "${MOUNTPOINT}/etc/rc.conf"
+        sed -i "s:#KEYMAP:KEYMAP:" "${MOUNTPOINT}/etc/rc.conf"
+    fi
+
+}
+
+instalando_bootloader_uefi(){
+ echo -en "$PROSS - INSTALAÇAO GRUB."
+sleep 0.2
+XBPS_ARCH="${ARCH}" xbps-install -S -r "${MOUNTPOINT}" -R "${REPO}" efibootmgr grub-efi-x86_64 dosfstools
+chroot "${MOUNTPOINT}" mkdir -p "${MOUNTPOINT}""${EFI_MOUNTPOINT}"
+chroot "${MOUNTPOINT}" mount /dev/"${NMSD}1" "${MOUNTPOINT}""${EFI_MOUNTPOINT}"
+chroot "${MOUNTPOINT}" grub-install --target=x86_64-efi --efi-directory=${MOUNTPOINT}${EFI_MOUNTPOINT} --bootloader-id=void_grub --recheck
+chroot "${MOUNTPOINT}" grub-mkconfig -o /boot/grub/grub.cfg
+sleep 0.2
+chroot "${MOUNTPOINT}" xbps-reconfigure -fa
+ echo -e "$COK - GRUB UEFI." # libisoburn mtools
+}
+
+instalando_bootloader_bios(){
+ echo -en "$PROSS - INSTALAÇAO GRUB."
+sleep 0.2
+XBPS_ARCH="${ARCH}" xbps-install -S -r "${MOUNTPOINT}" -R "${REPO}" grub
+chroot "${MOUNTPOINT}" grub-install --target=i386-pc --recheck /dev/${NMSD}
+chroot "${MOUNTPOINT}" grub-mkconfig -o /boot/grub/grub.cfg
+sleep 0.2
+chroot "${MOUNTPOINT}" xbps-reconfigure -fa
+ echo -e "$COK - GRUB BIOS."
+}
+
+instalando_bootloader(){
+if [[ -d /sys/firmware/efi ]]; then
+ instalando_bootloader_uefi
+else
+ instalando_bootloader_bios
+fi
+}
+
+desmontando_particoes(){
+
+umount -Rl ${MOUNTPOINT}
+swapoff -a
+  echo -e "$COK - PARTIÇOES DESMONTADAS."
+}
+
+saindo_da_instacao(){
+
+  echo -e "$CAC - Remova o pendrive do computador e aperte [ENTER]."
+  read -r ENTER
+  case "$ENTER" in
+    *) reboot
+    ;;
+    c) echo exit
+    ;;
+    q) echo exit
+    ;;
+  esac
 }
 
 inicio
@@ -398,11 +471,11 @@ ssh_configuracao
 internet_configuracao
 criando_usuario_senha
 configurando_sudo
-#zona_horario
-#teclado_layout
-#instalando_bootloader
+zona_horario
+teclado_layout
+instalando_bootloader
 #pacotes_extras
 ## dns_config
 #nvim_simples
-#desmontando_particoes
-#saindo_da_instacao
+desmontando_particoes
+saindo_da_instacao
