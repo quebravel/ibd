@@ -260,32 +260,129 @@ gerando_fstab(){
   xgenfstab -U "${MOUNTPOINT}" > /mnt/etc/fstab 
 }
 
-
+# Entering the Chroot
 nome_host(){
   HOSTS="void"
-  void_xchroot echo "$HOSTS" > /etc/hostname
+  void_xchroot "echo "$HOSTS" > /etc/hostname"
   # void_xchroot "sed -i '/127.0.0.1/s/$/ '${HOSTS}'/' /etc/hosts"
   # void_xchroot "sed -i '/::1/s/$/ '${HOSTS}'/' /etc/hosts"
 }
 
+# Installation Configuration
 idioma_portugues(){
-  "sed -i 's/#pt_BR.U/pt_BR.U/' /mnt/etc/default/libc-locales" 
-
-  void_xchroot "echo LANG=pt_BR.UTF-8 > /etc/locale.conf"
+  void_xchroot "sed -i 's/#pt_BR.U/pt_BR.U/' /mnt/etc/default/libc-locales" 
+  # void_xchroot "echo LANG=pt_BR.UTF-8 > /etc/locale.conf"
+  void_xchroot "xbps-reconfigure -f glibc-locales"
   sleep 0.2
   void_xchroot "export LANG=pt_BR.UTF-8"
   sleep 0.2
   export LANG=pt_BR.UTF-8
 }
 
+# Set a Root Password
+senha_root(){
+  echo -e "$CAC - Crie a senha do $(echo -e "\e[1;31m")ROOT$(echo -e "\e[0m")."
+  if ! void_xchroot "passwd"
+  then
+    echo "ERROU A SENHA ROOT"
+    senha_root
+  fi
+}
 
+# Enable services
+ssh_configuracao(){
 
+arch_chroot	"sed -i '/Port 22/s/^#//' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/Protocol 2/s/^#//' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/HostKey \/etc\/ssh\/ssh_host_rsa_key/s/^#//' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/HostKey \/etc\/ssh\/ssh_host_dsa_key/s/^#//' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/HostKey \/etc\/ssh\/ssh_host_ecdsa_key/s/^#//' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/KeyRegenerationInterval/s/^#//' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/ServerKeyBits/s/^#//' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/SyslogFacility/s/^#//' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/LogLevel/s/^#//' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/LoginGraceTime/s/^#//' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/PermitRootLogin/s/^#//' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/HostbasedAuthentication no/s/^#//' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/StrictModes/s/^#//' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/RSAAuthentication/s/^#//' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/PubkeyAuthentication/s/^#//' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/IgnoreRhosts/s/^#//' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/PermitEmptyPasswords/s/^#//' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/AllowTcpForwarding/s/^#//' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/AllowTcpForwarding no/d' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/X11Forwarding/s/^#//' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/X11Forwarding/s/no/yes/' /etc/ssh/sshd_config"
+arch_chroot	"sed -i -e '/\tX11Forwarding yes/d' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/X11DisplayOffset/s/^#//' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/X11UseLocalhost/s/^#//' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/PrintMotd/s/^#//' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/PrintMotd/s/yes/no/' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/PrintLastLog/s/^#//' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/TCPKeepAlive/s/^#//' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/the setting of/s/^/#/' /etc/ssh/sshd_config"
+arch_chroot	"sed -i '/RhostsRSAAuthentication and HostbasedAuthentication/s/^/#/' /etc/ssh/sshd_config"
 
+arch_chroot "systemctl enable sshd"
+sleep 0.2
+echo -e "$COK - SSH."
+}
 
+internet_configuracao(){
 
+SEM_FIO_DEV=$(ip link | grep wl | awk '{print $2}' | sed 's/://' | sed '1!d')
+COM_FIO_DEV=$(ip link | grep "ens\|eno\|enp" | awk '{print $2}' | sed 's/://' | sed '1!d')
 
+if [[ -n $SEM_FIO_DEV ]]; then
+  # XBPS_ARCH=$ARCH xbps-install -S -r /mnt -R "$REPO" iwd
+	# pacstrap "${MOUNTPOINT}" iwd --needed &>> $INSTLOG
+	void_xchroot "xbps-install -Sy iwd"
+	void_xchroot "ln -s /etc/sv/iwd /etc/runit/runsvdir/default/"
 
+  echo "SEM FIO OK"
+elif [[ -n $COM_FIO_DEV ]]; then
 
+		void_xchroot "ln -s /etc/sv/dhcpcd /etc/runit/runsvdir/default/"
+
+ 	echo "COM FIO OK"
+fi
+
+sleep 0.2
+
+ 	arch_chroot "systemctl enable systemd-networkd.service"
+  arch_chroot "systemctl enable systemd-resolved.service"
+
+sleep 0.2
+
+ echo -e "$COK - DISPOSITIVO DE INTERNET"
+}
+
+# usuario
+criando_usuario_senha(){
+
+ read -rep "$(echo -e $CAC) - Qual o nome do $(echo -e $LETRA)usuário$(echo -e $RESET)? -> " USUARIO
+
+void_xchroot "useradd -m -G users,wheel,video,audio,storage,input -s /bin/bash $USUARIO"
+
+echo -e "$CAC - Crie a senha do usuário."
+if ! void_xchroot "passwd $USUARIO"
+then
+  echo "ERROU A SENHA ROOT"
+  criando_usuario_senha
+fi
+sleep 0.2
+ echo -e "$COK - USUÁRIO $USUARIO"
+}
+
+# root
+configurando_sudo(){
+
+# desomentando grupo de usuario wheel
+void_xchroot "sed -i '/%wheel ALL=(ALL:ALL) ALL/s/^#//' /etc/sudoers"
+sleep 0.2
+
+ echo -e "$COK - CONFIGURADO VOID E SUDO."
+}
 
 inicio
 selecionar_dispositivo
@@ -295,16 +392,16 @@ qual_boot
 base_install
 gerando_fstab
 nome_host
-#zona_horario
 idioma_portugues
+senha_root
+ssh_configuracao
+internet_configuracao
+criando_usuario_senha
+configurando_sudo
+#zona_horario
 #teclado_layout
-#senha_root
 #instalando_bootloader
-#criando_usuario_senha
 #pacotes_extras
-#configurando_sudo
-#internet_configuracao
-#ssh_configuracao
 ## dns_config
 #nvim_simples
 #desmontando_particoes
