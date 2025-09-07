@@ -417,10 +417,10 @@ instalando_bootloader_uefi(){
  echo -en "$PROSS - INSTALAÇAO GRUB."
 sleep 0.2
 XBPS_ARCH="${ARCH}" xbps-install -S -r "${MOUNTPOINT}" -R "${REPO}" efibootmgr grub-efi-x86_64 dosfstools
-chroot "${MOUNTPOINT}" mkdir -p "${MOUNTPOINT}""${EFI_MOUNTPOINT}"
-chroot "${MOUNTPOINT}" mount /dev/"${NMSD}1" "${MOUNTPOINT}""${EFI_MOUNTPOINT}"
+# chroot "${MOUNTPOINT}" mkdir -p "${MOUNTPOINT}""${EFI_MOUNTPOINT}"
+# chroot "${MOUNTPOINT}" mount /dev/"${NMSD}1" "${MOUNTPOINT}""${EFI_MOUNTPOINT}"
 chroot "${MOUNTPOINT}" mount -t efivarfs none /sys/firmware/efi/efivars
-chroot "${MOUNTPOINT}" grub-install --target=x86_64-efi --efi-directory=${MOUNTPOINT}${EFI_MOUNTPOINT} --bootloader-id=void_grub --recheck
+chroot "${MOUNTPOINT}" grub-install --target=x86_64-efi --efi-directory=${EFI_MOUNTPOINT} --bootloader-id=void_grub --recheck
 chroot "${MOUNTPOINT}" grub-mkconfig -o /boot/grub/grub.cfg
 sleep 0.2
 chroot "${MOUNTPOINT}" xbps-reconfigure -fa
@@ -485,7 +485,7 @@ configurando_sudo
 zona_horario
 teclado_layout
 instalando_bootloader
-#gerando_fstab
+gerando_fstab
 
 ##pacotes_extras
 ### dns_config
