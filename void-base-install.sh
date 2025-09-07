@@ -18,7 +18,7 @@ KEYMAP=us
 REPO=https://mirrors.servercentral.com/voidlinux/current
 
 # MOUNTPOINTS
-EFI_MOUNTPOINT="/boot" # para uefi
+EFI_MOUNTPOINT="/boot/efi" # para uefi
 MOUNTPOINT="/mnt"
 
 # NOME DO DISCO
@@ -407,6 +407,7 @@ sleep 0.2
 XBPS_ARCH="${ARCH}" xbps-install -S -r "${MOUNTPOINT}" -R "${REPO}" efibootmgr grub-efi-x86_64 dosfstools
 chroot "${MOUNTPOINT}" mkdir -p "${MOUNTPOINT}""${EFI_MOUNTPOINT}"
 chroot "${MOUNTPOINT}" mount /dev/"${NMSD}1" "${MOUNTPOINT}""${EFI_MOUNTPOINT}"
+chroot "${MOUNTPOINT}" mount -t efivarfs none /sys/firmware/efi/efivars
 chroot "${MOUNTPOINT}" grub-install --target=x86_64-efi --efi-directory=${MOUNTPOINT}${EFI_MOUNTPOINT} --bootloader-id=void_grub --recheck
 chroot "${MOUNTPOINT}" grub-mkconfig -o /boot/grub/grub.cfg
 sleep 0.2
@@ -419,7 +420,7 @@ instalando_bootloader_bios(){
 sleep 0.2
 XBPS_ARCH="${ARCH}" xbps-install -S -r "${MOUNTPOINT}" -R "${REPO}" grub
 chroot "${MOUNTPOINT}" grub-install --target=i386-pc --recheck /dev/${NMSD}
-chroot "${MOUNTPOINT}" grub-mkconfig -o /boot/grub/grub.cfg
+# chroot "${MOUNTPOINT}" grub-mkconfig -o /boot/grub/grub.cfg
 sleep 0.2
 chroot "${MOUNTPOINT}" xbps-reconfigure -fa
  echo -e "$COK - GRUB BIOS."
@@ -460,7 +461,6 @@ umount_partitions
 #relogio <-- verificar se é preciso
 qual_boot
 base_install
-gerando_fstab
 nome_host
 idioma_portugues
 senha_root
@@ -469,8 +469,10 @@ internet_configuracao
 criando_usuario_senha
 configurando_sudo
 zona_horario
-#teclado_layout
-#instalando_bootloader
+teclado_layout
+instalando_bootloader
+#gerando_fstab
+
 ##pacotes_extras
 ### dns_config
 ##nvim_simples
