@@ -147,12 +147,6 @@ esac
 }
 
 
-# --> não vai funcionar, acho que não precisa configurar
-# relogio(){
-# timedatectl set-ntp true
-#   echo -e "$COK - RELÓGIO CONFIGURADO."
-# }
-
 # -> inicio detecta bios/uefi automatico -->
 particionamento_uefi(){
 #NMSD=$(fdisk -l | sed -n 1p | sed 's/.*dev//g;s/\///' | cut -d: -f1)
@@ -450,8 +444,28 @@ else
 fi
 }
 
-desmontando_particoes(){
+pacotes_extras(){
+XBPS_ARCH="${ARCH}" xbps-install -S -r "${MOUNTPOINT}" -R "${REPO}" dejavu-fonts-ttf xorg-fonts nerd-fonts-symbols-ttf neovim
+}
 
+nvim_simples() {
+ chroot "${MOUNTPOINT}" "mkdir -p /root/.config/nvim/"
+ chroot "${MOUNTPOINT}" "echo -e 'vim.o.number = true' >> /root/.config/nvim/init.lua" 
+ chroot "${MOUNTPOINT}" "echo -e 'vim.o.wrap = true' >> /root/.config/nvim/init.lua" 
+ chroot "${MOUNTPOINT}" "echo -e 'vim.o.tabstop = 2' >> /root/.config/nvim/init.lua" 
+ chroot "${MOUNTPOINT}" "echo -e 'vim.o.shiftwidth = 2' >> /root/.config/nvim/init.lua" 
+ chroot "${MOUNTPOINT}" "echo -e 'vim.o.smartcase = true' >> /root/.config/nvim/init.lua" 
+ chroot "${MOUNTPOINT}" "echo -e 'vim.o.ignorecase = true' >> /root/.config/nvim/init.lua" 
+ chroot "${MOUNTPOINT}" "echo -e 'vim.o.hlsearch = false' >> /root/.config/nvim/init.lua" 
+ chroot "${MOUNTPOINT}" "echo -e 'vim.o.signcolumn = "yes"' >> /root/.config/nvim/init.lua" 
+ chroot "${MOUNTPOINT}" "echo -e 'local ok_theme = pcall(vim.cmd.colorscheme, \"retrobox\")' >> /root/.config/nvim/init.lua" 
+ chroot "${MOUNTPOINT}" "echo -e 'if not ok_theme then' >> /root/.config/nvim/init.lua" 
+ chroot "${MOUNTPOINT}" "echo -e '  vim.cmd.colorscheme(\"habamax\")' >> /root/.config/nvim/init.lua" 
+ chroot "${MOUNTPOINT}" "echo -e 'end' >> /root/.config/nvim/init.lua" 
+}
+
+desmontando_particoes(){
+sync
 umount -Rl ${MOUNTPOINT}
 swapoff -a
   echo -e "$COK - PARTIÇOES DESMONTADAS."
@@ -462,7 +476,7 @@ saindo_da_instacao(){
   echo -e "$CAC - Remova o pendrive do computador e aperte [ENTER]."
   read -r ENTER
   case "$ENTER" in
-    *) reboot
+    *) reboot -f
     ;;
     c) echo exit
     ;;
@@ -474,14 +488,13 @@ saindo_da_instacao(){
 inicio
 selecionar_dispositivo
 umount_partitions
-#relogio <-- verificar se é preciso
 qual_boot
 base_install
 VAI_prepare_chroot
 nome_host
 idioma_portugues
 senha_root
-#ssh_configuracao
+ssh_configuracao
 internet_configuracao
 criando_usuario_senha
 configurando_sudo
@@ -490,8 +503,8 @@ teclado_layout
 instalando_bootloader
 gerando_fstab
 
-##pacotes_extras
+pacotes_extras
 ### dns_config
-##nvim_simples
-#desmontando_particoes
-#saindo_da_instacao
+nvim_simples
+desmontando_particoes
+saindo_da_instacao
