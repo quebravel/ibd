@@ -247,17 +247,6 @@ fi
 }
 #<- fim detecta bios/uefi automatico
 
-VAI_prepare_chroot() {
-    # Mount efivars if this is an EFI system
-    if [ -d /sys/firmware/efi ] ; then
-        mount -t efivarfs none /sys/firmware/efi/efivars
-    fi
-
-    # Mount dev, bind, proc, etc into chroot
-    mount -t proc proc "${MOUNTPOINT}/proc"
-    mount --rbind /sys "${MOUNTPOINT}/sys"
-    mount --rbind /dev "${MOUNTPOINT}/dev"
-}
 
 base_install(){
 echo -e "$CNT - VAMOS BAIXAR O KERNEL AGORA."
@@ -268,6 +257,18 @@ echo -e "$CNT - VAMOS BAIXAR O KERNEL AGORA."
   XBPS_ARCH="${ARCH}" xbps-install -S -r "${MOUNTPOINT}" -R "${REPO}" base-system
  sleep 0.2
   echo -e "$COK - FINALIZADO DOWNLOAD DO KERNEL."
+}
+
+VAI_prepare_chroot() {
+    # Mount efivars if this is an EFI system
+    if [ -d /sys/firmware/efi ] ; then
+        mount -t efivarfs none /sys/firmware/efi/efivars
+    fi
+
+    # Mount dev, bind, proc, etc into chroot
+    mount -t proc proc "${MOUNTPOINT}/proc"
+    mount --rbind /sys "${MOUNTPOINT}/sys"
+    mount --rbind /dev "${MOUNTPOINT}/dev"
 }
 
 gerando_fstab(){
@@ -416,14 +417,15 @@ teclado_layout(){
 instalando_bootloader_uefi(){
  echo -en "$PROSS - INSTALAÇAO GRUB."
 sleep 0.2
-XBPS_ARCH="${ARCH}" xbps-install -S -r "${MOUNTPOINT}" -R "${REPO}" efibootmgr grub-efi-x86_64 dosfstools
+#chroot "${MOUNTPOINT}" xbps-install efibootmgr grub-x86_64-efi dosfstools
+XBPS_ARCH="${ARCH}" xbps-install -S -r "${MOUNTPOINT}" -R "${REPO}" efibootmgr grub-x86_64-efi dosfstools
 # chroot "${MOUNTPOINT}" mkdir -p "${MOUNTPOINT}""${EFI_MOUNTPOINT}"
 # chroot "${MOUNTPOINT}" mount /dev/"${NMSD}1" "${MOUNTPOINT}""${EFI_MOUNTPOINT}"
-chroot "${MOUNTPOINT}" mount -t efivarfs none /sys/firmware/efi/efivars
+# chroot "${MOUNTPOINT}" mount -t efivarfs none /sys/firmware/efi/efivars
 chroot "${MOUNTPOINT}" grub-install --target=x86_64-efi --efi-directory=${EFI_MOUNTPOINT} --bootloader-id=void_grub --recheck
 chroot "${MOUNTPOINT}" grub-mkconfig -o /boot/grub/grub.cfg
 sleep 0.2
-chroot "${MOUNTPOINT}" xbps-reconfigure -fa
+# chroot "${MOUNTPOINT}" xbps-reconfigure -fa
  echo -e "$COK - GRUB UEFI." # libisoburn mtools
 }
 
@@ -473,8 +475,8 @@ selecionar_dispositivo
 umount_partitions
 #relogio <-- verificar se é preciso
 qual_boot
-VAI_prepare_chroot
 base_install
+VAI_prepare_chroot
 nome_host
 idioma_portugues
 senha_root
