@@ -15,7 +15,7 @@ KEYMAP=us
 # padrão
 # REPO=https://repo-default.voidlinux.org/current
 # chicago
-REPO=https://mirrors.servercentral.com/voidlinux
+REPO=https://mirrors.servercentral.com/voidlinux/current
 
 # MOUNTPOINTS
 EFI_MOUNTPOINT="/boot" # para uefi
@@ -265,7 +265,7 @@ gerando_fstab(){
 # Entering the Chroot
 nome_host(){
   HOSTS="void"
-  chroot "${MOUNTPOINT}" echo "$HOSTS" > /etc/hostname
+  echo "$HOSTS" > "${MOUNTPOINT}"/etc/hostname
   # chroot "${MOUNTPOINT}" "sed -i '/127.0.0.1/s/$/ '${HOSTS}'/' /etc/hosts"
   # chroot "${MOUNTPOINT}" "sed -i '/::1/s/$/ '${HOSTS}'/' /etc/hosts"
 }
@@ -276,9 +276,9 @@ idioma_portugues(){
   # chroot "${MOUNTPOINT}" "echo LANG=pt_BR.UTF-8 > /etc/locale.conf"
   chroot "${MOUNTPOINT}" xbps-reconfigure -f glibc-locales
   sleep 0.2
-  chroot "${MOUNTPOINT}" export LANG=pt_BR.UTF-8
-  sleep 0.2
-  export LANG=pt_BR.UTF-8
+  # chroot "${MOUNTPOINT}" export LANG=pt_BR.UTF-8
+  # sleep 0.2
+  # export LANG=pt_BR.UTF-8
 }
 
 # Set a Root Password
@@ -287,6 +287,7 @@ senha_root(){
   if ! chroot "${MOUNTPOINT}" passwd
   then
     echo "ERROU A SENHA ROOT"
+    sleep 5
     senha_root
   fi
 }
@@ -351,11 +352,6 @@ fi
 
 sleep 0.2
 
- 	chroot "${MOUNTPOINT}" systemctl enable systemd-networkd.service
-  chroot "${MOUNTPOINT}" systemctl enable systemd-resolved.service
-
-sleep 0.2
-
  echo -e "$COK - DISPOSITIVO DE INTERNET"
 }
 
@@ -389,9 +385,10 @@ sleep 0.2
 zona_horario(){
 
 # chroot "${MOUNTPOINT}" "ln -sf /usr/share/zoneinfo/America/Belem /etc/localtime"
-ln -s "/usr/share/zoneinfo/Amereica/Belem" "${MOUNTPOINT}/etc/localtime"
+rm -rf "${MOUNTPOINT}"/etc/localtime
+ln -s /usr/share/zoneinfo/America/Belem "${MOUNTPOINT}"/etc/localtime
 # chroot "${MOUNTPOINT}" "hwclock --systohc"
-chroot "${MOUNTPOINT}" xbps-reconfigure -f glibc-locales
+# chroot "${MOUNTPOINT}" xbps-reconfigure -f glibc-locales
 sleep 0.2
  echo -e "$COK - TIMEZONE LOCALIZAÇAO."
 }
@@ -467,15 +464,15 @@ gerando_fstab
 nome_host
 idioma_portugues
 senha_root
-ssh_configuracao
+#ssh_configuracao
 internet_configuracao
 criando_usuario_senha
 configurando_sudo
 zona_horario
-teclado_layout
-instalando_bootloader
-#pacotes_extras
-## dns_config
-#nvim_simples
-desmontando_particoes
-saindo_da_instacao
+#teclado_layout
+#instalando_bootloader
+##pacotes_extras
+### dns_config
+##nvim_simples
+#desmontando_particoes
+#saindo_da_instacao
