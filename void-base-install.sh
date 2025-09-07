@@ -286,6 +286,7 @@ nome_host(){
 # Installation Configuration
 idioma_portugues(){
   chroot "${MOUNTPOINT}" sed -i 's/#pt_BR.U/pt_BR.U/' /etc/default/libc-locales
+  chroot "${MOUNTPOINT}" sed -i 's/en_US.U/pt_BR.U/' /etc/locale.conf
   # chroot "${MOUNTPOINT}" "echo LANG=pt_BR.UTF-8 > /etc/locale.conf"
   chroot "${MOUNTPOINT}" xbps-reconfigure -f glibc-locales
   sleep 0.2
@@ -425,7 +426,7 @@ XBPS_ARCH="${ARCH}" xbps-install -S -r "${MOUNTPOINT}" -R "${REPO}" efibootmgr g
 chroot "${MOUNTPOINT}" grub-install --target=x86_64-efi --efi-directory=${EFI_MOUNTPOINT} --bootloader-id=void_grub --recheck
 chroot "${MOUNTPOINT}" grub-mkconfig -o /boot/grub/grub.cfg
 sleep 0.2
-# chroot "${MOUNTPOINT}" xbps-reconfigure -fa
+chroot "${MOUNTPOINT}" xbps-reconfigure -fa
  echo -e "$COK - GRUB UEFI." # libisoburn mtools
 }
 
