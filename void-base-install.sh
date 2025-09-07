@@ -247,6 +247,18 @@ fi
 }
 #<- fim detecta bios/uefi automatico
 
+VAI_prepare_chroot() {
+    # Mount efivars if this is an EFI system
+    if [ -d /sys/firmware/efi ] ; then
+        mount -t efivarfs none /sys/firmware/efi/efivars
+    fi
+
+    # Mount dev, bind, proc, etc into chroot
+    mount -t proc proc "${MOUNTPOINT}/proc"
+    mount --rbind /sys "${MOUNTPOINT}/sys"
+    mount --rbind /dev "${MOUNTPOINT}/dev"
+}
+
 base_install(){
 echo -e "$CNT - VAMOS BAIXAR O KERNEL AGORA."
   sleep 0.2
@@ -419,8 +431,9 @@ instalando_bootloader_bios(){
  echo -en "$PROSS - INSTALAÇAO GRUB."
 sleep 0.2
 XBPS_ARCH="${ARCH}" xbps-install -S -r "${MOUNTPOINT}" -R "${REPO}" grub
-chroot "${MOUNTPOINT}" grub-install --target=i386-pc --recheck /dev/${NMSD}
-# chroot "${MOUNTPOINT}" grub-mkconfig -o /boot/grub/grub.cfg
+# chroot "${MOUNTPOINT}" grub-install --target=i386-pc --recheck /dev/${NMSD}
+chroot "${MOUNTPOINT}" grub-install /dev/${NMSD}
+chroot "${MOUNTPOINT}" grub-mkconfig -o /boot/grub/grub.cfg
 sleep 0.2
 chroot "${MOUNTPOINT}" xbps-reconfigure -fa
  echo -e "$COK - GRUB BIOS."
@@ -460,6 +473,7 @@ selecionar_dispositivo
 umount_partitions
 #relogio <-- verificar se é preciso
 qual_boot
+VAI_prepare_chroot
 base_install
 nome_host
 idioma_portugues
