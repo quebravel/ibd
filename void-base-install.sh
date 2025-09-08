@@ -153,7 +153,7 @@ particionamento_uefi(){
 
 # FDISK
 echo -en "$PROSS - PARTICIONAMENTO."
-(echo o; echo n; echo p; echo 1; echo; echo +500M; echo Y; echo t; echo; echo uefi; echo a; echo w) | fdisk /dev/"${NMSD}" &>> $INSTLOG
+(echo o; echo n; echo p; echo 1; echo; echo +1G; echo Y; echo t; echo; echo uefi; echo a; echo w) | fdisk /dev/"${NMSD}" &>> $INSTLOG
   sleep 0.2
 (echo n; echo p; echo 2; echo; echo +4G; echo Y; echo t; echo 2; echo swap; echo w) | fdisk /dev/"${NMSD}" &>> $INSTLOG
   sleep 0.2
