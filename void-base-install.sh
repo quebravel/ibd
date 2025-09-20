@@ -449,19 +449,19 @@ XBPS_ARCH="${ARCH}" xbps-install -S -r "${MOUNTPOINT}" -R "${REPO}" dejavu-fonts
 }
 
 nvim_simples() {
- chroot "${MOUNTPOINT}" "mkdir -p /root/.config/nvim/"
- chroot "${MOUNTPOINT}" "echo -e 'vim.o.number = true' >> /root/.config/nvim/init.lua" 
- chroot "${MOUNTPOINT}" "echo -e 'vim.o.wrap = true' >> /root/.config/nvim/init.lua" 
- chroot "${MOUNTPOINT}" "echo -e 'vim.o.tabstop = 2' >> /root/.config/nvim/init.lua" 
- chroot "${MOUNTPOINT}" "echo -e 'vim.o.shiftwidth = 2' >> /root/.config/nvim/init.lua" 
- chroot "${MOUNTPOINT}" "echo -e 'vim.o.smartcase = true' >> /root/.config/nvim/init.lua" 
- chroot "${MOUNTPOINT}" "echo -e 'vim.o.ignorecase = true' >> /root/.config/nvim/init.lua" 
- chroot "${MOUNTPOINT}" "echo -e 'vim.o.hlsearch = false' >> /root/.config/nvim/init.lua" 
- chroot "${MOUNTPOINT}" "echo -e 'vim.o.signcolumn = "yes"' >> /root/.config/nvim/init.lua" 
- chroot "${MOUNTPOINT}" "echo -e 'local ok_theme = pcall(vim.cmd.colorscheme, \"retrobox\")' >> /root/.config/nvim/init.lua" 
- chroot "${MOUNTPOINT}" "echo -e 'if not ok_theme then' >> /root/.config/nvim/init.lua" 
- chroot "${MOUNTPOINT}" "echo -e '  vim.cmd.colorscheme(\"habamax\")' >> /root/.config/nvim/init.lua" 
- chroot "${MOUNTPOINT}" "echo -e 'end' >> /root/.config/nvim/init.lua" 
+ chroot "${MOUNTPOINT}" mkdir -p /root/.config/nvim/
+ chroot "${MOUNTPOINT}" echo -e 'vim.o.number = true' >> /root/.config/nvim/init.lua
+ chroot "${MOUNTPOINT}" echo -e 'vim.o.wrap = true' >> /root/.config/nvim/init.lua
+ chroot "${MOUNTPOINT}" echo -e 'vim.o.tabstop = 2' >> /root/.config/nvim/init.lua
+ chroot "${MOUNTPOINT}" echo -e 'vim.o.shiftwidth = 2' >> /root/.config/nvim/init.lua
+ chroot "${MOUNTPOINT}" echo -e 'vim.o.smartcase = true' >> /root/.config/nvim/init.lua
+ chroot "${MOUNTPOINT}" echo -e 'vim.o.ignorecase = true' >> /root/.config/nvim/init.lua
+ chroot "${MOUNTPOINT}" echo -e 'vim.o.hlsearch = false' >> /root/.config/nvim/init.lua
+ chroot "${MOUNTPOINT}" echo -e 'vim.o.signcolumn = "yes"' >> /root/.config/nvim/init.lua
+ chroot "${MOUNTPOINT}" echo -e 'local ok_theme = pcall(vim.cmd.colorscheme, \"retrobox\")' >> /root/.config/nvim/init.lua
+ chroot "${MOUNTPOINT}" echo -e 'if not ok_theme then' >> /root/.config/nvim/init.lua
+ chroot "${MOUNTPOINT}" echo -e '  vim.cmd.colorscheme(\"habamax\")' >> /root/.config/nvim/init.lua
+ chroot "${MOUNTPOINT}" echo -e 'end' >> /root/.config/nvim/init.lua
 }
 
 desmontando_particoes(){
