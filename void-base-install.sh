@@ -345,7 +345,7 @@ SEM_FIO_DEV=$(ip link | grep wl | awk '{print $2}' | sed 's/://' | sed '1!d')
 COM_FIO_DEV=$(ip link | grep "ens\|eno\|enp" | awk '{print $2}' | sed 's/://' | sed '1!d')
 
 if [[ -n $SEM_FIO_DEV ]]; then
-  XBPS_ARCH="${ARCH}" xbps-install -Sy -r "${MOUNTPOINT}" -R "${REPO}" iwd
+  XBPS_ARCH="${ARCH}" xbps-install -S -y -r "${MOUNTPOINT}" -R "${REPO}" iwd
 	chroot "${MOUNTPOINT}" ln -s /etc/sv/iwd /etc/runit/runsvdir/default/
 
   echo "SEM FIO OK"
@@ -411,7 +411,7 @@ instalando_bootloader_uefi(){
  echo -en "$PROSS - INSTALAÇAO GRUB."
 sleep 0.2
 #chroot "${MOUNTPOINT}" xbps-install efibootmgr grub-x86_64-efi dosfstools
-XBPS_ARCH="${ARCH}" xbps-install -S -r "${MOUNTPOINT}" -R "${REPO}" efibootmgr grub-x86_64-efi dosfstools
+XBPS_ARCH="${ARCH}" xbps-install -S -y -r "${MOUNTPOINT}" -R "${REPO}" efibootmgr grub-x86_64-efi dosfstools
 # chroot "${MOUNTPOINT}" mkdir -p "${MOUNTPOINT}""${EFI_MOUNTPOINT}"
 # chroot "${MOUNTPOINT}" mount /dev/"${NMSD}1" "${MOUNTPOINT}""${EFI_MOUNTPOINT}"
 # chroot "${MOUNTPOINT}" mount -t efivarfs none /sys/firmware/efi/efivars
@@ -425,7 +425,7 @@ chroot "${MOUNTPOINT}" xbps-reconfigure -fa
 instalando_bootloader_bios(){
  echo -en "$PROSS - INSTALAÇAO GRUB."
 sleep 0.2
-XBPS_ARCH="${ARCH}" xbps-install -S -r "${MOUNTPOINT}" -R "${REPO}" grub
+XBPS_ARCH="${ARCH}" xbps-install -S -y -r "${MOUNTPOINT}" -R "${REPO}" grub
 # chroot "${MOUNTPOINT}" grub-install --target=i386-pc --recheck /dev/${NMSD}
 chroot "${MOUNTPOINT}" grub-install /dev/${NMSD}
 chroot "${MOUNTPOINT}" grub-mkconfig -o /boot/grub/grub.cfg
@@ -443,7 +443,7 @@ fi
 }
 
 pacotes_extras(){
-XBPS_ARCH="${ARCH}" xbps-install -S -r "${MOUNTPOINT}" -R "${REPO}" dejavu-fonts-ttf xorg-fonts nerd-fonts-symbols-ttf neovim
+XBPS_ARCH="${ARCH}" xbps-install -S -y -r "${MOUNTPOINT}" -R "${REPO}" dejavu-fonts-ttf xorg-fonts nerd-fonts-symbols-ttf neovim git
 }
 
 nvim_simples() {
