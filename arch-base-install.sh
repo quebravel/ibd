@@ -365,7 +365,7 @@ criando_usuario_senha(){
 
  read -rep "$(echo -e $CAC) - Qual o nome do $(echo -e $LETRA)usuário$(echo -e $RESET)? -> " USUARIO
 
-arch_chroot "useradd -m -G users,wheel,power,storage,input -s /bin/bash $USUARIO"
+arch_chroot "useradd -m -G users,wheel,power,storage,input,video,audio -s /bin/bash $USUARIO"
 
 echo -e "$CAC - Crie a senha do usuário."
 if ! arch_chroot "passwd $USUARIO"
