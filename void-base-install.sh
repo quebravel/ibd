@@ -442,25 +442,33 @@ else
 fi
 }
 
-pacotes_extras(){
+pacotes_extras() {
 XBPS_ARCH="${ARCH}" xbps-install -S -y -r "${MOUNTPOINT}" -R "${REPO}" dejavu-fonts-ttf xorg-fonts nerd-fonts-symbols-ttf neovim git
+}
+
+pacotes_ignore() {
+  chroot "${MOUNTPOINT}" touch /etc/xbps.d/ignore_pkg.conf
+  chroot "${MOUNTPOINT}" echo ignorepkg=iw | tee /etc/xbps.d/ignore_pkg.conf
+  chroot "${MOUNTPOINT}" echo ignorepkg=linux-firmware-nvidia | tee -a /etc/xbps.d/ignore_pkg.conf
+  chroot "${MOUNTPOINT}" XBPS_ARCH="${ARCH}" xbps-remove -R -y -r "${MOUNTPOINT}" iw linux-firmware-nvidia
 }
 
 nvim_simples() {
  chroot "${MOUNTPOINT}" mkdir -p /root/.config/nvim/
+ chroot "${MOUNTPOINT}" touch /root/.config/nvim/init.lua
  sleep 0.3
- chroot "${MOUNTPOINT}" echo 'vim.o.number = true' | sudo tee -a /root/.config/nvim/init.lua
- chroot "${MOUNTPOINT}" echo 'vim.o.wrap = true' | sudo tee -a /root/.config/nvim/init.lua
- chroot "${MOUNTPOINT}" echo 'vim.o.tabstop = 2' | sudo tee -a /root/.config/nvim/init.lua 
- chroot "${MOUNTPOINT}" echo 'vim.o.shiftwidth = 2' | sudo tee -a /root/.config/nvim/init.lua
- chroot "${MOUNTPOINT}" echo 'vim.o.smartcase = true' | sudo tee -a /root/.config/nvim/init.lua
- chroot "${MOUNTPOINT}" echo 'vim.o.ignorecase = true' | sudo tee -a /root/.config/nvim/init.lua
- chroot "${MOUNTPOINT}" echo 'vim.o.hlsearch = false' | sudo tee -a /root/.config/nvim/init.lua 
- chroot "${MOUNTPOINT}" echo 'vim.o.signcolumn = "yes"' | sudo tee -a /root/.config/nvim/init.lua
- chroot "${MOUNTPOINT}" echo 'local ok_theme = pcall(vim.cmd.colorscheme, "retrobox")' | sudo tee -a /root/.config/nvim/init.lua
- chroot "${MOUNTPOINT}" echo 'if not ok_theme then' | sudo tee -a /root/.config/nvim/init.lua
- chroot "${MOUNTPOINT}" echo '  vim.cmd.colorscheme("habamax")' | sudo tee -a /root/.config/nvim/init.lua
- chroot "${MOUNTPOINT}" echo 'end' | sudo tee -a /root/.config/nvim/init.lua
+ chroot "${MOUNTPOINT}" echo 'vim.o.number = true' | tee -a /root/.config/nvim/init.lua
+ chroot "${MOUNTPOINT}" echo 'vim.o.wrap = true' | tee -a /root/.config/nvim/init.lua
+ chroot "${MOUNTPOINT}" echo 'vim.o.tabstop = 2' | tee -a /root/.config/nvim/init.lua 
+ chroot "${MOUNTPOINT}" echo 'vim.o.shiftwidth = 2' | tee -a /root/.config/nvim/init.lua
+ chroot "${MOUNTPOINT}" echo 'vim.o.smartcase = true' | tee -a /root/.config/nvim/init.lua
+ chroot "${MOUNTPOINT}" echo 'vim.o.ignorecase = true' | tee -a /root/.config/nvim/init.lua
+ chroot "${MOUNTPOINT}" echo 'vim.o.hlsearch = false' | tee -a /root/.config/nvim/init.lua 
+ chroot "${MOUNTPOINT}" echo 'vim.o.signcolumn = "yes"' | tee -a /root/.config/nvim/init.lua
+ chroot "${MOUNTPOINT}" echo 'local ok_theme = pcall(vim.cmd.colorscheme, "retrobox")' | tee -a /root/.config/nvim/init.lua
+ chroot "${MOUNTPOINT}" echo 'if not ok_theme then' | tee -a /root/.config/nvim/init.lua
+ chroot "${MOUNTPOINT}" echo '  vim.cmd.colorscheme("habamax")' | tee -a /root/.config/nvim/init.lua
+ chroot "${MOUNTPOINT}" echo 'end' | tee -a /root/.config/nvim/init.lua
 }
 
 desmontando_particoes(){
@@ -503,6 +511,7 @@ instalando_bootloader
 gerando_fstab
 
 pacotes_extras
+pacotes_ignore
 ### dns_config
 nvim_simples
 desmontando_particoes
