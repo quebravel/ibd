@@ -347,11 +347,14 @@ COM_FIO_DEV=$(ip link | grep "ens\|eno\|enp" | awk '{print $2}' | sed 's/://' | 
 if [[ -n $SEM_FIO_DEV ]]; then
   XBPS_ARCH="${ARCH}" xbps-install -S -y -r "${MOUNTPOINT}" -R "${REPO}" iwd
 	chroot "${MOUNTPOINT}" ln -s /etc/sv/iwd /etc/runit/runsvdir/default/
+	chroot "${MOUNTPOINT}" ln -s /etc/sv/dhcpcd /etc/runit/runsvdir/default/
 
   echo "SEM FIO OK"
 elif [[ -n $COM_FIO_DEV ]]; then
 
-		chroot "${MOUNTPOINT}" ln -s /etc/sv/dhcpcd /etc/runit/runsvdir/default/
+  XBPS_ARCH="${ARCH}" xbps-install -S -y -r "${MOUNTPOINT}" -R "${REPO}" iwd
+	chroot "${MOUNTPOINT}" ln -s /etc/sv/dhcpcd /etc/runit/runsvdir/default/
+	chroot "${MOUNTPOINT}" ln -s /etc/sv/iwd /etc/runit/runsvdir/default/
 
  	echo "COM FIO OK"
 fi
