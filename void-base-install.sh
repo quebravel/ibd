@@ -457,18 +457,18 @@ nvim_simples() {
  chroot "${MOUNTPOINT}" mkdir -p /root/.config/nvim/
  chroot "${MOUNTPOINT}" touch /root/.config/nvim/init.lua
  sleep 0.3
- chroot "${MOUNTPOINT}" echo 'vim.o.number = true' | tee -a /root/.config/nvim/init.lua
- chroot "${MOUNTPOINT}" echo 'vim.o.wrap = true' | tee -a /root/.config/nvim/init.lua
- chroot "${MOUNTPOINT}" echo 'vim.o.tabstop = 2' | tee -a /root/.config/nvim/init.lua 
- chroot "${MOUNTPOINT}" echo 'vim.o.shiftwidth = 2' | tee -a /root/.config/nvim/init.lua
- chroot "${MOUNTPOINT}" echo 'vim.o.smartcase = true' | tee -a /root/.config/nvim/init.lua
- chroot "${MOUNTPOINT}" echo 'vim.o.ignorecase = true' | tee -a /root/.config/nvim/init.lua
- chroot "${MOUNTPOINT}" echo 'vim.o.hlsearch = false' | tee -a /root/.config/nvim/init.lua 
- chroot "${MOUNTPOINT}" echo 'vim.o.signcolumn = "yes"' | tee -a /root/.config/nvim/init.lua
- chroot "${MOUNTPOINT}" echo 'local ok_theme = pcall(vim.cmd.colorscheme, "retrobox")' | tee -a /root/.config/nvim/init.lua
- chroot "${MOUNTPOINT}" echo 'if not ok_theme then' | tee -a /root/.config/nvim/init.lua
- chroot "${MOUNTPOINT}" echo '  vim.cmd.colorscheme("habamax")' | tee -a /root/.config/nvim/init.lua
- chroot "${MOUNTPOINT}" echo 'end' | tee -a /root/.config/nvim/init.lua
+ echo 'vim.o.number = true' | tee -a /mnt/root/.config/nvim/init.lua
+ echo 'vim.o.wrap = true' | tee -a /mnt/root/.config/nvim/init.lua
+ echo 'vim.o.tabstop = 2' | tee -a /mnt/root/.config/nvim/init.lua 
+ echo 'vim.o.shiftwidth = 2' | tee -a /mnt/root/.config/nvim/init.lua
+ echo 'vim.o.smartcase = true' | tee -a /mnt/root/.config/nvim/init.lua
+ echo 'vim.o.ignorecase = true' | tee -a /mnt/root/.config/nvim/init.lua
+ echo 'vim.o.hlsearch = false' | tee -a /mnt/root/.config/nvim/init.lua 
+ echo 'vim.o.signcolumn = "yes"' | tee -a /mnt/root/.config/nvim/init.lua
+ echo 'local ok_theme = pcall(vim.cmd.colorscheme, "retrobox")' | tee -a /mnt/root/.config/nvim/init.lua
+ echo 'if not ok_theme then' | tee -a /mnt/root/.config/nvim/init.lua
+ echo '  vim.cmd.colorscheme("habamax")' | tee -a /mnt/root/.config/nvim/init.lua
+ echo 'end' | tee -a /mnt/root/.config/nvim/init.lua
 }
 
 desmontando_particoes(){
