@@ -453,7 +453,7 @@ pacotes_ignore() {
   chroot "${MOUNTPOINT}" touch /etc/xbps.d/ignore_pkg.conf
   echo ignorepkg=iw | tee "${MOUNTPOINT}"/etc/xbps.d/ignore_pkg.conf
   echo ignorepkg=linux-firmware-nvidia | tee -a "${MOUNTPOINT}"/etc/xbps.d/ignore_pkg.conf
-  chroot "${MOUNTPOINT}" XBPS_ARCH="${ARCH}" xbps-remove -R -y -r "${MOUNTPOINT}" iw linux-firmware-nvidia
+  chroot "${MOUNTPOINT}" xbps-remove -R -y iw linux-firmware-nvidia
 }
 
 nvim_simples() {
