@@ -155,24 +155,25 @@ umount_partitions() {
 rankeando_mirrors() {
 
   echo -e "$CNT - RANKEANDO MIRRORS"
-  pacman -Sy pacman-contrib --noconfirm --needed &>>$INSTLOG
-  # cat /etc/pacman.d/mirrorlist
-  if [[ ! -f /etc/pacman.d/mirrorlist.backup ]]; then
-    cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
-
-    echo -e "\n $CNT - ESPERE UM MOMENTO ENQUANTO FAÇO UM RANK COM OS 8 MELHORES MIRRORS."
-
-    echo -en "$PROSS] - RANQUEAMENTO."
-    if ! rankmirrors -n 8 /etc/pacman.d/mirrorlist.backup >/etc/pacman.d/mirrorlist; then
-      rm /etc/pacman.d/mirrorlist && mv /etc/pacman.d/mirrorlist.backup /etc/pacman.d/mirrorlist
-    fi
-    # cat /etc/pacman.d/mirrorlist
-    tail -n 10 /etc/pacman.d/mirrorlist | head -n 1
-    echo -e "$COK - MIRROS RANQUEADAS."
-  else
-    echo -e "$CAT - MIRROS JÁ FORAM RANQUEADOS ANTES."
-    sleep 1
-  fi
+  # pacman -Sy pacman-contrib --noconfirm --needed &>>$INSTLOG
+  # # cat /etc/pacman.d/mirrorlist
+  # if [[ ! -f /etc/pacman.d/mirrorlist.backup ]]; then
+  #   cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
+  #
+  #   echo -e "\n $CNT - ESPERE UM MOMENTO ENQUANTO FAÇO UM RANK COM OS 8 MELHORES MIRRORS."
+  #
+  #   echo -en "$PROSS] - RANQUEAMENTO."
+  #   if ! rankmirrors -n 8 /etc/pacman.d/mirrorlist.backup >/etc/pacman.d/mirrorlist; then
+  #     rm /etc/pacman.d/mirrorlist && mv /etc/pacman.d/mirrorlist.backup /etc/pacman.d/mirrorlist
+  #   fi
+  #   # cat /etc/pacman.d/mirrorlist
+  #   tail -n 10 /etc/pacman.d/mirrorlist | head -n 1
+  #   echo -e "$COK - MIRROS RANQUEADAS."
+  # else
+  #   echo -e "$CAT - MIRROS JÁ FORAM RANQUEADOS ANTES."
+  #   sleep 1
+  # fi
+  source ./rankeando_mirrors.sh
 }
 
 relogio() {
