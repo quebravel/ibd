@@ -402,7 +402,7 @@ senha_root() {
 instalando_bootloader_uefi() {
   echo -en "$PROSS - INSTALAÇAO GRUB."
   sleep 0.2
-  pacstrap "${MOUNTPOINT}" efibootmgr grub dosfstools --needed --noconfirm
+  pacstrap "${MOUNTPOINT}" efibootmgr grub-efi-x86_64 dosfstools --needed --noconfirm
   arch_chroot "mkdir -p "${MOUNTPOINT}""${EFI_MOUNTPOINT}""
   arch_chroot "mount /dev/"${NMSD}1" "${MOUNTPOINT}""${EFI_MOUNTPOINT}""
   arch_chroot "grub-install --target=x86_64-efi --efi-directory=${MOUNTPOINT}${EFI_MOUNTPOINT} --bootloader-id=arch_grub --recheck"
@@ -433,6 +433,14 @@ instalando_bootloader() {
 criando_usuario_senha() {
 
   read -rep "$(echo -e $CAC) - Qual o nome do $(echo -e $LETRA)usuário$(echo -e $RESET)? -> " USUARIO
+
+  groupadd users
+  groupadd wheel
+  groupadd power
+  groupadd storage
+  groupadd input
+  groupadd video
+  groupadd audio
 
   arch_chroot "useradd -m -G users,wheel,power,storage,input,video,audio -s /bin/bash $USUARIO"
 
