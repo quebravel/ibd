@@ -402,12 +402,11 @@ senha_root() {
 instalando_bootloader_uefi() {
   echo -en "$PROSS - INSTALAÇAO GRUB."
   sleep 0.2
-  pacstrap "${MOUNTPOINT}" efibootmgr grub dosfstools --needed --noconfirm &>>$INSTLOG
-  arch_chroot "mkdir -p "${MOUNTPOINT}""${EFI_MOUNTPOINT}"" &>>$INSTLOG
-  arch_chroot "mount /dev/"${NMSD}1" "${MOUNTPOINT}""${EFI_MOUNTPOINT}"" &>>$INSTLOG
-  arch_chroot "grub-install --target=x86_64-efi --efi-directory=${MOUNTPOINT}${EFI_MOUNTPOINT} --bootloader-id=arch_grub --recheck" &>>$INSTLOG
-  arch_chroot "grub-mkconfig -o /boot/grub/grub.cfg" &>>$INSTLOG &
-  show_progress $!
+  pacstrap "${MOUNTPOINT}" efibootmgr grub dosfstools --needed --noconfirm
+  arch_chroot "mkdir -p "${MOUNTPOINT}""${EFI_MOUNTPOINT}""
+  arch_chroot "mount /dev/"${NMSD}1" "${MOUNTPOINT}""${EFI_MOUNTPOINT}""
+  arch_chroot "grub-install --target=x86_64-efi --efi-directory=${MOUNTPOINT}${EFI_MOUNTPOINT} --bootloader-id=arch_grub --recheck"
+  arch_chroot "grub-mkconfig -o /boot/grub/grub.cfg"
   sleep 0.2
   echo -e "$COK - GRUB UEFI." # libisoburn mtools
 }
