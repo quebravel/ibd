@@ -56,16 +56,31 @@ checar_root() {
 checar_dependencias() {
   local deps=("rankmirrors" "curl")
   local faltando=()
-
   for dep in "${deps[@]}"; do
     command -v "$dep" &>/dev/null || faltando+=("$dep")
   done
-
   if [[ ${#faltando[@]} -gt 0 ]]; then
     err "Dependências ausentes: ${faltando[*]}"
     err "Instale com: pacman -S pacman-contrib curl"
     exit 1
   fi
+}
+
+# ──────────────────────────────────────────────────────────────────────────────
+#  DETECTAR FLAGS SUPORTADAS PELO rankmirrors
+# ──────────────────────────────────────────────────────────────────────────────
+detectar_flags_rankmirrors() {
+  # Descobre se esta versão aceita -t (timeout)
+  RANKMIRRORS_SUPORTA_T=false
+  if rankmirrors --help 2>&1 | grep -q -- '-t'; then
+    RANKMIRRORS_SUPORTA_T=true
+  fi
+
+  # Mostra versão encontrada
+  local versao
+  versao=$(rankmirrors --version 2>&1 || rankmirrors -V 2>&1 || echo "desconhecida")
+  msg "rankmirrors versão: $versao"
+  msg "Suporte a -t (timeout): $RANKMIRRORS_SUPORTA_T"
 }
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -107,14 +122,22 @@ baixar_mirrorlist() {
 rankear_mirrors() {
   titulo "Rankeando os ${TOP_N} mirrors mais rápidos"
   msg "Isso pode levar alguns minutos..."
-  msg "Timeout por mirror: ${TIMEOUT}s | Top mirrors: ${TOP_N}"
+
+  # Montar comando conforme flags disponíveis
+  local cmd="rankmirrors -n ${TOP_N}"
+  if [[ "$RANKMIRRORS_SUPORTA_T" == true ]]; then
+    cmd="$cmd -t ${TIMEOUT}"
+    msg "Timeout por mirror: ${TIMEOUT}s"
+  else
+    warn "Esta versão do rankmirrors não suporta -t. Sem timeout definido."
+  fi
   echo ""
 
   local ranked_file
   ranked_file=$(mktemp /tmp/ranked.XXXXXX)
 
-  # rankmirrors: stderr (progresso) vai direto ao terminal; stdout capturado
-  rankmirrors -n "$TOP_N" -t "$TIMEOUT" "$TEMP_FILE" >"$ranked_file"
+  # Executar — stderr (progresso) vai direto ao terminal
+  $cmd "$TEMP_FILE" >"$ranked_file"
 
   # Verificar se gerou resultado
   if ! grep -q '^Server' "$ranked_file"; then
@@ -126,7 +149,6 @@ rankear_mirrors() {
   # Montar mirrorlist final com cabeçalho
   local final_file
   final_file=$(mktemp /tmp/mirrorlist_final.XXXXXX)
-
   {
     echo "################################################################################"
     echo "# Arch Linux mirrorlist gerado por rankeando_mirrors.sh"
@@ -137,7 +159,6 @@ rankear_mirrors() {
     cat "$ranked_file"
   } >"$final_file"
 
-  # Salvar log, aplicar e limpar
   cp "$final_file" "$LOG_FILE"
   cp "$final_file" "$MIRRORLIST"
   rm -f "$ranked_file" "$final_file"
@@ -181,6 +202,7 @@ main() {
 
   checar_root
   checar_dependencias
+  detectar_flags_rankmirrors
   fazer_backup
   baixar_mirrorlist
   rankear_mirrors
