@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # =============================================================================
 #  rankeando_mirrors.sh — Rankeia e aplica os melhores mirrors do Arch Linux
-#  Dependências: rankmirrors (pacman-contrib), curl
+#  Dependências: rankmirrors v1.13+ (pacman-contrib), curl
 # =============================================================================
 
 set -euo pipefail
@@ -14,8 +14,8 @@ readonly BACKUP="${MIRRORLIST}.bak.$(date +%Y%m%d_%H%M%S)"
 readonly MIRRORLIST_URL="https://archlinux.org/mirrorlist/?country=BR&country=US&protocol=https&use_mirror_status=on"
 readonly TEMP_FILE=$(mktemp /tmp/mirrorlist.XXXXXX)
 readonly LOG_FILE="/tmp/rankeando_mirrors.log"
-readonly TOP_N=10  # número de mirrors no resultado final
-readonly TIMEOUT=5 # timeout por mirror (segundos)
+readonly TOP_N=10   # número de mirrors no resultado final
+readonly MAX_TIME=5 # timeout por mirror em segundos (flag -m / --max-time)
 
 # ──────────────────────────────────────────────────────────────────────────────
 #  CORES
@@ -40,9 +40,7 @@ titulo() {
   echo -e "${CYAN}══════════════════════════════════════════${RESET}\n"
 }
 
-cleanup() {
-  rm -f "$TEMP_FILE"
-}
+cleanup() { rm -f "$TEMP_FILE"; }
 trap cleanup EXIT
 
 checar_root() {
@@ -64,23 +62,6 @@ checar_dependencias() {
     err "Instale com: pacman -S pacman-contrib curl"
     exit 1
   fi
-}
-
-# ──────────────────────────────────────────────────────────────────────────────
-#  DETECTAR FLAGS SUPORTADAS PELO rankmirrors
-# ──────────────────────────────────────────────────────────────────────────────
-detectar_flags_rankmirrors() {
-  # Descobre se esta versão aceita -t (timeout)
-  RANKMIRRORS_SUPORTA_T=false
-  if rankmirrors --help 2>&1 | grep -q -- '-t'; then
-    RANKMIRRORS_SUPORTA_T=true
-  fi
-
-  # Mostra versão encontrada
-  local versao
-  versao=$(rankmirrors --version 2>&1 || rankmirrors -V 2>&1 || echo "desconhecida")
-  msg "rankmirrors versão: $versao"
-  msg "Suporte a -t (timeout): $RANKMIRRORS_SUPORTA_T"
 }
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -121,27 +102,21 @@ baixar_mirrorlist() {
 # ──────────────────────────────────────────────────────────────────────────────
 rankear_mirrors() {
   titulo "Rankeando os ${TOP_N} mirrors mais rápidos"
+  msg "Timeout por mirror: ${MAX_TIME}s  |  Top mirrors: ${TOP_N}"
   msg "Isso pode levar alguns minutos..."
-
-  # Montar comando conforme flags disponíveis
-  local cmd="rankmirrors -n ${TOP_N}"
-  if [[ "$RANKMIRRORS_SUPORTA_T" == true ]]; then
-    cmd="$cmd -t ${TIMEOUT}"
-    msg "Timeout por mirror: ${TIMEOUT}s"
-  else
-    warn "Esta versão do rankmirrors não suporta -t. Sem timeout definido."
-  fi
   echo ""
 
   local ranked_file
   ranked_file=$(mktemp /tmp/ranked.XXXXXX)
 
-  # Executar — stderr (progresso) vai direto ao terminal
-  $cmd "$TEMP_FILE" >"$ranked_file"
+  # -n  → número de mirrors no output
+  # -m  → max-time (timeout por mirror)  ← flag correta nesta versão
+  # -w  → só incluir mirrors que responderam dentro do timeout
+  # stderr (progresso) vai direto ao terminal
+  rankmirrors -n "$TOP_N" -m "$MAX_TIME" -w "$TEMP_FILE" >"$ranked_file"
 
-  # Verificar se gerou resultado
   if ! grep -q '^Server' "$ranked_file"; then
-    err "Nenhum mirror respondeu. Verifique sua conexão ou aumente o TIMEOUT."
+    err "Nenhum mirror respondeu. Tente aumentar MAX_TIME no script."
     rm -f "$ranked_file"
     exit 1
   fi
@@ -197,12 +172,9 @@ atualizar_pacman() {
 # ──────────────────────────────────────────────────────────────────────────────
 main() {
   titulo "rankeando_mirrors.sh"
-  msg "Testando mirrors do Arch Linux com rankmirrors..."
-  echo ""
 
   checar_root
   checar_dependencias
-  detectar_flags_rankmirrors
   fazer_backup
   baixar_mirrorlist
   rankear_mirrors
