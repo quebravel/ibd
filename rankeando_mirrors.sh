@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 # =============================================================================
 #  rankeando_mirrors.sh — Rankeia e aplica os melhores mirrors do Arch Linux
-#  Dependências: rankmirrors (pacman-contrib), curl, reflector (opcional)
-#  feito com claude
+#  Dependências: rankmirrors (pacman-contrib), curl
 # =============================================================================
 
 set -euo pipefail
@@ -15,9 +14,8 @@ readonly BACKUP="${MIRRORLIST}.bak.$(date +%Y%m%d_%H%M%S)"
 readonly MIRRORLIST_URL="https://archlinux.org/mirrorlist/?country=BR&country=US&protocol=https&use_mirror_status=on"
 readonly TEMP_FILE=$(mktemp /tmp/mirrorlist.XXXXXX)
 readonly LOG_FILE="/tmp/rankeando_mirrors.log"
-readonly TOP_N=10      # número de mirrors a testar
-readonly TIMEOUT=5     # timeout por mirror (segundos)
-readonly NUM_THREADS=5 # downloads paralelos no rankmirrors
+readonly TOP_N=10  # número de mirrors no resultado final
+readonly TIMEOUT=5 # timeout por mirror (segundos)
 
 # ──────────────────────────────────────────────────────────────────────────────
 #  CORES
@@ -44,7 +42,6 @@ titulo() {
 
 cleanup() {
   rm -f "$TEMP_FILE"
-  msg "Arquivo temporário removido."
 }
 trap cleanup EXIT
 
@@ -110,40 +107,40 @@ baixar_mirrorlist() {
 rankear_mirrors() {
   titulo "Rankeando os ${TOP_N} mirrors mais rápidos"
   msg "Isso pode levar alguns minutos..."
-  msg "Timeout por mirror: ${TIMEOUT}s | Threads: ${NUM_THREADS}"
+  msg "Timeout por mirror: ${TIMEOUT}s | Top mirrors: ${TOP_N}"
   echo ""
 
   local ranked_file
   ranked_file=$(mktemp /tmp/ranked.XXXXXX)
 
-  # Cabeçalho do mirrorlist final
+  # rankmirrors: stderr (progresso) vai direto ao terminal; stdout capturado
+  rankmirrors -n "$TOP_N" -t "$TIMEOUT" "$TEMP_FILE" >"$ranked_file"
+
+  # Verificar se gerou resultado
+  if ! grep -q '^Server' "$ranked_file"; then
+    err "Nenhum mirror respondeu. Verifique sua conexão ou aumente o TIMEOUT."
+    rm -f "$ranked_file"
+    exit 1
+  fi
+
+  # Montar mirrorlist final com cabeçalho
+  local final_file
+  final_file=$(mktemp /tmp/mirrorlist_final.XXXXXX)
+
   {
     echo "################################################################################"
     echo "# Arch Linux mirrorlist gerado por rankeando_mirrors.sh"
     echo "# Data: $(date '+%d/%m/%Y %H:%M:%S')"
-    echo "# Top ${TOP_N} mirrors (por latência) — ordenados do mais rápido ao mais lento"
+    echo "# Top ${TOP_N} mirrors (latência) — do mais rápido ao mais lento"
     echo "################################################################################"
     echo ""
-  } >"$ranked_file"
+    cat "$ranked_file"
+  } >"$final_file"
 
-  # Executa rankmirrors com barra de progresso simples
-  rankmirrors -n "$TOP_N" -t "$TIMEOUT" -p "$NUM_THREADS" "$TEMP_FILE" \
-    2> >(grep -v '^$' | while IFS= read -r line; do
-      echo -e "${YELLOW}  ${line}${RESET}" >&2
-    done) |
-    tee -a "$ranked_file" |
-    grep '^Server' |
-    while IFS= read -r server; do
-      url="${server#Server = }"
-      echo -e "  ${GREEN}✔${RESET} $url"
-    done
-
-  # Log completo
-  cp "$ranked_file" "$LOG_FILE"
-
-  # Aplicar mirrorlist
-  cp "$ranked_file" "$MIRRORLIST"
-  rm -f "$ranked_file"
+  # Salvar log, aplicar e limpar
+  cp "$final_file" "$LOG_FILE"
+  cp "$final_file" "$MIRRORLIST"
+  rm -f "$ranked_file" "$final_file"
 
   ok "Mirrorlist aplicado em: $MIRRORLIST"
 }
@@ -165,7 +162,7 @@ exibir_resultado() {
 atualizar_pacman() {
   echo ""
   read -rp "$(echo -e "${YELLOW}[?]${RESET} Atualizar a base de dados do pacman agora? [S/n]: ")" resp
-  resp="${resp,,}" # lowercase
+  resp="${resp,,}"
   if [[ "$resp" =~ ^(s|sim|yes|y|)$ ]]; then
     msg "Executando: pacman -Syy"
     pacman -Syy && ok "Base de dados atualizada com sucesso!"

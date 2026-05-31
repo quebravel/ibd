@@ -155,7 +155,7 @@ umount_partitions() {
 rankeando_mirrors() {
 
   echo -e "$CNT - RANKEANDO MIRRORS"
-  pacman -Sy pacman-contrib --noconfirm --needed &>>$INSTLOG
+  pacman -Sy pacman-contrib curl --noconfirm --needed &>>$INSTLOG
   # # cat /etc/pacman.d/mirrorlist
   # if [[ ! -f /etc/pacman.d/mirrorlist.backup ]]; then
   #   cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
