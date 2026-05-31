@@ -89,8 +89,13 @@ baixar_mirrorlist() {
     exit 1
   fi
 
-  # Descomentar todos os mirrors (rankmirrors precisa de linhas ativas)
-  sed -i 's/^#Server/Server/' "$TEMP_FILE"
+  # Descomentar apenas linhas "#Server" (ativar mirrors)
+  # Remover todos os outros comentários e linhas vazias extras
+  sed -i \
+    -e 's/^#Server/Server/' \
+    -e '/^#/d' \
+    -e '/^[[:space:]]*$/d' \
+    "$TEMP_FILE"
 
   local total
   total=$(grep -c '^Server' "$TEMP_FILE" || true)
@@ -109,9 +114,9 @@ rankear_mirrors() {
   local ranked_file
   ranked_file=$(mktemp /tmp/ranked.XXXXXX)
 
-  # -n  → número de mirrors no output
-  # -m  → max-time (timeout por mirror)  ← flag correta nesta versão
-  # -w  → só incluir mirrors que responderam dentro do timeout
+  # -n → número de mirrors no output
+  # -m → max-time (timeout por mirror)
+  # -w → só mirrors que responderam dentro do timeout
   # stderr (progresso) vai direto ao terminal
   rankmirrors -n "$TOP_N" -m "$MAX_TIME" -w "$TEMP_FILE" >"$ranked_file"
 
@@ -121,7 +126,7 @@ rankear_mirrors() {
     exit 1
   fi
 
-  # Montar mirrorlist final com cabeçalho
+  # Montar mirrorlist final limpo: só cabeçalho + linhas Server
   local final_file
   final_file=$(mktemp /tmp/mirrorlist_final.XXXXXX)
   {
@@ -131,7 +136,7 @@ rankear_mirrors() {
     echo "# Top ${TOP_N} mirrors (latência) — do mais rápido ao mais lento"
     echo "################################################################################"
     echo ""
-    cat "$ranked_file"
+    grep '^Server' "$ranked_file"
   } >"$final_file"
 
   cp "$final_file" "$LOG_FILE"
@@ -146,8 +151,13 @@ rankear_mirrors() {
 # ──────────────────────────────────────────────────────────────────────────────
 exibir_resultado() {
   titulo "Mirrorlist final"
-  grep '^Server' "$MIRRORLIST" | nl -ba |
-    awk '{printf "  \033[1;32m%2d.\033[0m %s\n", $1, $3}'
+  local i=1
+  while IFS= read -r line; do
+    # Extrai só a URL (tudo após "Server = ")
+    url="${line#Server = }"
+    printf "  ${GREEN}%2d.${RESET} %s\n" "$i" "$url"
+    ((i++))
+  done < <(grep '^Server' "$MIRRORLIST")
   echo ""
   ok "Log completo salvo em: $LOG_FILE"
 }
