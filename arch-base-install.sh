@@ -434,13 +434,9 @@ criando_usuario_senha() {
 
   read -rep "$(echo -e $CAC) - Qual o nome do $(echo -e $LETRA)usuário$(echo -e $RESET)? -> " USUARIO
 
-  groupadd users
-  groupadd wheel
-  groupadd power
-  groupadd storage
-  groupadd input
-  groupadd video
-  groupadd audio
+  for group in users wheel power storage input video audio; do
+    getent group "$group" &>/dev/null || groupadd "$group"
+  done
 
   arch_chroot "useradd -m -G users,wheel,power,storage,input,video,audio -s /bin/bash $USUARIO"
 
